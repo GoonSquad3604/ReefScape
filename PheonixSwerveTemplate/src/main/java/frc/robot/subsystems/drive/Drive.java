@@ -14,6 +14,7 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -21,6 +22,8 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -39,6 +42,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -68,10 +72,7 @@ public class Drive extends SubsystemBase {
               Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
-  // PathPlanner config constants
-  private static final double ROBOT_MASS_KG = 74.088;
-  private static final double ROBOT_MOI = 6.883;
-  private static final double WHEEL_COF = 1.2;
+  
   private static final RobotConfig PP_CONFIG =
       new RobotConfig(
           ROBOT_MASS_KG,
@@ -130,8 +131,7 @@ public class Drive extends SubsystemBase {
         this::setPose,
         this::getChassisSpeeds,
         this::runVelocity,
-        new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+        PP_DRIVE_CONTROLLER,
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -365,4 +365,28 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
   }
+
+  public Command PathfindToFieldPose(Pose2d targetPose) {
+    PathConstraints constraints = new PathConstraints(
+      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond), 
+      PATH_MAX_ACCEL, 
+      Units.degreesToRadians(PATH_MAX_ANGULAR_VELO), 
+      Units.degreesToRadians(PATH_MAX_ANGULAR_ACCEL));
+    
+    return AutoBuilder.pathfindToPose(targetPose, constraints, 0);
+  }
+
+  public Command PathfindToPath(PathPlannerPath path){
+
+    PathConstraints constraints = new PathConstraints(
+      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond), 
+      PATH_MAX_ACCEL, 
+      Units.degreesToRadians(PATH_MAX_ANGULAR_VELO), 
+      Units.degreesToRadians(PATH_MAX_ANGULAR_ACCEL));
+  
+      return AutoBuilder.pathfindThenFollowPath(
+        path,
+        constraints);
+  }
+  
 }
