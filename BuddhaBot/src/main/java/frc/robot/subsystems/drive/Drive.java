@@ -21,6 +21,8 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -39,6 +41,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -364,5 +367,28 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
+  }
+
+  public Command PathfindToFieldPose(Pose2d targetPose) {
+    PathConstraints constraints =
+        new PathConstraints(
+            TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
+            DriveConstants.PATH_MAX_ACCEL,
+            Units.degreesToRadians(DriveConstants.PATH_MAX_ANGULAR_VELO),
+            Units.degreesToRadians(DriveConstants.PATH_MAX_ANGULAR_ACCEL));
+
+    return AutoBuilder.pathfindToPose(targetPose, constraints, 0);
+  }
+
+  public Command PathfindToPath(PathPlannerPath path) {
+
+    PathConstraints constraints =
+        new PathConstraints(
+            TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
+            DriveConstants.PATH_MAX_ACCEL,
+            Units.degreesToRadians(DriveConstants.PATH_MAX_ANGULAR_VELO),
+            Units.degreesToRadians(DriveConstants.PATH_MAX_ANGULAR_ACCEL));
+
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
   }
 }

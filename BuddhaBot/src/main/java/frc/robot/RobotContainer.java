@@ -17,11 +17,15 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -40,6 +44,30 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  // paths
+  //   List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+  //         new Pose2d(, 1.0, Rotation2d.fromDegrees(0)),
+  //         new Pose2d(, 1.0, Rotation2d.fromDegrees(0))
+
+  // );
+
+  // PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The
+  // constraints for this path.
+  // // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); // You can also
+  // use unlimited constraints, only limited by motor torque and nominal battery voltage
+
+  // // Create the path using the waypoints created above
+  // PathPlannerPath path = new PathPlannerPath(
+  //         waypoints,
+  //         constraints,
+  //         null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+  // be null for on-the-fly paths.
+  //         new GoalEndState(0.0, Rotation2d.fromDegrees(-90)) // Goal end state. You can set a
+  // holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+  // );
+
+  // Prevent the path from being flipped if the coordinates are already correct
+
   // Subsystems
   private final Drive drive;
 
@@ -117,6 +145,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    Trigger rumbleTime = new Trigger(() -> Timer.getMatchTime() <= 20 && Timer.getMatchTime() > 18);
+    rumbleTime.onTrue(
+        new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 1))
+            .andThen(new WaitCommand(1))
+            .andThen(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0)));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -124,6 +157,16 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
+
+    // drive with lower power when right trigger is held
+    driverController
+        .rightTrigger()
+        .whileTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> (-driverController.getLeftY() * .5),
+                () -> (-driverController.getLeftX() * .5),
+                () -> (-driverController.getRightX() * .4)));
 
     // Lock to 0° when A button is held
     driverController
@@ -134,11 +177,32 @@ public class RobotContainer {
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
                 () -> new Rotation2d()));
+
+    // Lock robot to right source angle when rbumper is held (225°)
+    driverController
+        .rightBumper()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> new Rotation2d(225 * (Math.PI / 180))));
+
+    // Lock robot to left source angle when lbumper is held (135°)
+    driverController
+        .leftBumper()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> new Rotation2d(135 * (Math.PI / 180))));
+
     // Robot Relative Drive
     driverController
         .b()
         .whileTrue(
-            DriveCommands.joystickDrive(
+            DriveCommands.joystickRobotRelativeDrive(
                 drive,
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
@@ -147,7 +211,7 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
+    // Reset gyro to 0° when start button is pressed
     driverController
         .start()
         .onTrue(
@@ -157,6 +221,23 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    // Points limelight towards game piece WIP
+    driverController
+        .y()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngleDetection(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () ->
+                    LimelightHelpers.getTV("") ? LimelightHelpers.getTX("") * (Math.PI / 180) : 0));
+
+    // Future Pathfinding to april tag location!!!
+    // driverController.x()
+    //     .whileTrue(
+    //         new PathFindToPath()
+    //     );
   }
 
   /**
