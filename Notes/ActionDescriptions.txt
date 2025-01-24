@@ -1,0 +1,4 @@
+Set Coral Mode
+ - Set Leds to Coral Color
+ - Set Arm to coral position
+

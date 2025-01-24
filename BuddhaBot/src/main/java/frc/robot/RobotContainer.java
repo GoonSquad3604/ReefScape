@@ -14,6 +14,10 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -35,6 +39,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -45,26 +50,29 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // paths
-  //   List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-  //         new Pose2d(, 1.0, Rotation2d.fromDegrees(0)),
-  //         new Pose2d(, 1.0, Rotation2d.fromDegrees(0))
+  List<Waypoint> waypoints =
+      PathPlannerPath.waypointsFromPoses(
+          new Pose2d(1.356, 4.0, Rotation2d.fromDegrees(0)),
+          new Pose2d(2.822, 4.0, Rotation2d.fromDegrees(0)));
 
-  // );
+  PathConstraints constraints =
+      new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+  // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); // You can also use
+  // unlimited constraints, only limited by motor torque and nominal battery voltage
 
-  // PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The
-  // constraints for this path.
-  // // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); // You can also
-  // use unlimited constraints, only limited by motor torque and nominal battery voltage
-
-  // // Create the path using the waypoints created above
-  // PathPlannerPath path = new PathPlannerPath(
-  //         waypoints,
-  //         constraints,
-  //         null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-  // be null for on-the-fly paths.
-  //         new GoalEndState(0.0, Rotation2d.fromDegrees(-90)) // Goal end state. You can set a
-  // holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
-  // );
+  // Create the path using the waypoints created above
+  PathPlannerPath failure =
+      new PathPlannerPath(
+          waypoints,
+          constraints,
+          null, // The ideal starting state, this is only relevant for pre-planned paths, so can be
+          // null for on-the-fly paths.
+          new GoalEndState(
+              0.0,
+              Rotation2d.fromDegrees(
+                  -90)) // Goal end state. You can set a holonomic rotation here. If using a
+          // differential drivetrain, the rotation will have no effect.
+          );
 
   // Prevent the path from being flipped if the coordinates are already correct
 
@@ -234,10 +242,7 @@ public class RobotContainer {
                     LimelightHelpers.getTV("") ? LimelightHelpers.getTX("") * (Math.PI / 180) : 0));
 
     // Future Pathfinding to april tag location!!!
-    // driverController.x()
-    //     .whileTrue(
-    //         new PathFindToPath()
-    //     );
+    driverController.x().whileTrue(PathFindToPath(failure));
   }
 
   /**
