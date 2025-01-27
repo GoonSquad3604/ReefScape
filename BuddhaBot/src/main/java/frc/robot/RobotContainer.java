@@ -241,8 +241,10 @@ public class RobotContainer {
                 () ->
                     LimelightHelpers.getTV("") ? LimelightHelpers.getTX("") * (Math.PI / 180) : 0));
 
-    // Future Pathfinding to april tag location!!!
-    driverController.x().whileTrue(PathFindToPath(failure));
+    // drive to reef
+    driverController
+        .leftTrigger()
+        .whileTrue(drive.pathFindToFieldPose(new Pose2d(2.8, 4, Rotation2d.fromDegrees(0))));
   }
 
   /**
