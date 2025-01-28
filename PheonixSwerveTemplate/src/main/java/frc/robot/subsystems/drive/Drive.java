@@ -366,7 +366,7 @@ public class Drive extends SubsystemBase {
     };
   }
 
-  public Command PathfindToFieldPose(Pose2d targetPose) {
+  public Command pathfindToFieldPose(Pose2d targetPose) {
     PathConstraints constraints = new PathConstraints(
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond), 
       PATH_MAX_ACCEL, 
@@ -376,7 +376,7 @@ public class Drive extends SubsystemBase {
     return AutoBuilder.pathfindToPose(targetPose, constraints, 0);
   }
 
-  public Command PathfindToPath(PathPlannerPath path){
+  public Command pathfindToPath(PathPlannerPath path){
 
     PathConstraints constraints = new PathConstraints(
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond), 
