@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.FieldConstants;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -363,6 +364,22 @@ public class DriveCommands {
                               + formatter.format(Units.metersToInches(wheelRadius))
                               + " inches");
                     })));
+  }
+
+  public static Command driveToClosestSource(Drive drive) {
+    double leftDistance =
+        FieldConstants.CoralStation.leftCenterFace
+            .getTranslation()
+            .getDistance(drive.getPose().getTranslation());
+    double rightDistance =
+        FieldConstants.CoralStation.rightCenterFace
+            .getTranslation()
+            .getDistance(drive.getPose().getTranslation());
+    if (rightDistance >= leftDistance) {
+      return drive.pathFindToFieldPose(FieldConstants.CoralStation.leftCenterFace);
+    } else {
+      return drive.pathFindToFieldPose(FieldConstants.CoralStation.rightCenterFace);
+    }
   }
 
   private static class WheelRadiusCharacterizationState {

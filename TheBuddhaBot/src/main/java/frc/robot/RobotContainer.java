@@ -52,7 +52,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  private final Drive drive;
+  private Drive drive;
   // private final Vision vision;
 
   List<Waypoint> waypoints =
@@ -171,6 +171,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     Trigger rumbleTime = new Trigger(() -> Timer.getMatchTime() <= 20 && Timer.getMatchTime() > 18);
+
     rumbleTime.onTrue(
         new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 1))
             .andThen(new WaitCommand(1))
@@ -234,14 +235,20 @@ public class RobotContainer {
                 () -> (-driverController.getLeftX() * .5),
                 () -> (-driverController.getRightX() * .4)));
     // drive to reef
+    // driverController.leftTrigger().whileTrue(DriveCommands.driveToClosestSource(drive));
+    // driverController
+    //     .povDown()
+    //     .whileTrue(
+    //         new ConditionalCommand(
+    //             drive.pathFindToFieldPose(FieldConstants.CoralStation.leftCenterFace),
+    //             drive.pathFindToFieldPose(FieldConstants.CoralStation.rightCenterFace),
+    //             () -> drive.leftIsClosest()));
     driverController
-        .leftTrigger()
-        .whileTrue(drive.pathFindToFieldPose(new Pose2d(2.8, 4, Rotation2d.fromDegrees(0))));
-
-    driverController
-        .povLeft()
-        .whileTrue(
-            drive.pathFindToFieldPose(new Pose2d(1.256, 1.268, Rotation2d.fromDegrees(225))));
+        .povDown()
+        .whileTrue(drive.defer(() -> drive.pathFindToFieldPose(drive.getClosestSource())));
+    // driverController
+    //     .povDown()
+    //     .whileTrue(drive.pathFindToFieldPose(FieldConstants.CoralStation.leftCenterFace));
     driverController
         .povRight()
         .whileTrue(

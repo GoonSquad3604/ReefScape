@@ -1,12 +1,12 @@
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-// import lombok.Getter;
 
 /**
  * Contains various field dimensions and useful reference points. All units are in meters and poses
@@ -17,7 +17,6 @@ public class FieldConstants {
   public static final double fieldWidth = Units.inchesToMeters(317);
   public static final double startingLineX =
       Units.inchesToMeters(299.438); // Measured from the inside of starting line
-  public static final double algaeDiameter = Units.inchesToMeters(16);
 
   public static class Processor {
     public static final Pose2d centerFace =
@@ -57,43 +56,36 @@ public class FieldConstants {
         Units.inchesToMeters(12); // Side of the reef to the inside of the reef zone line
 
     public static final Pose2d[] centerFaces =
-        new Pose2d[6]; // Starting facing the driver station in clockwise order
-    public static final List<Map<ReefHeight, Pose3d>> branchPositions =
-        new ArrayList<>(); // Starting at the right branch facing the driver station in clockwise
-
-    static {
-      // Initialize faces
-      centerFaces[0] =
+        new Pose2d[] {
           new Pose2d(
               Units.inchesToMeters(144.003),
               Units.inchesToMeters(158.500),
-              Rotation2d.fromDegrees(180));
-      centerFaces[1] =
+              Rotation2d.fromDegrees(180)),
           new Pose2d(
               Units.inchesToMeters(160.373),
               Units.inchesToMeters(186.857),
-              Rotation2d.fromDegrees(120));
-      centerFaces[2] =
+              Rotation2d.fromDegrees(120)),
           new Pose2d(
               Units.inchesToMeters(193.116),
               Units.inchesToMeters(186.858),
-              Rotation2d.fromDegrees(60));
-      centerFaces[3] =
+              Rotation2d.fromDegrees(60)),
           new Pose2d(
               Units.inchesToMeters(209.489),
               Units.inchesToMeters(158.502),
-              Rotation2d.fromDegrees(0));
-      centerFaces[4] =
+              Rotation2d.fromDegrees(0)),
           new Pose2d(
               Units.inchesToMeters(193.118),
               Units.inchesToMeters(130.145),
-              Rotation2d.fromDegrees(-60));
-      centerFaces[5] =
+              Rotation2d.fromDegrees(-60)),
           new Pose2d(
               Units.inchesToMeters(160.375),
               Units.inchesToMeters(130.144),
-              Rotation2d.fromDegrees(-120));
+              Rotation2d.fromDegrees(-120))
+        }; // Starting facing the driver station in clockwise order
+    public static final ArrayList<Map<ReefHeight, Pose3d>> branchPositions =
+        new ArrayList<>(13); // Starting at the right branch facing the driver station in clockwise
 
+    static {
       // Initialize branch positions
       for (int face = 0; face < 6; face++) {
         Map<ReefHeight, Pose3d> fillRight = new HashMap<>();
@@ -134,8 +126,8 @@ public class FieldConstants {
                       Units.degreesToRadians(level.pitch),
                       poseDirection.getRotation().getRadians())));
         }
-        branchPositions.add(fillRight);
         branchPositions.add(fillLeft);
+        branchPositions.add(fillRight);
       }
     }
   }
@@ -165,39 +157,6 @@ public class FieldConstants {
     public final double pitch;
   }
 
-  public static final double aprilTagWidth = Units.inchesToMeters(6.50);
-  // public static final AprilTagLayoutType defaultAprilTagType = AprilTagLayoutType.OFFICIAL;
-  public static final int aprilTagCount = 22;
-
-  //   //@Getter
-  //   public enum AprilTagLayoutType {
-  //     OFFICIAL("2025-official");
-
-  //     AprilTagLayoutType(String name) {
-  //       if (Constants.disableHAL) {
-  //         layout = null;
-  //       } else {
-  //         try {
-  //           layout =
-  //               new AprilTagFieldLayout(
-  //                   Path.of(Filesystem.getDeployDirectory().getPath(), "apriltags", name +
-  // ".json"));
-  //         } catch (IOException e) {
-  //           throw new RuntimeException(e);
-  //         }
-  //       }
-  //       if (layout == null) {
-  //         layoutString = "";
-  //       } else {
-  //         try {
-  //           layoutString = new ObjectMapper().writeValueAsString(layout);
-  //         } catch (JsonProcessingException e) {
-  //           throw new RuntimeException(
-  //               "Failed to serialize AprilTag layout JSON " + toString() + "for Northstar");
-  //         }
-  //       }
-  //
-
-  // private final AprilTagFieldLayout layout;
-  // private final String layoutString;
+  public static final AprilTagFieldLayout layout =
+      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 }

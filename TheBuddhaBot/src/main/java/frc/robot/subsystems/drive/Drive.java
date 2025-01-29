@@ -50,6 +50,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
@@ -384,5 +385,33 @@ public class Drive extends SubsystemBase {
             Units.degreesToRadians(PATH_MAX_ANGULAR_ACCEL));
 
     return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Pose2d getClosestSource() {
+    double leftDistance =
+        FieldConstants.CoralStation.leftCenterFace
+            .getTranslation()
+            .getDistance(getPose().getTranslation());
+    double rightDistance =
+        FieldConstants.CoralStation.rightCenterFace
+            .getTranslation()
+            .getDistance(getPose().getTranslation());
+    if (leftDistance >= rightDistance) {
+      return FieldConstants.CoralStation.rightCenterFace;
+    } else {
+      return FieldConstants.CoralStation.leftCenterFace;
+    }
+  }
+
+  public boolean leftIsClosest() {
+    double leftDistance =
+        FieldConstants.CoralStation.leftCenterFace
+            .getTranslation()
+            .getDistance(getPose().getTranslation());
+    double rightDistance =
+        FieldConstants.CoralStation.rightCenterFace
+            .getTranslation()
+            .getDistance(getPose().getTranslation());
+    return leftDistance < rightDistance;
   }
 }
