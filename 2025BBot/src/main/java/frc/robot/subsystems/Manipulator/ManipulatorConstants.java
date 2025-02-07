@@ -10,6 +10,13 @@ public final class ManipulatorConstants {
     public static final double algaePos = 1; //Not true value
 
     public static final double wheelPower = .25; //Not true value
+    public static final double wheelP = 0; //Not true value
+    public static final double wheelI = 0; //Not true value
+    public static final double wheelD = 0; //Not true value
+    public static final double wheelFF = 0; //Not true value
+    
+
+
 
     public static final double openingMotorP = 0; //Not true value
     public static final double openingMotorI = 0; //Not true value
