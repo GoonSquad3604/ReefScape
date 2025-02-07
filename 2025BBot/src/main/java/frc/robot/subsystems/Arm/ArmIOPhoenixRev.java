@@ -14,7 +14,7 @@ import com.revrobotics.AbsoluteEncoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Encoder;
 
-public class ArmIOPhoenix implements ArmIO {
+public class ArmIOPhoenixRev implements ArmIO {
 
     private final TalonFXS wrist;
     private final TalonFXS elbow;
@@ -26,7 +26,7 @@ public class ArmIOPhoenix implements ArmIO {
     private final VoltageOut elbowRequest = new VoltageOut(0.0);
     private final VoltageOut wristRequest = new VoltageOut(0.0);
 
-    public ArmIOPhoenix(){
+    public ArmIOPhoenixRev(){
         wrist = new TalonFXS(-1);
         elbow = new TalonFXS(-21);
 

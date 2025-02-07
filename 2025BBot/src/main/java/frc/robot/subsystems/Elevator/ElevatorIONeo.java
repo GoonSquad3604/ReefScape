@@ -22,6 +22,8 @@ public class ElevatorIONeo implements ElevatorIO {
         leftMotor = new SparkMax(ElevatorConstants.leftMotorID, MotorType.kBrushless);
         rightMotor = new SparkMax(ElevatorConstants.rightMotorID, MotorType.kBrushless);
 
+        
+
         limitSwitchLeft = new DigitalInput(ElevatorConstants.limitSwitch1ID);
         limitSwitchRight = new DigitalInput(ElevatorConstants.limitSwitch2ID);
 
@@ -53,7 +55,12 @@ public class ElevatorIONeo implements ElevatorIO {
     public void setPosInches(double position) {}
 
     @Override
-    public void setVoltage(double voltage) {}
+    public void setVoltage(double voltage) {
+
+        leftMotor.setVoltage(voltage);
+        rightMotor.setVoltage(voltage);
+
+    }
 
     @Override
     public void setToZero() {}
