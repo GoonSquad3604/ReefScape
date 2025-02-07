@@ -5,7 +5,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface ManipulatorIO {
 
-  default void updateInputs(ElevatorIOInputs inputs) {}
+  default void updateInputs(ManipulatorIOInputs inputs) {}
 
   @AutoLog
   class ManipulatorIOInputs {
