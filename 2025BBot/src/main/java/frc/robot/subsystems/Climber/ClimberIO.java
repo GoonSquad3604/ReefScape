@@ -13,11 +13,9 @@ public interface ClimberIO {
     public double climberMotorVoltage;
     public double climberMotorCurrent;
     public double climberMotorPosition;
-
   }
 
   default void setVoltage(double voltage) {}
 
   default void setPosition(double position) {}
-
 }

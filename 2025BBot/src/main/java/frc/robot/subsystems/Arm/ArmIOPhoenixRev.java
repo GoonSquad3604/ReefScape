@@ -3,12 +3,10 @@ package frc.robot.subsystems.Arm;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -37,8 +35,6 @@ public class ArmIOPhoenixRev implements ArmIO {
     private final PositionTorqueCurrentFOC positionTorqueCurrentRequest;
 
 
-
-
     private final VoltageOut elbowRequest = new VoltageOut(0.0);
 
     public ArmIOPhoenixRev(){
@@ -50,16 +46,8 @@ public class ArmIOPhoenixRev implements ArmIO {
         torqueCurrentRequest = new TorqueCurrentFOC(0).withUpdateFreqHz(0);
         positionTorqueCurrentRequest = new PositionTorqueCurrentFOC(0).withUpdateFreqHz(0);
 
-        TalonFXSConfiguration config = new TalonFXSConfiguration();
-        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 40;
-        config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.StatorCurrentLimit = 80;
-        config.Voltage.PeakForwardVoltage = 12.0;
-        config.Voltage.PeakReverseVoltage = -12.0;
-        config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
+    // Phoenix6Util.applyAndCheckConfiguration(elbow, config);
+    // Phoenix6Util.applyAndCheckConfiguration(wrist, config);
 
         var slot0Configs = new Slot0Configs();
         slot0Configs.kS = 0.1; 
@@ -105,11 +93,6 @@ public class ArmIOPhoenixRev implements ArmIO {
         inputs.wristMotorVoltage = wrist.getBusVoltage() * wrist.getAppliedOutput();
         inputs.wristMotorCurrent = wrist.getOutputCurrent();
         inputs.wristPosition = wristEncoder.getPosition();
-    }
-
-     @Override
-    public void setElbowMotorVoltage(double voltage) {
-        elbow.setControl(elbowRequest.withOutput(MathUtil.clamp(voltage, -12.0, 12.0)));
     }
 
     @Override
