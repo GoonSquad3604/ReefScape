@@ -1,6 +1,5 @@
 package frc.robot.subsystems.Manipulator;
 
-import frc.robot.subsystems.Elevator.ElevatorIO.ElevatorIOInputs;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ManipulatorIO {

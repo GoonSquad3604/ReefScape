@@ -9,10 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Manipulator extends SubsystemBase {
 
   /** Creates a new Manipulator. */
-
-  public Manipulator() {
-
-  }
+  public Manipulator() {}
 
   @Override
   public void periodic() {

@@ -31,11 +31,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.StateController;
-import frc.robot.subsystems.Arm.Arm;
-import frc.robot.subsystems.Climber.Climber;
-import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -58,11 +53,11 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-//   private final StateController stateController;
-//   private final Arm arm;
-//   private final Manipulator manipulator;
-//   private final Climber climber;
-//   private final Elevator elevator;
+  //   private final StateController stateController;
+  //   private final Arm arm;
+  //   private final Manipulator manipulator;
+  //   private final Climber climber;
+  //   private final Elevator elevator;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);

@@ -25,6 +25,7 @@ public interface ElevatorIO {
     public double MotorLeftPos;
     public double MotorRightPos;
     public double HeightInInches;
+    
   }
 
   default void setPos(double position) {}
@@ -40,9 +41,8 @@ public interface ElevatorIO {
     return pos;
   }
 
-  default double findPosFromInches(double posInInches){
+  default double findPosFromInches(double posInInches) {
 
     return posInInches;
   }
-
 }
