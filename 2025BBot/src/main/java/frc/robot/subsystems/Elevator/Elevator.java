@@ -7,11 +7,12 @@ package frc.robot.subsystems.Elevator;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 public class Elevator extends SubsystemBase {
-  
+
   /** Creates a new Elevator. */
   private ElevatorIO IO;
   protected final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
@@ -28,6 +29,30 @@ public class Elevator extends SubsystemBase {
     leftDisconnected = new Alert("Left elevator motor is disconnected!", Alert.AlertType.kWarning);
     rightDisconnected = new Alert("Right elevator motor is disconnected!", Alert.AlertType.kWarning);
 
+      }
+    
+      public Command elevatorCL1(){
+        return run(() -> IO.setPos(ElevatorConstants.l1Pos));
+      }
+
+      public Command elevatorCL2(){
+        return run(() -> IO.setPos(ElevatorConstants.l2Pos));
+      }
+
+      public Command elevatorCL3(){
+        return run(() -> IO.setPos(ElevatorConstants.l3Pos));
+      }
+
+      public Command elevatorCL4(){
+        return run(() -> IO.setPos(ElevatorConstants.l4Pos));
+      }
+
+      public Command elevatorAL2(){
+        return run(() -> IO.setPos(ElevatorConstants.algaeL2Pos));
+      }
+
+      public Command elevatorAL3(){
+        return run(() -> IO.setPos(ElevatorConstants.algaeL3Pos));
       }
 
   @Override
