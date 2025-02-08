@@ -12,7 +12,7 @@ public class ClimberIOPhoenix implements ClimberIO {
     private TalonFX climberMotor;
 
     // create a position closed-loop request, voltage output, slot 0 configs
-    final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+    final PositionVoltage climberPositionrequest = new PositionVoltage(0).withSlot(0);
 
     public ClimberIOPhoenix() {
         
@@ -32,13 +32,11 @@ public class ClimberIOPhoenix implements ClimberIO {
         config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
 
         
-        //configure PID
-        // in init function, set slot 0 gains
+        //configure PID, set slot 0 gains
         var slot0Configs = new Slot0Configs();
         slot0Configs.kP = ClimberConstants.p;
         slot0Configs.kI = ClimberConstants.i;
         slot0Configs.kD = ClimberConstants.d;
-        
 
         climberMotor.getConfigurator().apply(slot0Configs);
 
@@ -65,7 +63,7 @@ public class ClimberIOPhoenix implements ClimberIO {
     @Override
     public void setPosition(double position){
         //climberMotor.setPosition(position);
-        climberMotor.setControl(m_request.withPosition(position));
+        climberMotor.setControl(climberPositionrequest.withPosition(position));
     }
 
 }
