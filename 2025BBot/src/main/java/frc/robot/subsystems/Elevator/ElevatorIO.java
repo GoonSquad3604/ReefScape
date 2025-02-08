@@ -34,4 +34,15 @@ public interface ElevatorIO {
   default void setVoltage(double voltage) {}
 
   default void setToZero() {}
+
+  default double findPosInInches(double pos) {
+
+    return pos;
+  }
+
+  default double findPosFromInches(double posInInches){
+
+    return posInInches;
+  }
+
 }

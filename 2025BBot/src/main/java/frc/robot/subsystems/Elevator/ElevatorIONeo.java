@@ -59,7 +59,7 @@ public class ElevatorIONeo implements ElevatorIO {
         leftMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         rightMotor.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
-
+        //initialializes limit switches
         limitSwitchLeft = new DigitalInput(ElevatorConstants.limitSwitch1ID);
         limitSwitchRight = new DigitalInput(ElevatorConstants.limitSwitch2ID);
 
@@ -96,7 +96,12 @@ public class ElevatorIONeo implements ElevatorIO {
     }
 
     @Override
-    public void setPosInches(double position) {}
+    public void setPosInches(double position) {
+
+        //calculates the position the motor should go to, then goes to position
+        leftMotor.getClosedLoopController().setReference(findPosInInches(position), ControlType.kPosition);
+
+    }
 
     @Override
     public void setVoltage(double voltage) {
@@ -109,8 +114,23 @@ public class ElevatorIONeo implements ElevatorIO {
     @Override
     public void setToZero() {
 
-
+        
 
     }
 
+    //gets
+    @Override
+    public double findPosInInches(double pos){
+
+        return ElevatorConstants.homeOffset + pos * ElevatorConstants.gearRatio * ElevatorConstants.pulleyCircumference;
+
+    }
+
+    //gets the pos from inches
+    @Override
+    public double findPosFromInches(double posInInches){
+
+        return posInInches / ElevatorConstants.gearRatio / ElevatorConstants.pulleyCircumference - ElevatorConstants.homeOffset;
+
+    }   
 }
