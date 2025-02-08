@@ -246,6 +246,9 @@ public class RobotContainer {
     driverController
         .povDown()
         .whileTrue(drive.defer(() -> drive.pathFindToFieldPose(drive.getClosestSource())));
+    driverController
+        .povUp()
+        .whileTrue(drive.defer(() -> drive.pathFindToFieldPose(drive.getClosestReefPanel())));
     // driverController
     //     .povDown()
     //     .whileTrue(drive.pathFindToFieldPose(FieldConstants.CoralStation.leftCenterFace));

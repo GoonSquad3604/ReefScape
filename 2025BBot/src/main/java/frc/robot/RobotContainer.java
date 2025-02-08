@@ -32,10 +32,15 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.StateController;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.Arm.Arm;
+import frc.robot.subsystems.Arm.ArmIOPhoenixRev;
 import frc.robot.subsystems.Climber.Climber;
 import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorIONeo;
 import frc.robot.subsystems.Manipulator.Manipulator;
+import frc.robot.subsystems.Manipulator.ManipulatorIO;
+import frc.robot.subsystems.Manipulator.ManipulatorIOPhoenixRev;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -58,11 +63,12 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-//   private final StateController stateController;
-//   private final Arm arm;
-//   private final Manipulator manipulator;
+  private final StateController stateController;
+  private final SuperStructure superStructure;
+  private final Arm arm;
+  private final Manipulator manipulator;
 //   private final Climber climber;
-//   private final Elevator elevator;
+  private final Elevator elevator;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -73,13 +79,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // RumBLe
-    Trigger rumbleTime = new Trigger(() -> Timer.getMatchTime() <= 20 && Timer.getMatchTime() > 18);
-
-    rumbleTime.onTrue(
-        new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 1))
-            .andThen(new WaitCommand(1))
-            .andThen(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0)));
+    
 
     switch (Constants.currentMode) {
       case REAL:
@@ -99,6 +99,9 @@ public class RobotContainer {
                 new VisionIOPhotonVision(camera1Name, robotToCamera1),
                 new VisionIOPhotonVision(camera2Name, robotToCamera2),
                 new VisionIOPhotonVision(camera3Name, robotToCamera3));
+        manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
+        arm = new Arm(new ArmIOPhoenixRev());
+        elevator = new Elevator(new ElevatorIONeo());
         break;
 
       case SIM:
@@ -116,6 +119,9 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+        manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
+        arm = new Arm(new ArmIOPhoenixRev());
+        elevator = new Elevator(new ElevatorIONeo());
         break;
 
       default:
@@ -128,9 +134,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
+        arm = new Arm(new ArmIOPhoenixRev());
+        elevator = new Elevator(new ElevatorIONeo());
         break;
     }
-
+    stateController = new StateController();
+    superStructure = new SuperStructure(manipulator, arm, elevator);
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -161,6 +171,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    // RumBLe
+    Trigger rumbleTime = new Trigger(() -> Timer.getMatchTime() <= 20 && Timer.getMatchTime() > 18);
+    Trigger coralMode = new Trigger(() -> stateController.isCoralMode());
+    Trigger algaeMode = new Trigger(() -> stateController.isAlgaeMode());
+
+    rumbleTime.onTrue(
+        new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 1))
+            .andThen(new WaitCommand(1))
+            .andThen(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0)));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -218,6 +238,51 @@ public class RobotContainer {
     driverController
         .povUp()
         .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(drive.getClosestReefPanel())));
+
+    operatorButtonBox
+        .button(1)
+        .onTrue(stateController.setCoralMode(manipulator));
+    operatorButtonBox
+        .button(2)
+        .onTrue(stateController.setAlgaeMode(manipulator));
+    //goes to L4 positions
+    operatorButtonBox
+        .button(3)
+        .and(coralMode)
+        .onTrue(superStructure.goToL4Coral());
+    operatorButtonBox
+        .button(3)
+        .and(algaeMode)
+        .onTrue(superStructure.goToBarge());
+    //goes to L3 positions
+    operatorButtonBox
+        .button(4)
+        .and(coralMode)
+        .onTrue(superStructure.goToL3Coral());
+    operatorButtonBox
+        .button(4)
+        .and(algaeMode)
+        .onTrue(superStructure.goToL3Algae());
+    //goes to L2 positions
+    operatorButtonBox
+        .button(5)
+        .and(coralMode)
+        .onTrue(superStructure.goToL2Coral());
+    operatorButtonBox
+        .button(5)
+        .and(algaeMode)
+        .onTrue(superStructure.goToL2Algae());
+    //goes to L1 positions
+    operatorButtonBox
+        .button(6)
+        .and(coralMode)
+        .onTrue(superStructure.goToL1Coral());
+    operatorButtonBox
+        .button(6)
+        .and(algaeMode)
+        .onTrue(superStructure.goToProcessor());
+    //goes home
+    
   }
 
   /**
