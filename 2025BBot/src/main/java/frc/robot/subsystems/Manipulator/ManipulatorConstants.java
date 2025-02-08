@@ -13,6 +13,7 @@ public final class ManipulatorConstants {
   public static final double wheelPower = .25; // Not true value
   public static final double intakeRPM = -2;
   public static final double fireRPM = 2;
+  public static final double zeroRPM = 0;
   public static final double wheelP = 0; // Not true value
   public static final double wheelI = 0; // Not true value
   public static final double wheelD = 0; // Not true value
