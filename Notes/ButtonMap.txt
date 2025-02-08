@@ -10,6 +10,7 @@ Driver:
   Right Trigger - Pathfind to Right Source
   X - Brake Mode
   Y - Cancel Pathfind
+  POV Up - drive to barge
 
 Operator: (Button number to be determined)
   Coral - Sets state to Coral. Changes LEDs, Target Angles and L1-L4 positions
