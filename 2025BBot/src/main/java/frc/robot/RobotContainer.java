@@ -36,6 +36,7 @@ import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmIOPhoenixRev;
 import frc.robot.subsystems.Climber.Climber;
+import frc.robot.subsystems.Climber.ClimberIOPhoenix;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorIONeo;
 import frc.robot.subsystems.Manipulator.Manipulator;
@@ -67,7 +68,7 @@ public class RobotContainer {
   private final SuperStructure superStructure;
   private final Arm arm;
   private final Manipulator manipulator;
-//   private final Climber climber;
+  private final Climber climber;
   private final Elevator elevator;
 
   // Controller
@@ -102,6 +103,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
+        climber = new Climber(new ClimberIOPhoenix());
         break;
 
       case SIM:
@@ -122,6 +124,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
+        climber = new Climber(new ClimberIOPhoenix());
         break;
 
       default:
@@ -137,6 +140,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
+        climber = new Climber(new ClimberIOPhoenix());
         break;
     }
     stateController = new StateController();
@@ -282,6 +286,16 @@ public class RobotContainer {
         .and(algaeMode)
         .onTrue(superStructure.goToProcessor());
     //goes home
+
+    //Deploy Climber
+    operatorButtonBox
+        .button(8)
+        .onTrue(climber.setClimberDown());
+    //Climbs
+    operatorButtonBox
+        .button(9)
+        .onTrue(climber.setClimberUp());
+        
     
   }
 
