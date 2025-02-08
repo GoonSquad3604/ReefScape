@@ -2,6 +2,9 @@ package frc.robot.subsystems.Elevator;
 
 public final class ElevatorConstants {
     
+    //almighty motor ratios and circumference
+    public static final double gearRatio = 0; //placeholder
+    public static final double pulleyCircumference = 0; //placeholder
 
     //motor ids
     public static final int leftMotorID = 15;
@@ -12,12 +15,9 @@ public final class ElevatorConstants {
     public static final int limitSwitch2ID = 1; 
 
     //PIDs
-    public static final double leftMotorP = 0; //placeholder
-    public static final double rightMotorP = 0; //placeholder
-    public static final double leftMotorI = 0; //placeholder
-    public static final double rightMotorI = 0; //placeholder
-    public static final double leftMotorD = 0; //placeholder
-    public static final double rightMotorD = 0; //placeholder
+    public static final double elevatorP = 0; //placeholder
+    public static final double elevatorI = 0; //placeholder
+    public static final double elevatorD = 0; //placeholder
 
     //default home position
     public static final double homePos = 0;  //placeholder
@@ -36,5 +36,6 @@ public final class ElevatorConstants {
     public static final double sourcePos = 0; //placeholder
     public static final double bargePos = 0; //placeholder
     public static final double processorPos = 0; //placeholder 
+    public static final double homeOffset = 0; //placeholder
 
 }

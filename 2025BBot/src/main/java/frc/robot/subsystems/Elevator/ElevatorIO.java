@@ -11,19 +11,20 @@ public interface ElevatorIO {
 
     // silly little code -lucas
 
-    public boolean elevatorMotorLeftConnected = false;
-    public boolean elevatorMotorRightConnected = false;
-    public boolean limitSwitch = false;
+    public boolean MotorLeftConnected = false;
+    public boolean MotorRightConnected = false;
+    public boolean limitSwitchLeft = false;
+    public boolean limitSwitchRight = false;
 
-    public double elevatorMotorLeftVoltage;
-    public double elevatorMotorRightVoltage;
+    public double MotorLeftVoltage;
+    public double MotorRightVoltage;
 
-    public double elevatorMotorLeftCurrent;
-    public double elevatorMotorRightCurrent;
+    public double MotorLeftCurrent;
+    public double MotorRightCurrent;
 
-    public double elevatorMotorLeftPos;
-    public double elevatorMotorRightPos;
-    public double elevatorHeightInInches;
+    public double MotorLeftPos;
+    public double MotorRightPos;
+    public double HeightInInches;
   }
 
   default void setPos(double position) {}
