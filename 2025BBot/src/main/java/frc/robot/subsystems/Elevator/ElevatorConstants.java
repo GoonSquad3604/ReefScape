@@ -37,5 +37,9 @@ public final class ElevatorConstants {
   public static final double sourcePos = 0; // placeholder
   public static final double bargePos = 0; // placeholder
   public static final double processorPos = 0; // placeholder
+  public static final double groundAlgaeIntake = 0; // placeholder?
+
+  //the offset
   public static final double homeOffset = 0; // placeholder
+
 }

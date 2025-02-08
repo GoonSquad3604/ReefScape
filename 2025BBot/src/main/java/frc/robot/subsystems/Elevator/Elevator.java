@@ -4,23 +4,42 @@
 
 package frc.robot.subsystems.Elevator;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+
 public class Elevator extends SubsystemBase {
+  
   /** Creates a new Elevator. */
   private ElevatorIO IO;
+  protected final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+  private final Alert leftDisconnected;
+  private final Alert rightDisconnected;
 
   public Elevator(ElevatorIO elevatorIo) {
 
-    IO = elevatorIo;
+    // whee elevator go up yippee
 
-    final Alert motorDisconnectedAlert =
-        new Alert("Elevator motor disconnected!", Alert.AlertType.kWarning);
-  }
+    IO = elevatorIo;
+    
+    //will throw an error if a motor is disconnected
+    leftDisconnected = new Alert("Left elevator motor is disconnected!", Alert.AlertType.kWarning);
+    rightDisconnected = new Alert("Right elevator motor is disconnected!", Alert.AlertType.kWarning);
+
+      }
 
   @Override
   public void periodic() {
+
     // This method will be called once per scheduler run
+    IO.updateInputs(inputs);
+    Logger.processInputs("Elevator", inputs);
+
+    //checks for disconnected motors
+    leftDisconnected.set(!inputs.MotorLeftConnected);
+    rightDisconnected.set(!inputs.MotorRightConnected);
+
   }
 }

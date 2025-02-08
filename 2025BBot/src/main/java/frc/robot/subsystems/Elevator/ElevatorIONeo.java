@@ -52,6 +52,7 @@ public class ElevatorIONeo implements ElevatorIO {
     // initialializes limit switches
     limitSwitchLeft = new DigitalInput(ElevatorConstants.limitSwitch1ID);
     limitSwitchRight = new DigitalInput(ElevatorConstants.limitSwitch2ID);
+
   }
 
   // updates IO
@@ -77,6 +78,7 @@ public class ElevatorIONeo implements ElevatorIO {
             + leftMotor.getEncoder().getPosition()
                 * ElevatorConstants.gearRatio
                 * ElevatorConstants.pulleyCircumference;
+
   }
 
   @Override
@@ -84,6 +86,7 @@ public class ElevatorIONeo implements ElevatorIO {
 
     // set l & r motor to a set position
     leftMotor.getClosedLoopController().setReference(position, ControlType.kPosition);
+
   }
 
   @Override
@@ -93,6 +96,7 @@ public class ElevatorIONeo implements ElevatorIO {
     leftMotor
         .getClosedLoopController()
         .setReference(findPosInInches(position), ControlType.kPosition);
+
   }
 
   @Override
@@ -100,7 +104,7 @@ public class ElevatorIONeo implements ElevatorIO {
 
     // set l & r motor to a given voltage
     leftMotor.getClosedLoopController().setReference(voltage, ControlType.kVoltage);
-    ;
+
   }
 
   @Override
@@ -108,6 +112,7 @@ public class ElevatorIONeo implements ElevatorIO {
 
     // sets the motor to zero
     leftMotor.getEncoder().setPosition(0);
+  
   }
 
   @Override
@@ -116,6 +121,7 @@ public class ElevatorIONeo implements ElevatorIO {
     // gets encoder pos from inches
     return ElevatorConstants.homeOffset
         + pos * ElevatorConstants.gearRatio * ElevatorConstants.pulleyCircumference;
+
   }
 
   @Override
@@ -124,5 +130,7 @@ public class ElevatorIONeo implements ElevatorIO {
     // gets the pos from a given pos in inches
     return posInInches / ElevatorConstants.gearRatio / ElevatorConstants.pulleyCircumference
         - ElevatorConstants.homeOffset;
+
   }
+  
 }
