@@ -4,19 +4,33 @@
 
 package frc.robot.subsystems.Arm;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.StateController;
 
 public class Arm extends SubsystemBase {
 
   private ArmIO io;
+  protected final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
+  private final Alert elbowDisconnected;
+  private final Alert wristDisconnected;
+
+  
   /** Creates a new Arm. */
   public Arm(ArmIO armIO) {
     io = armIO;
+    elbowDisconnected = new Alert("ELBOW DISCONNECTED", Alert.AlertType.kWarning);
+    wristDisconnected = new Alert("Wrist DISCONNECTED", Alert.AlertType.kWarning);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    io.updateInputs(inputs);
+    Logger.processInputs("Arm", inputs);
+    elbowDisconnected.set(!inputs.elbowMotorConnected);
+    wristDisconnected.set(!inputs.wristMotorConnected);
   }
 }
