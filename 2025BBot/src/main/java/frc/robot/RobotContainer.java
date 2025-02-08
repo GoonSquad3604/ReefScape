@@ -295,7 +295,19 @@ public class RobotContainer {
     operatorButtonBox
         .button(9)
         .onTrue(climber.setClimberUp());
-        
+    //Intake
+    operatorButtonBox
+        .button(10)
+        .onTrue();
+    //Vomit
+    operatorButtonBox
+        .button(11)
+        .onTrue();
+    //Fire
+    operatorButtonBox
+        .button(12)
+        .whileTrue();
+
     
   }
 

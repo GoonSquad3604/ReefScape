@@ -67,14 +67,20 @@ public class SuperStructure extends SubsystemBase {
   public Command goToSource(){
     return run(() -> {
       arm.source();
-      //TODO: make elevator.source();
+      elevator.source();
     });
   }
   public Command goToProcessor(){
-    return null;
+    return run(() -> {
+      arm.processor();
+      elevator.processor();
+    });
   }
   public Command goToBarge(){
-    return null;
+    return run(() -> {
+      arm.barge();
+      elevator.barge();
+    });
   }
 
 
