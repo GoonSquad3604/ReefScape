@@ -33,6 +33,12 @@ public class Manipulator extends SubsystemBase {
   public void setOpeningToAlgae(){
       io.setOpeningPos(ManipulatorConstants.algaePos);
   }
+  public void intakeGamePiece(){
+      io.setRPM(ManipulatorConstants.intakeRPM);
+  }
+  public void fireGamePiece(){
+      io.setRPM(ManipulatorConstants.fireRPM);
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
