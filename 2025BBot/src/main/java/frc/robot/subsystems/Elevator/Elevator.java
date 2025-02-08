@@ -31,28 +31,28 @@ public class Elevator extends SubsystemBase {
 
       }
     
-      public Command elevatorCL1(){
-        return run(() -> IO.setPos(ElevatorConstants.l1Pos));
+      public void elevatorCL1(){
+        IO.setPos(ElevatorConstants.l1Pos);
       }
 
-      public Command elevatorCL2(){
-        return run(() -> IO.setPos(ElevatorConstants.l2Pos));
+      public void elevatorCL2(){
+        IO.setPos(ElevatorConstants.l2Pos);
       }
 
-      public Command elevatorCL3(){
-        return run(() -> IO.setPos(ElevatorConstants.l3Pos));
+      public void elevatorCL3(){
+        IO.setPos(ElevatorConstants.l3Pos);
       }
 
-      public Command elevatorCL4(){
-        return run(() -> IO.setPos(ElevatorConstants.l4Pos));
+      public void elevatorCL4(){
+        IO.setPos(ElevatorConstants.l4Pos);
       }
 
-      public Command elevatorAL2(){
-        return run(() -> IO.setPos(ElevatorConstants.algaeL2Pos));
+      public void elevatorAL2(){
+        IO.setPos(ElevatorConstants.algaeL2Pos);
       }
 
-      public Command elevatorAL3(){
-        return run(() -> IO.setPos(ElevatorConstants.algaeL3Pos));
+      public void elevatorAL3(){
+        IO.setPos(ElevatorConstants.algaeL3Pos);
       }
 
   @Override
