@@ -15,14 +15,6 @@ public class StateController extends SubsystemBase{
         setCoral();
     }
 
-    public static StateController getInstance() {
-
-        if (_instance == null) {
-          _instance = new StateController();
-        }
-        return _instance;
-      }
-
     public void setCoral(){
         m_Mode = RobotMode.CORAL;
     }

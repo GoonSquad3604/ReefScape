@@ -9,30 +9,31 @@ import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
+
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Encoder;
 
-public class ArmIOPhoenix implements ArmIO {
+public class ArmIOPhoenixRev implements ArmIO {
 
-    private SparkFlex wrist;
-    private TalonFX elbow;
+    private final TalonFXS wrist;
+    private final TalonFXS elbow;
 
-    private AbsoluteEncoder wristEncoder;
+    //private final AbsoluteEncoder wristEncoder;
+    //private final AbsoluteEncoder elbowEncoder;
 
 
     private final VoltageOut elbowRequest = new VoltageOut(0.0);
     private final VoltageOut wristRequest = new VoltageOut(0.0);
 
-    public ArmIOPhoenix(){
-        wrist = new SparkFlex(ArmConstants.wristID, MotorType.kBrushless);
-        elbow = new TalonFX(ArmConstants.elbowID);
+    public ArmIOPhoenixRev(){
+        wrist = new TalonFXS(-1);
+        elbow = new TalonFXS(-21);
 
-        wristEncoder = wrist.getAbsoluteEncoder();
+        // wristEncoder = ;
+        // elbowEncoder = ;
 
-        TalonFXConfiguration config = new TalonFXConfiguration();
+        TalonFXSConfiguration config = new TalonFXSConfiguration();
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -55,16 +56,16 @@ public class ArmIOPhoenix implements ArmIO {
                         elbow.getDeviceTemp(),
                         elbow.getVelocity())
                 .isOK();
-        // inputs.wristMotorConnected = BaseStatusSignal.refreshAll(
-        //                 wrist.getMotorVoltage(),
-        //                 wrist.getSupplyCurrent(),
-        //                 wrist.getDeviceTemp(),
-        //                 wrist.getVelocity())
-        //         .isOK();
+        inputs.wristMotorConnected = BaseStatusSignal.refreshAll(
+                        wrist.getMotorVoltage(),
+                        wrist.getSupplyCurrent(),
+                        wrist.getDeviceTemp(),
+                        wrist.getVelocity())
+                .isOK();
         inputs.elbowMotorVoltage = elbow.getMotorVoltage().getValueAsDouble();
         inputs.elbowMotorCurrent = elbow.getSupplyCurrent().getValueAsDouble();
-        inputs.wristMotorVoltage = wrist.getBusVoltage();
-        inputs.wristMotorCurrent = wrist.getOutputCurrent();
+        inputs.wristMotorVoltage = wrist.getMotorVoltage().getValueAsDouble();
+        inputs.wristMotorCurrent = wrist.getSupplyCurrent().getValueAsDouble();
     }
 
      @Override
@@ -74,16 +75,16 @@ public class ArmIOPhoenix implements ArmIO {
 
     @Override
     public void setWristMotorVoltage(double voltage) {
-        //wrist.setControl(wristRequest.withOutput(MathUtil.clamp(voltage, -12.0, 12.0)));
+        wrist.setControl(wristRequest.withOutput(MathUtil.clamp(voltage, -12.0, 12.0)));
     }
 
     @Override
     public void setElbowPosition(double position){
-        
+        //elbow.set();
     }
 
     @Override
     public void setWristPosition(double position){
-        
+        //wrist.set();
     }
 }
