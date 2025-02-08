@@ -51,6 +51,10 @@ public class Elevator extends SubsystemBase {
         IO.setPos(ElevatorConstants.algaeL2Pos);
       }
 
+      public void elevatorAL3(){
+        IO.setPos(ElevatorConstants.algaeL3Pos);
+      }
+
       public void source(){
         IO.setPos(ElevatorConstants.sourcePos);
       }
