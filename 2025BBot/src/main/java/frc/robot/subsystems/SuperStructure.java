@@ -82,6 +82,21 @@ public class SuperStructure extends SubsystemBase {
       elevator.barge();
     });
   }
+  public Command intake(){
+    return run(() -> {
+      arm.intake();
+      manipulator.intakeGamePiece();
+    });
+  }
+  // public Command intakeOff(){
+  //   return run(() -> {
+  //     arm.();
+  //     manipulator.intakeGamePiece();
+  //   });
+  // }
+  public Command fire(){
+    return run(() -> manipulator.fireGamePiece());
+  }
 
 
   @Override

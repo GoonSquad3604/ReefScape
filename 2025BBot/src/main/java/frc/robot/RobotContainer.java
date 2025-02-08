@@ -298,15 +298,18 @@ public class RobotContainer {
     //Intake
     operatorButtonBox
         .button(10)
-        .onTrue();
+        .whileTrue(superStructure.intake());
+    // operatorButtonBox
+    //     .button(10)
+    //     .onFalse(superStructure.);
     //Vomit
     operatorButtonBox
         .button(11)
-        .onTrue();
+        .whileTrue(superStructure.fire());
     //Fire
     operatorButtonBox
         .button(12)
-        .whileTrue();
+        .whileTrue(superStructure.fire());
 
     
   }
