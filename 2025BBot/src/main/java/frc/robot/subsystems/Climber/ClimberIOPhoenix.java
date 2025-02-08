@@ -11,10 +11,13 @@ public class ClimberIOPhoenix implements ClimberIO {
 
   private TalonFX climberMotor;
 
-  // create a position closed-loop request, voltage output, slot 0 configs
-  final PositionVoltage climberPositionrequest = new PositionVoltage(0).withSlot(0);
+    // create a position closed-loop request, voltage output, slot 0 configs
+    private final PositionVoltage climberPositionrequest = new PositionVoltage(0).withSlot(0);
 
-  public ClimberIOPhoenix() {
+    public ClimberIOPhoenix() {
+        
+        //declare motor
+        climberMotor = new TalonFX(ClimberConstants.ID);
 
     // declare motor and encoder
     climberMotor = new TalonFX(ClimberConstants.ID);
