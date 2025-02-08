@@ -101,6 +101,11 @@ public class ArmIOPhoenixRev implements ArmIO {
     }
 
     @Override
+    public void setElbowMotorVoltage(double voltage) {
+        elbow.setVoltage(voltage);
+    }
+
+    @Override
     public void setElbowPosition(double position){
         elbow.setControl(wristRequest.withPosition(position));
     }

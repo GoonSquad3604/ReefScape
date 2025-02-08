@@ -44,4 +44,10 @@ public final class ArmConstants {
 
   public static final double bargeWrist = 1;
   public static final double bargeElbow = 2;
+
+  public static final double homeWrist = 1;
+  public static final double homeElbow = 2;
+
+  public static final double intakeWrist = 1;
+  public static final double intakeElbow = 2;
 }
