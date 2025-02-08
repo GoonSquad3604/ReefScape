@@ -9,17 +9,12 @@ import frc.robot.subsystems.StateController;
 
 public class Arm extends SubsystemBase {
 
-  public static Arm _instance;
+  private ArmIO io;
   /** Creates a new Arm. */
-  public Arm() {}
+  public Arm(ArmIO armIO) {
+    io = armIO;
+  }
 
-  public static Arm getInstance() {
-
-        if (_instance == null) {
-          _instance = new Arm();
-        }
-        return _instance;
-      }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
