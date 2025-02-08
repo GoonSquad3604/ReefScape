@@ -39,6 +39,9 @@ public class Manipulator extends SubsystemBase {
   public void fireGamePiece(){
       io.setRPM(ManipulatorConstants.fireRPM);
   }
+  public void stopWheels(){
+      io.setRPM(ManipulatorConstants.zeroRPM);
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
