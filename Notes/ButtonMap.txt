@@ -4,25 +4,28 @@ Driver:
   A (Hold)- Lock to target Rotation While Driving (Target is set by state)
   B (Hold)- Robot Relative Drive
   Start - Reset Gyro
-  Left Bumper - Pathfind to Left Branch of Closet Reef Tag
-  Right Bumper - Pathfind to Right Branch of Closet Reef Tag
-  Left Trigger - Pathfind to Left Source
-  Right Trigger - Pathfind to Right Source
+  Left Trigger - Pathfind to Left Branch of Closet Reef Tag (Center of closest tag in Algae Mode)
+  Right Trigger - Pathfind to Right Branch of Closet Reef Tag (Center of closest tag in Algae Mode)
+  Left Bumper - Pathfind to Left spot on closest Source
+  Right Bumper - Pathfind to Right spot on closest Source
   X - Brake Mode
-  Y - Cancel Pathfind
+  Y - Slow Mode
+  POV Up - drive to barge
+  POV Left - drive to cage
+  POV Right/Down - drive to processor
 
 Operator: (Button number to be determined)
-  Coral - Sets state to Coral. Changes LEDs, Target Angles and L1-L4 positions
-  Algae - Sets state to Algae. Changes LEDs, Target Angles and L1-L4 positions
-  L1 - Sets elevator to L1 height for Coral and processor for Algae
-  L2 - Sets elevator to L2 height for Coral and Lower Reef Algae position for Algae
-  L3 - Sets elevator to L3 height for Coral and Higher Reef algae position for Algae
-  L4 - Sets elevator to l4 height for Coral and Barge position for Alage
-  Intake - Sets arm in take position and runs intake. If ground intake for Algae, run that if L1
-  Home - Returns Elevator to 0 position and resets to 0 when sensor pressed
-  Vomit - Outakes Intakes regardless of position
-  Fire - Outakes in scoring position
-  Deploy Climb - Sets Climber to ready to climb position
-  Climb - Activates climber
+  1. Coral - Sets state to Coral. Changes LEDs, Target Angles and L1-L4 positions
+  2. Algae - Sets state to Algae. Changes LEDs, Target Angles and L1-L4 positions
+  6. L1 - Sets elevator to L1 height for Coral and processor for Algae
+  5. L2 - Sets elevator to L2 height for Coral and Lower Reef Algae position for Algae
+  4. L3 - Sets elevator to L3 height for Coral and Higher Reef algae position for Algae
+  3. L4 - Sets elevator to L4 height for Coral and Barge position for Alage
+  10. Intake - Sets arm in take position and runs intake. If ground intake for Algae, run that if L1
+  7. Home - Returns Elevator to 0 position and resets to 0 when sensor pressed
+  11. Vomit - Outakes Intakes regardless of position
+  12. Fire - Outakes in scoring position
+  8. Deploy Climb - Sets Climber to ready to climb position
+  9. Climb - Activates climber
 
 

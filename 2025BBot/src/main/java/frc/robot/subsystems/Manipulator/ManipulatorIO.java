@@ -1,6 +1,5 @@
 package frc.robot.subsystems.Manipulator;
 
-import frc.robot.subsystems.Elevator.ElevatorIO.ElevatorIOInputs;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ManipulatorIO {
@@ -35,4 +34,6 @@ public interface ManipulatorIO {
   default void setVoltage(double voltage) {}
 
   default void setRPM(double RPM) {}
+
+  default void setOpeningVoltage(double voltage) {}
 }
