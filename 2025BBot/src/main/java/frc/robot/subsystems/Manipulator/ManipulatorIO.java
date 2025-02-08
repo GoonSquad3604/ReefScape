@@ -35,4 +35,6 @@ public interface ManipulatorIO {
   default void setVoltage(double voltage) {}
 
   default void setRPM(double RPM) {}
+
+  default void setOpeningVoltage(double voltage) {}
 }

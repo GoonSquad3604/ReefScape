@@ -4,18 +4,42 @@
 
 package frc.robot.subsystems.Manipulator;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Manipulator extends SubsystemBase {
 
-  /** Creates a new Manipulator. */
+  private ManipulatorIO io;
+  protected final ManipulatorIOInputsAutoLogged inputs = new ManipulatorIOInputsAutoLogged();
+  private final Alert openingDisconnected;
+  private final Alert leftWheelDisconnected;
+  private final Alert rightWheelDisconnected;
 
-  public Manipulator() {
+
+  /** Creates a new Manipulator. */
+  public Manipulator(ManipulatorIO manipulatorIO) {
+    io = manipulatorIO;
+    leftWheelDisconnected = new Alert("Left wheel manipulator motor disconnected",  Alert.AlertType.kWarning);
+    rightWheelDisconnected = new Alert("Right wheel manipulator motor disconnected",  Alert.AlertType.kWarning);
+    openingDisconnected = new Alert("Opening manipulator motor disconnected",  Alert.AlertType.kWarning);
 
   }
-
+  public Command setOpeningToCoral(){
+    return run(() -> io.setOpeningPos(ManipulatorConstants.coralPos));
+  }
+  public Command setOpeningToAlgae(){
+    return run(() -> io.setOpeningPos(ManipulatorConstants.algaePos));
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    io.updateInputs(inputs);
+    Logger.processInputs("Manipulator", inputs);
+    leftWheelDisconnected.set(!inputs.manipulatorLeftWheelMotorConnected);
+    openingDisconnected.set(!inputs.manipulatorOpeningMotorConnected);
+    rightWheelDisconnected.set(!inputs.manipulatorRightWheelMotorConnected);
   }
 }
