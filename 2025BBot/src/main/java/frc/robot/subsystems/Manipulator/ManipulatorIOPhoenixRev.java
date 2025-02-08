@@ -35,8 +35,9 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     private final VoltageOut leftWheelRequest = new VoltageOut(0.0);
     private final VoltageOut rightWheelRequest = new VoltageOut(0.0);
     private final VoltageOut openingRequest = new VoltageOut(0.0);
-    final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
+    final VelocityVoltage wheelVelocityRequest = new VelocityVoltage(0).withSlot(0);
     
+
     public ManipulatorIOPhoenixRev(){
     
         var slot0Configs = new Slot0Configs();
@@ -112,8 +113,12 @@ inputs.manipulatorLeftWheelMotorConnected = BaseStatusSignal.refreshAll(
         leftWheel.setControl(leftWheelRequest.withOutput(MathUtil.clamp(voltage, -12, 12)));
     }
     @Override
+    public void setOpeningVoltage(double voltage){
+        opening.setVoltage(voltage);
+    }
+    @Override
     public void setRPM(double RPM){
-        leftWheel.setControl(m_request.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
+        leftWheel.setControl(wheelVelocityRequest.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
     }
     @Override
     public void setOpeningPos(double position){
