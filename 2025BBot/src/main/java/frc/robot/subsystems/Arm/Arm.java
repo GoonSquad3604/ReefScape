@@ -8,16 +8,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
 
-  public static Arm _instance;
+  private ArmIO io;
   /** Creates a new Arm. */
-  public Arm() {}
-
-  public static Arm getInstance() {
-
-    if (_instance == null) {
-      _instance = new Arm();
-    }
-    return _instance;
+  public Arm(ArmIO armIO) {
+    io = armIO;
   }
 
   @Override
