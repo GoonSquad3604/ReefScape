@@ -7,6 +7,7 @@ public final class ClimberConstants {
 
     //Positions
     public static final double positionDown = 0;
+    public static final double positionUp = 0;
     public static final double positionHome = 0;
 
     //PID values
