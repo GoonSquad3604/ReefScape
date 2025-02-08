@@ -4,15 +4,47 @@
 
 package frc.robot.subsystems.Climber;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
+
+  private ClimberIO io;
+  protected final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
+  private final Alert disconnected;
+
   /** Creates a new Climber. */
-  public Climber() {}
+  public Climber(ClimberIO io) {
+
+    this.io = io;
+
+    disconnected = new Alert("Climber motor disconnected!", Alert.AlertType.kWarning);
+
+  }
+
+  /** Deploys the climber. **/
+  public Command setClimberDown(){
+    return run(() -> io.setPosition(ClimberConstants.positionDown));
+  }
+
+  /** Raises the climber. **/
+  public Command setClimberUp(){
+    return run(() -> io.setPosition(ClimberConstants.positionUp));
+  }
+
+  /** Sets the climber to home position */
+  public Command setClimberHome(){
+    return run(() -> io.setPosition(ClimberConstants.positionHome));
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
+    io.updateInputs(inputs);
+    Logger.processInputs("Climber", inputs);
+    disconnected.set(!inputs.climberMotorConnected);
   }
 }
