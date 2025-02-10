@@ -27,11 +27,20 @@ public class Manipulator extends SubsystemBase {
     openingDisconnected = new Alert("Opening manipulator motor disconnected",  Alert.AlertType.kWarning);
 
   }
-  public Command setOpeningToCoral(){
-    return run(() -> io.setOpeningPos(ManipulatorConstants.coralPos));
+  public void setOpeningToCoral(){
+     io.setOpeningPos(ManipulatorConstants.coralPos);
   }
-  public Command setOpeningToAlgae(){
-    return run(() -> io.setOpeningPos(ManipulatorConstants.algaePos));
+  public void setOpeningToAlgae(){
+      io.setOpeningPos(ManipulatorConstants.algaePos);
+  }
+  public void intakeGamePiece(){
+      io.setRPM(ManipulatorConstants.intakeRPM);
+  }
+  public void fireGamePiece(){
+      io.setRPM(ManipulatorConstants.fireRPM);
+  }
+  public void stopWheels(){
+      io.setRPM(ManipulatorConstants.zeroRPM);
   }
   @Override
   public void periodic() {

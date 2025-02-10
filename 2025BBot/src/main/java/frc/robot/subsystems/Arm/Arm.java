@@ -26,49 +26,60 @@ public class Arm extends SubsystemBase {
   }
 
   public void elbowAlgaeL25(){
-    run(() -> io.setElbowPosition(ArmConstants.algaeElbowL25));
+    io.setElbowPosition(ArmConstants.algaeElbowL25);
   }
   public void elbowAlgaeL35(){
-    run(() -> io.setElbowPosition(ArmConstants.algaeElbowL35));
+    io.setElbowPosition(ArmConstants.algaeElbowL35);
   }
   public void wristAlgaeL25(){
-    run(() -> io.setWristPosition(ArmConstants.algaeWristL25));
+    io.setWristPosition(ArmConstants.algaeWristL25);
   }
   public void wristAlgaeL35(){
-    run(() -> io.setWristPosition(ArmConstants.algaeWristL35));
+    io.setWristPosition(ArmConstants.algaeWristL35);
   }
   public void elbowCoralL1(){
-    run(() -> io.setElbowPosition(ArmConstants.coralElbowL1));
+    io.setElbowPosition(ArmConstants.coralElbowL1);
   }
   public void elbowCoralL2(){
-    run(() -> io.setElbowPosition(ArmConstants.coralElbowL2));
+    io.setElbowPosition(ArmConstants.coralElbowL2);
   }
   public void elbowCoralL3(){
-    run(() -> io.setElbowPosition(ArmConstants.coralElbowL3));
+    io.setElbowPosition(ArmConstants.coralElbowL3);
   }
   public void elbowCoralL4(){
-    run(() -> io.setElbowPosition(ArmConstants.coralElbowL4));
+    io.setElbowPosition(ArmConstants.coralElbowL4);
   }
   public void wristCoralL1(){
-    run(() -> io.setWristPosition(ArmConstants.coralWristL1));
+    io.setWristPosition(ArmConstants.coralWristL1);
   }
   public void wristCoralL2(){
-    run(() -> io.setWristPosition(ArmConstants.coralWristL2));
+    io.setWristPosition(ArmConstants.coralWristL2);
   }
   public void wristCoralL3(){
-    run(() -> io.setWristPosition(ArmConstants.coralWristL3));
+    io.setWristPosition(ArmConstants.coralWristL3);
   }
   public void wristCoralL4(){
-    run(() -> io.setWristPosition(ArmConstants.coralWristL4));
+    io.setWristPosition(ArmConstants.coralWristL4);
   }
   public void source(){
-    run(() -> {io.setWristPosition(ArmConstants.sourceWrist); io.setElbowPosition(ArmConstants.sourceElbow);});
+    io.setWristPosition(ArmConstants.sourceWrist); 
+    io.setElbowPosition(ArmConstants.sourceElbow);
   }
   public void processor(){
-    run(() -> {io.setWristPosition(ArmConstants.processorWrist); io.setElbowPosition(ArmConstants.processorElbow);});
+    io.setWristPosition(ArmConstants.processorWrist); 
+    io.setElbowPosition(ArmConstants.processorElbow);
   }
   public void barge(){
-    run(() -> {io.setWristPosition(ArmConstants.bargeWrist); io.setElbowPosition(ArmConstants.bargeElbow);});
+    io.setWristPosition(ArmConstants.bargeWrist);
+    io.setElbowPosition(ArmConstants.bargeElbow);
+  }
+  public void intake(){
+    io.setWristPosition(ArmConstants.intakeWrist); 
+    io.setElbowPosition(ArmConstants.intakeElbow);
+  }
+  public void home(){
+    io.setWristPosition(ArmConstants.homeWrist); 
+    io.setElbowPosition(ArmConstants.homeElbow);
   }
 
   @Override
