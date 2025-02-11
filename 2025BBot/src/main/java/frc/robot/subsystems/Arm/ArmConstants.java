@@ -7,6 +7,7 @@ package frc.robot.subsystems.Arm;
 public final class ArmConstants {
   /** Creates a new ArmConstants. */
   public static final int elbowID = 5;
+  public static final int elbowEncoderID = 32;
 
   public static final int wristID = 13;
 
@@ -48,6 +49,5 @@ public final class ArmConstants {
   public static final double homeWrist = 1;
   public static final double homeElbow = 2;
 
-  public static final double intakeWrist = 1;
-  public static final double intakeElbow = 2;
+  public static final double elbowCurrentLimit = 40;
 }
