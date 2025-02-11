@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -298,18 +300,24 @@ public class RobotContainer {
     //Intake
     operatorButtonBox
         .button(10)
-        .whileTrue(superStructure.intake());
-    // operatorButtonBox
-    //     .button(10)
-    //     .onFalse(superStructure.);
+        .whileTrue(new ParallelCommandGroup(superStructure.goToSource(), superStructure.intake()));
+    operatorButtonBox
+        .button(10)
+        .onFalse(new ParallelCommandGroup(superStructure.intakeOff(), superStructure.goHome()));
     //Vomit
     operatorButtonBox
         .button(11)
         .whileTrue(superStructure.fire());
+    operatorButtonBox
+        .button(11)
+        .whileTrue(superStructure.intakeOff());
     //Fire
     operatorButtonBox
         .button(12)
         .whileTrue(superStructure.fire());
+    operatorButtonBox
+        .button(12)
+        .onFalse(new ParallelCommandGroup(superStructure.intakeOff(), superStructure.goHome()));
 
     
   }

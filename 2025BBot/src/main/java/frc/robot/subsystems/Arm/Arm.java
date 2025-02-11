@@ -73,10 +73,6 @@ public class Arm extends SubsystemBase {
     io.setWristPosition(ArmConstants.bargeWrist);
     io.setElbowPosition(ArmConstants.bargeElbow);
   }
-  public void intake(){
-    io.setWristPosition(ArmConstants.intakeWrist); 
-    io.setElbowPosition(ArmConstants.intakeElbow);
-  }
   public void home(){
     io.setWristPosition(ArmConstants.homeWrist); 
     io.setElbowPosition(ArmConstants.homeElbow);
