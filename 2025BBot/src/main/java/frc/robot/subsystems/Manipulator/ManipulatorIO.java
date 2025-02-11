@@ -36,4 +36,9 @@ public interface ManipulatorIO {
   default void setRPM(double RPM) {}
 
   default void setOpeningVoltage(double voltage) {}
+
+  default boolean getManipulatorSensor() {
+      return false;
+  }
+  
 }
