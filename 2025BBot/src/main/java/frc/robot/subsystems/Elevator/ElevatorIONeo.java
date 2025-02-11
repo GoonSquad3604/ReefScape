@@ -9,6 +9,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.util.SparkUtil;
 
 public class ElevatorIONeo implements ElevatorIO {
 
@@ -45,9 +46,19 @@ public class ElevatorIONeo implements ElevatorIO {
         .pid(ElevatorConstants.elevatorP, ElevatorConstants.elevatorI, ElevatorConstants.elevatorD);
 
     // sets configs in motion
-    leftMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    SparkUtil.tryUntilOk(
+      leftMotor,
+      5,
+      () ->
+      leftMotor.configure(
+      config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+
+    SparkUtil.tryUntilOk(
+      rightMotor,
+      5,
+      () ->
     rightMotor.configure(
-        rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     // initialializes limit switches
     limitSwitchLeft = new DigitalInput(ElevatorConstants.limitSwitch1ID);
@@ -132,5 +143,13 @@ public class ElevatorIONeo implements ElevatorIO {
         - ElevatorConstants.homeOffset;
 
   }
-  
+
+  @Override
+  public void setPower(double power){
+
+    //sets the speed to a given power
+    leftMotor.set(power);
+
+  }
+
 }

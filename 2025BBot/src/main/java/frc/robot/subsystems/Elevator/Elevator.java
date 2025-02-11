@@ -29,8 +29,9 @@ public class Elevator extends SubsystemBase {
     leftDisconnected = new Alert("Left elevator motor is disconnected!", Alert.AlertType.kWarning);
     rightDisconnected = new Alert("Right elevator motor is disconnected!", Alert.AlertType.kWarning);
 
-      }
+      } 
     
+      //goes to a set position, C is coral and A is algae
       public void elevatorCL1(){
         IO.setPos(ElevatorConstants.l1Pos);
       }

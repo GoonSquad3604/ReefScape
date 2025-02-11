@@ -47,4 +47,7 @@ public interface ElevatorIO {
     return posInInches;
     
   }
+
+  default void setPower(double power){}
+
 }
