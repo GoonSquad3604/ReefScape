@@ -7,7 +7,6 @@ package frc.robot.subsystems.Manipulator;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Manipulator extends SubsystemBase {
@@ -18,7 +17,6 @@ public class Manipulator extends SubsystemBase {
   private final Alert leftWheelDisconnected;
   private final Alert rightWheelDisconnected;
 
-
   /** Creates a new Manipulator. */
   public Manipulator(ManipulatorIO manipulatorIO) {
     io = manipulatorIO;
@@ -26,6 +24,9 @@ public class Manipulator extends SubsystemBase {
     rightWheelDisconnected = new Alert("Right wheel manipulator motor disconnected",  Alert.AlertType.kWarning);
     openingDisconnected = new Alert("Opening manipulator motor disconnected",  Alert.AlertType.kWarning);
 
+  }
+  public boolean hasGamePiece(){
+    return io.getManipulatorSensor();
   }
   public void setOpeningToCoral(){
      io.setOpeningPos(ManipulatorConstants.coralPos);
