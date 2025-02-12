@@ -7,7 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Example Path"
+            "pathName": "somethingCoherent"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "wellICantSayAnything"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Im...No"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "IThinkYouShouldNameItLucasShouldNotBeDriver"
           }
         }
       ]
