@@ -16,6 +16,8 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -165,6 +167,17 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    // Named Commands
+    NamedCommands.registerCommand("intake", superStructure.intake().until(() -> manipulator.hasGamePiece()));
+    NamedCommands.registerCommand("fire", superStructure.fire());
+    NamedCommands.registerCommand("holdFire", superStructure.intakeOff());
+    NamedCommands.registerCommand("goToL4", superStructure.goToL4Coral());
+    NamedCommands.registerCommand("goToAlgae25", superStructure.goToL2Algae());
+    NamedCommands.registerCommand("goToAlgae35", superStructure.goToL3Algae());
+    NamedCommands.registerCommand("goToSource", superStructure.goToSource());
+    NamedCommands.registerCommand("goToProcessor", superStructure.goToProcessor());
+    NamedCommands.registerCommand("goToBarge", superStructure.goToBarge());
 
     // Configure the button bindings
     configureButtonBindings();
