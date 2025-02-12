@@ -133,12 +133,12 @@ public class FieldConstants {
   }
 
   public static class StagingPositions {
-    // Measured from the center of the ice cream
-    public static final Pose2d leftIceCream =
+    // Measured from the center of the tree
+    public static final Pose2d leftTree =
         new Pose2d(Units.inchesToMeters(48), Units.inchesToMeters(230.5), new Rotation2d());
-    public static final Pose2d middleIceCream =
+    public static final Pose2d middleTree =
         new Pose2d(Units.inchesToMeters(48), Units.inchesToMeters(158.5), new Rotation2d());
-    public static final Pose2d rightIceCream =
+    public static final Pose2d rightTree =
         new Pose2d(Units.inchesToMeters(48), Units.inchesToMeters(86.5), new Rotation2d());
   }
 
