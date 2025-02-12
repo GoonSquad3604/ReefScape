@@ -38,7 +38,6 @@ public interface ManipulatorIO {
   default void setOpeningVoltage(double voltage) {}
 
   default boolean getManipulatorSensor() {
-      return false;
+    return false;
   }
-  
 }

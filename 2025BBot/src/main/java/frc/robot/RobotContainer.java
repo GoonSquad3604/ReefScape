@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -33,8 +32,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.StateController;
-import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmIOPhoenixRev;
 import frc.robot.subsystems.Climber.Climber;
@@ -42,8 +39,9 @@ import frc.robot.subsystems.Climber.ClimberIOPhoenix;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorIONeo;
 import frc.robot.subsystems.Manipulator.Manipulator;
-import frc.robot.subsystems.Manipulator.ManipulatorIO;
 import frc.robot.subsystems.Manipulator.ManipulatorIOPhoenixRev;
+import frc.robot.subsystems.StateController;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -82,7 +80,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    
 
     switch (Constants.currentMode) {
       case REAL:
@@ -245,81 +242,41 @@ public class RobotContainer {
         .povUp()
         .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(drive.getClosestReefPanel())));
 
-    operatorButtonBox
-        .button(1)
-        .onTrue(stateController.setCoralMode(manipulator));
-    operatorButtonBox
-        .button(2)
-        .onTrue(stateController.setAlgaeMode(manipulator));
-    //goes to L4 positions
-    operatorButtonBox
-        .button(3)
-        .and(coralMode)
-        .onTrue(superStructure.goToL4Coral());
-    operatorButtonBox
-        .button(3)
-        .and(algaeMode)
-        .onTrue(superStructure.goToBarge());
-    //goes to L3 positions
-    operatorButtonBox
-        .button(4)
-        .and(coralMode)
-        .onTrue(superStructure.goToL3Coral());
-    operatorButtonBox
-        .button(4)
-        .and(algaeMode)
-        .onTrue(superStructure.goToL3Algae());
-    //goes to L2 positions
-    operatorButtonBox
-        .button(5)
-        .and(coralMode)
-        .onTrue(superStructure.goToL2Coral());
-    operatorButtonBox
-        .button(5)
-        .and(algaeMode)
-        .onTrue(superStructure.goToL2Algae());
-    //goes to L1 positions
-    operatorButtonBox
-        .button(6)
-        .and(coralMode)
-        .onTrue(superStructure.goToL1Coral());
-    operatorButtonBox
-        .button(6)
-        .and(algaeMode)
-        .onTrue(superStructure.goToProcessor());
-    //goes home
+    operatorButtonBox.button(1).onTrue(stateController.setCoralMode(manipulator));
+    operatorButtonBox.button(2).onTrue(stateController.setAlgaeMode(manipulator));
+    // goes to L4 positions
+    operatorButtonBox.button(3).and(coralMode).onTrue(superStructure.goToL4Coral());
+    operatorButtonBox.button(3).and(algaeMode).onTrue(superStructure.goToBarge());
+    // goes to L3 positions
+    operatorButtonBox.button(4).and(coralMode).onTrue(superStructure.goToL3Coral());
+    operatorButtonBox.button(4).and(algaeMode).onTrue(superStructure.goToL3Algae());
+    // goes to L2 positions
+    operatorButtonBox.button(5).and(coralMode).onTrue(superStructure.goToL2Coral());
+    operatorButtonBox.button(5).and(algaeMode).onTrue(superStructure.goToL2Algae());
+    // goes to L1 positions
+    operatorButtonBox.button(6).and(coralMode).onTrue(superStructure.goToL1Coral());
+    operatorButtonBox.button(6).and(algaeMode).onTrue(superStructure.goToProcessor());
+    // goes home
 
-    //Deploy Climber
-    operatorButtonBox
-        .button(8)
-        .onTrue(climber.setClimberDown());
-    //Climbs
-    operatorButtonBox
-        .button(9)
-        .onTrue(climber.setClimberUp());
-    //Intake
+    // Deploy Climber
+    operatorButtonBox.button(8).onTrue(climber.setClimberDown());
+    // Climbs
+    operatorButtonBox.button(9).onTrue(climber.setClimberUp());
+    // Intake
     operatorButtonBox
         .button(10)
         .whileTrue(new ParallelCommandGroup(superStructure.goToSource(), superStructure.intake()));
     operatorButtonBox
         .button(10)
         .onFalse(new ParallelCommandGroup(superStructure.intakeOff(), superStructure.goHome()));
-    //Vomit
-    operatorButtonBox
-        .button(11)
-        .whileTrue(superStructure.fire());
-    operatorButtonBox
-        .button(11)
-        .whileTrue(superStructure.intakeOff());
-    //Fire
-    operatorButtonBox
-        .button(12)
-        .whileTrue(superStructure.fire());
+    // Vomit
+    operatorButtonBox.button(11).whileTrue(superStructure.fire());
+    operatorButtonBox.button(11).whileTrue(superStructure.intakeOff());
+    // Fire
+    operatorButtonBox.button(12).whileTrue(superStructure.fire());
     operatorButtonBox
         .button(12)
         .onFalse(new ParallelCommandGroup(superStructure.intakeOff(), superStructure.goHome()));
-
-    
   }
 
   /**
