@@ -4,11 +4,10 @@
 
 package frc.robot.subsystems.Climber;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
 
@@ -22,21 +21,20 @@ public class Climber extends SubsystemBase {
     this.io = io;
 
     disconnected = new Alert("Climber motor disconnected!", Alert.AlertType.kWarning);
-
   }
 
-  /** Deploys the climber. **/
-  public Command setClimberDown(){
+  /** Deploys the climber. * */
+  public Command setClimberDown() {
     return run(() -> io.setPosition(ClimberConstants.positionDown));
   }
 
-  /** Raises the climber. **/
-  public Command setClimberUp(){
+  /** Raises the climber. * */
+  public Command setClimberUp() {
     return run(() -> io.setPosition(ClimberConstants.positionUp));
   }
 
   /** Sets the climber to home position */
-  public Command setClimberHome(){
+  public Command setClimberHome() {
     return run(() -> io.setPosition(ClimberConstants.positionHome));
   }
 
