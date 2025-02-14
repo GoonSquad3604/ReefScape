@@ -22,86 +22,109 @@ public class SuperStructure extends SubsystemBase {
     this.elevator = elevator;
   }
 
-  public Command goToL1Coral(){
-    return run(() -> {
-      arm.elbowCoralL1();
-      arm.wristCoralL1();
-      elevator.elevatorCL1();
-    });
-  }
-  public Command goToL2Coral(){
-    return run(() -> {
-      arm.elbowCoralL2();
-      arm.wristCoralL2();
-      elevator.elevatorCL2();
-    });
-  }
-  public Command goToL3Coral(){
-    return run(() -> {
-      arm.elbowCoralL3();
-      arm.wristCoralL3();
-      elevator.elevatorCL3();
-    });
-  }
-  public Command goToL4Coral(){
-    return run(() -> {
-      arm.elbowCoralL4();
-      arm.wristCoralL4();
-      elevator.elevatorCL4();
-    });
-  }
-  public Command goToL2Algae(){
-    return run(() -> {
-      arm.elbowAlgaeL25();
-      arm.wristAlgaeL25();
-      elevator.elevatorAL2();
-    });
-  }
-  public Command goToL3Algae(){
-    return run(() -> {
-      arm.elbowAlgaeL35();
-      arm.wristAlgaeL35();
-      elevator.elevatorAL3();
-    });
-  }
-  public Command goToSource(){
-    return run(() -> {
-      arm.source();
-      elevator.source();
-    });
-  }
-  public Command goToProcessor(){
-    return run(() -> {
-      arm.processor();
-      elevator.processor();
-    });
-  }
-  public Command goToBarge(){
-    return run(() -> {
-      arm.barge();
-      elevator.barge();
-    });
-  }
-  public Command goHome(){
-    return run(() -> {
-      arm.home();
-      elevator.home();
-    });
-  }
-  public Command intake(){
-    return run(() -> {
-      manipulator.intakeGamePiece();
-    });
-  }
-  public Command intakeOff(){
-    return run(() -> {
-      manipulator.stopWheels();
-    });
-  }
-  public Command fire(){
-    return run(() -> manipulator.fireGamePiece());
+  public Command goToL1Coral() {
+    return run(
+        () -> {
+          arm.elbowCoralL1();
+          arm.wristCoralL1();
+          elevator.elevatorCL1();
+        });
   }
 
+  public Command goToL2Coral() {
+    return run(
+        () -> {
+          arm.elbowCoralL2();
+          arm.wristCoralL2();
+          elevator.elevatorCL2();
+        });
+  }
+
+  public Command goToL3Coral() {
+    return run(
+        () -> {
+          arm.elbowCoralL3();
+          arm.wristCoralL3();
+          elevator.elevatorCL3();
+        });
+  }
+
+  public Command goToL4Coral() {
+    return run(
+        () -> {
+          arm.elbowCoralL4();
+          arm.wristCoralL4();
+          elevator.elevatorCL4();
+        });
+  }
+
+  public Command goToL2Algae() {
+    return run(
+        () -> {
+          arm.elbowAlgaeL25();
+          arm.wristAlgaeL25();
+          elevator.elevatorAL2();
+        });
+  }
+
+  public Command goToL3Algae() {
+    return run(
+        () -> {
+          arm.elbowAlgaeL35();
+          arm.wristAlgaeL35();
+          elevator.elevatorAL3();
+        });
+  }
+
+  public Command goToSource() {
+    return run(
+        () -> {
+          arm.source();
+          elevator.source();
+        });
+  }
+
+  public Command goToProcessor() {
+    return run(
+        () -> {
+          arm.processor();
+          elevator.processor();
+        });
+  }
+
+  public Command goToBarge() {
+    return run(
+        () -> {
+          arm.barge();
+          elevator.barge();
+        });
+  }
+
+  public Command goHome() {
+    return run(
+        () -> {
+          arm.home();
+          elevator.home();
+        });
+  }
+
+  public Command intake() {
+    return run(
+        () -> {
+          manipulator.intakeGamePiece();
+        });
+  }
+
+  public Command intakeOff() {
+    return run(
+        () -> {
+          manipulator.stopWheels();
+        });
+  }
+
+  public Command fire() {
+    return run(() -> manipulator.fireGamePiece());
+  }
 
   @Override
   public void periodic() {

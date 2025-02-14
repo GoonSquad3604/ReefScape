@@ -4,10 +4,9 @@
 
 package frc.robot.subsystems.Manipulator;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Manipulator extends SubsystemBase {
 
@@ -20,29 +19,38 @@ public class Manipulator extends SubsystemBase {
   /** Creates a new Manipulator. */
   public Manipulator(ManipulatorIO manipulatorIO) {
     io = manipulatorIO;
-    leftWheelDisconnected = new Alert("Left wheel manipulator motor disconnected",  Alert.AlertType.kWarning);
-    rightWheelDisconnected = new Alert("Right wheel manipulator motor disconnected",  Alert.AlertType.kWarning);
-    openingDisconnected = new Alert("Opening manipulator motor disconnected",  Alert.AlertType.kWarning);
-
+    leftWheelDisconnected =
+        new Alert("Left wheel manipulator motor disconnected", Alert.AlertType.kWarning);
+    rightWheelDisconnected =
+        new Alert("Right wheel manipulator motor disconnected", Alert.AlertType.kWarning);
+    openingDisconnected =
+        new Alert("Opening manipulator motor disconnected", Alert.AlertType.kWarning);
   }
-  public boolean hasGamePiece(){
+
+  public boolean hasGamePiece() {
     return io.getManipulatorSensor();
   }
-  public void setOpeningToCoral(){
-     io.setOpeningPos(ManipulatorConstants.coralPos);
+
+  public void setOpeningToCoral() {
+    io.setOpeningPos(ManipulatorConstants.coralPos);
   }
-  public void setOpeningToAlgae(){
-      io.setOpeningPos(ManipulatorConstants.algaePos);
+
+  public void setOpeningToAlgae() {
+    io.setOpeningPos(ManipulatorConstants.algaePos);
   }
-  public void intakeGamePiece(){
-      io.setRPM(ManipulatorConstants.intakeRPM);
+
+  public void intakeGamePiece() {
+    io.setRPM(ManipulatorConstants.intakeRPM);
   }
-  public void fireGamePiece(){
-      io.setRPM(ManipulatorConstants.fireRPM);
+
+  public void fireGamePiece() {
+    io.setRPM(ManipulatorConstants.fireRPM);
   }
-  public void stopWheels(){
-      io.setRPM(ManipulatorConstants.zeroRPM);
+
+  public void stopWheels() {
+    io.setRPM(ManipulatorConstants.zeroRPM);
   }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
