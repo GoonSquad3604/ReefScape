@@ -16,8 +16,8 @@ public class ElevatorIONeo implements ElevatorIO {
   // declares motors
   private SparkMax leftMotor;
   private SparkMax rightMotor;
-  private DigitalInput limitSwitchLeft;
-  private DigitalInput limitSwitchRight;
+  // private DigitalInput limitSwitchLeft;
+  // private DigitalInput limitSwitchRight;
 
   public ElevatorIONeo() {
 
@@ -61,16 +61,16 @@ public class ElevatorIONeo implements ElevatorIO {
                 rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     // initialializes limit switches
-    limitSwitchLeft = new DigitalInput(ElevatorConstants.limitSwitch1ID);
-    limitSwitchRight = new DigitalInput(ElevatorConstants.limitSwitch2ID);
+    // limitSwitchLeft = new DigitalInput(ElevatorConstants.limitSwitch1ID);
+    // limitSwitchRight = new DigitalInput(ElevatorConstants.limitSwitch2ID);
   }
 
   // updates IO
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
 
-    inputs.limitSwitchLeft = limitSwitchLeft.get();
-    inputs.limitSwitchRight = limitSwitchRight.get();
+    inputs.limitSwitchLeft = leftMotor.getForwardLimitSwitch().isPressed();
+    // inputs.limitSwitchRight = limitSwitchRight.get();
 
     double leftVoltage = leftMotor.getAppliedOutput() * leftMotor.getBusVoltage();
     double rightVoltage = rightMotor.getAppliedOutput() * rightMotor.getBusVoltage();
