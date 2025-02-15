@@ -17,7 +17,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -166,8 +165,9 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Named Commands
-    NamedCommands.registerCommand("intake", superStructure.intake().until(() -> manipulator.hasGamePiece()));
-    NamedCommands.registerCommand("fire", superStructure.fire());
+    NamedCommands.registerCommand("intake", superStructure.goToSource().andThen(superStructure.intake()));
+    NamedCommands.registerCommand("intakeUntilPiece", superStructure.intake().until(() -> manipulator.hasGamePiece()).andThen(superStructure.intakeOff()));
+    NamedCommands.registerCommand("fire", superStructure.fire().withTimeout(2).andThen(superStructure.intakeOff()));
     NamedCommands.registerCommand("holdFire", superStructure.intakeOff());
     NamedCommands.registerCommand("goToL4", superStructure.goToL4Coral());
     NamedCommands.registerCommand("goToAlgae25", superStructure.goToL2Algae());
@@ -175,6 +175,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("goToSource", superStructure.goToSource());
     NamedCommands.registerCommand("goToProcessor", superStructure.goToProcessor());
     NamedCommands.registerCommand("goToBarge", superStructure.goToBarge());
+    
 
     // Configure the button bindings
     configureButtonBindings();
