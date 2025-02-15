@@ -11,7 +11,7 @@ import org.littletonrobotics.junction.Logger;
 public class Elevator extends SubsystemBase {
 
   /** Creates a new Elevator. */
-  private ElevatorIO IO;
+  private ElevatorIO io;
 
   protected final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
   private final Alert leftDisconnected;
@@ -21,7 +21,7 @@ public class Elevator extends SubsystemBase {
 
     // whee elevator go up yippee
 
-    IO = elevatorIo;
+    io = elevatorIo;
 
     // will throw an error if a motor is disconnected
     leftDisconnected = new Alert("Left elevator motor is disconnected!", Alert.AlertType.kWarning);
@@ -31,54 +31,59 @@ public class Elevator extends SubsystemBase {
 
   // goes to a set position, C is coral and A is algae
   public void elevatorCL1() {
-    IO.setPos(ElevatorConstants.l1Pos);
+    io.setPos(ElevatorConstants.l1Pos);
   }
 
   public void elevatorCL2() {
-    IO.setPos(ElevatorConstants.l2Pos);
+    io.setPos(ElevatorConstants.l2Pos);
   }
 
   public void elevatorCL3() {
-    IO.setPos(ElevatorConstants.l3Pos);
+    io.setPos(ElevatorConstants.l3Pos);
   }
 
   public void elevatorCL4() {
-    IO.setPos(ElevatorConstants.l4Pos);
+    io.setPos(ElevatorConstants.l4Pos);
   }
 
   public void elevatorAL2() {
-    IO.setPos(ElevatorConstants.algaeL2Pos);
+    io.setPos(ElevatorConstants.algaeL2Pos);
   }
 
   public void elevatorAL3() {
-    IO.setPos(ElevatorConstants.algaeL3Pos);
+    io.setPos(ElevatorConstants.algaeL3Pos);
   }
 
   public void source() {
-    IO.setPos(ElevatorConstants.sourcePos);
+    io.setPos(ElevatorConstants.sourcePos);
   }
 
   public void barge() {
-    IO.setPos(ElevatorConstants.bargePos);
+    io.setPos(ElevatorConstants.bargePos);
   }
 
   public void home() {
-    IO.setPos(ElevatorConstants.homePos);
+    io.setPos(ElevatorConstants.homePos);
   }
 
   public void algaeGround() {
-    IO.setPos(ElevatorConstants.algaeL3Pos);
+    io.setPos(ElevatorConstants.algaeL3Pos);
   }
 
   public void processor() {
-    IO.setPos(ElevatorConstants.processorPos);
+    io.setPos(ElevatorConstants.processorPos);
   }
 
-  @Override
+  public void homingElv(){
+    io.setPos(ElevatorConstants.homePos);
+    //TODO: add a homing function
+  }
+
+  @Override 
   public void periodic() {
 
     // This method will be called once per scheduler run
-    IO.updateInputs(inputs);
+    io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
 
     // checks for disconnected motors
