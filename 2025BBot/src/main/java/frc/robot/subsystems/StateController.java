@@ -31,6 +31,10 @@ public class StateController extends SubsystemBase {
     return m_Mode == RobotMode.ALGAE;
   }
 
+  public boolean hasGamePiece(Manipulator manipulator) {
+    return manipulator.hasGamePiece();
+  }
+
   public RobotMode getMode() {
     return m_Mode;
   }

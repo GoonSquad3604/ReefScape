@@ -54,6 +54,8 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.AllianceFlipUtil;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -203,6 +205,8 @@ public class RobotContainer {
     Trigger rumbleTime = new Trigger(() -> Timer.getMatchTime() <= 20 && Timer.getMatchTime() > 18);
     Trigger coralMode = new Trigger(() -> stateController.isCoralMode());
     Trigger algaeMode = new Trigger(() -> stateController.isAlgaeMode());
+    Trigger hasGamePiece = new Trigger(() -> stateController.hasGamePiece(manipulator));
+    Trigger hasNoGamePiece = new Trigger(() -> !stateController.hasGamePiece(manipulator));
 
     rumbleTime.onTrue(
         new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 1))
@@ -216,15 +220,47 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
 
-    // Lock to 0° when A button is held
+    // Lock to goal when A button is held
     driverController
         .a()
+        .and(coralMode)
+        .and(hasGamePiece)
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
-                () -> new Rotation2d()));
+                () -> AllianceFlipUtil.apply(drive.getClosestReefPanel()).getRotation()));
+    driverController
+        .a()
+        .and(coralMode)
+        .and(hasNoGamePiece)
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> AllianceFlipUtil.apply(drive.getClosestSource()).getRotation()));
+    driverController
+        .a()
+        .and(algaeMode)
+        .and(hasGamePiece)
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> AllianceFlipUtil.apply(FieldConstants.Processor.centerFace).getRotation()));
+    driverController
+        .a()
+        .and(algaeMode)
+        .and(hasNoGamePiece)
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> AllianceFlipUtil.apply(drive.getClosestReefPanel()).getRotation()));
     // Robot Relative Drive
     driverController
         .b()
@@ -250,21 +286,69 @@ public class RobotContainer {
                 .ignoringDisable(true));
     // Slow Mode
     driverController
-        .rightTrigger()
+        .y()
         .whileTrue(
             DriveCommands.joystickDrive(
                 drive,
                 () -> (-driverController.getLeftY() * .5),
                 () -> (-driverController.getLeftX() * .5),
                 () -> (-driverController.getRightX() * .4)));
-    // Goes to closest coral station
+    //Pathfinds based on State Controller
     driverController
-        .povDown()
-        .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(drive.getClosestSource())));
-    // Goes to closest reef panel
+    .leftTrigger()
+    .and(coralMode)
+    .and(hasGamePiece)
+    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+
     driverController
-        .povUp()
-        .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(drive.getClosestReefPanel())));
+    .leftTrigger()
+    .and(coralMode)
+    .and(hasNoGamePiece)
+    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestSource()))));
+
+    driverController
+    .leftTrigger()
+    .and(algaeMode)
+    .and(hasGamePiece)
+    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))));
+
+    driverController
+    .leftTrigger()
+    .and(algaeMode)
+    .and(hasNoGamePiece)
+    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+
+    driverController
+    .rightTrigger()
+    .and(coralMode)
+    .and(hasGamePiece)
+    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+
+    driverController
+    .rightTrigger()
+    .and(coralMode)
+    .and(hasNoGamePiece)
+    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestSource()))));
+
+    driverController
+    .rightTrigger()
+    .and(algaeMode)
+    .and(hasGamePiece)
+    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))));
+
+    driverController
+    .rightTrigger()
+    .and(algaeMode)
+    .and(hasNoGamePiece)
+    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+    // // Goes to closest coral station
+    // driverController
+    //     .povDown()
+    //     .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(drive.getClosestSource())));
+    // // Goes to closest reef panel
+    // driverController
+    //     .povUp()
+    //     .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(drive.getClosestReefPanel())));
 
     operatorButtonBox.button(1).onTrue(stateController.setCoralMode(manipulator));
     operatorButtonBox.button(2).onTrue(stateController.setAlgaeMode(manipulator));
