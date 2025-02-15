@@ -3,26 +3,33 @@ package frc.robot.subsystems.Climber;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import frc.robot.util.PhoenixUtil;
 
 public class ClimberIOPhoenix implements ClimberIO {
 
   private TalonFX climberMotor;
+  // private CANcoder climberEncoder;
 
   // create a position closed-loop request, voltage output, slot 0 configs
-  private final PositionVoltage climberPositionrequest = new PositionVoltage(0).withSlot(0);
+  private final PositionVoltage climberPositionrequest;
+  private final PositionTorqueCurrentFOC positionTorqueCurrentRequest;
+
 
   public ClimberIOPhoenix() {
 
-    // declare motor
-    climberMotor = new TalonFX(ClimberConstants.ID);
+    // declare the motor and encoder
+    climberMotor = new TalonFX(ClimberConstants.motorID);
+    // climberEncoder = new CANcoder(ClimberConstants.encoderID);
 
-    // declare motor and encoder
-    climberMotor = new TalonFX(ClimberConstants.ID);
+    climberPositionrequest = new PositionVoltage(0).withSlot(0);
+    positionTorqueCurrentRequest = new PositionTorqueCurrentFOC(0).withUpdateFreqHz(0);
 
-    // Configure the motor
+
+    // motor configs
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -33,7 +40,16 @@ public class ClimberIOPhoenix implements ClimberIO {
     config.Voltage.PeakReverseVoltage = -12.0;
     config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
 
-    // configure PID, set slot 0 gains
+    // encoder configs
+    // CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+    // config.Feedback.FeedbackRemoteSensorID = ClimberConstants.encoderID;
+    // config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    // config.Feedback.withRemoteCANcoder(climberEncoder);
+
+    // apply configs
+    PhoenixUtil.tryUntilOk(5, () -> climberMotor.getConfigurator().apply(config));
+
+    // configure PID, apply slot 0 gains
     var slot0Configs = new Slot0Configs();
     slot0Configs.kP = ClimberConstants.p;
     slot0Configs.kI = ClimberConstants.i;
@@ -63,7 +79,11 @@ public class ClimberIOPhoenix implements ClimberIO {
 
   @Override
   public void setPosition(double position) {
-    // climberMotor.setPosition(position);
-    climberMotor.setControl(climberPositionrequest.withPosition(position));
+    // climberMotor.setControl(climberPositionrequest.withPosition(position));
+    climberMotor.setControl(positionTorqueCurrentRequest.withPosition(position));
+  }
+
+  public void setPower(double power) {
+    climberMotor.set(power);
   }
 }

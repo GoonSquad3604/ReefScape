@@ -104,7 +104,7 @@ public class ArmIOPhoenixRev implements ArmIO {
                 torqueCurrent,
                 tempCelsius));
     PhoenixUtil.tryUntilOk(5, () -> elbow.optimizeBusUtilization(0, 1.0));
-
+  
     var slot0Configs = new Slot0Configs();
     slot0Configs.kS = 0.1;
     slot0Configs.kV = 0.12;
@@ -114,6 +114,7 @@ public class ArmIOPhoenixRev implements ArmIO {
 
     elbow.getConfigurator().apply(slot0Configs);
   }
+  
 
   @Override
   public void updateInputs(ArmIOInputs inputs) {

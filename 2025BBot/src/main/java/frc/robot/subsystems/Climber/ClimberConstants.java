@@ -3,7 +3,8 @@ package frc.robot.subsystems.Climber;
 public final class ClimberConstants {
 
   // Motor IDs
-  public static final int ID = 4;
+  public static final int motorID = 4;
+  public static final int encoderID = 0; // placeholder id
 
   // Positions
   public static final double positionDown = 0;

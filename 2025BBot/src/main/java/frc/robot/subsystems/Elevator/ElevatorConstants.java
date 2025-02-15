@@ -40,10 +40,10 @@ public final class ElevatorConstants {
   public static final double groundAlgaeIntake = 0; // placeholder?
   public static final double treeAlgaeIntake = 0; // placeholder
 
-  //the offset
+  // the offset
   public static final double homeOffset = 0; // placeholder
 
-  //up up down down left right left right b a select start
+  // up up down down left right left right b a select start
 
 }
 //this is cleam code
