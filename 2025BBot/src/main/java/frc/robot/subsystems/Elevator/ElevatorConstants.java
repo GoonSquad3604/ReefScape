@@ -33,7 +33,7 @@ public final class ElevatorConstants {
   public static final double algaeL2Pos = 0; // placeholder
   public static final double algaeL3Pos = 0; // placeholder
 
-  // misc positions
+  // misc position
   public static final double sourcePos = 0; // placeholder
   public static final double bargePos = 0; // placeholder
   public static final double processorPos = 0; // placeholder
