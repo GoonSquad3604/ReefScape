@@ -5,10 +5,10 @@ public final class ClimberConstants {
   // Motor IDs
   public static final int ID = 4;
 
-    //Positions
-    public static final double positionDown = 0;
-    public static final double positionUp = 0;
-    public static final double positionHome = 0;
+  // Positions
+  public static final double positionDown = 0;
+  public static final double positionUp = 0;
+  public static final double positionHome = 0;
 
   // PID values
   public static final double p = 0;

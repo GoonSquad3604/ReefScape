@@ -24,15 +24,14 @@ import frc.robot.util.SparkUtil;
 
 public class ManipulatorIOPhoenixRev implements ManipulatorIO {
 
-    private TalonFXS leftWheel, rightWheel;
-    private SparkFlex opening;
-    private DigitalInput manipulatorSensor;
-    private AbsoluteEncoder openingAbsoluteEncoder;
-    //digital ID sensor is 3
-    
-    private final VoltageOut leftWheelRequest = new VoltageOut(0.0);
-    final VelocityVoltage wheelVelocityRequest = new VelocityVoltage(0).withSlot(0);
+  private TalonFXS leftWheel, rightWheel;
+  private SparkFlex opening;
+  private DigitalInput manipulatorSensor;
+  private AbsoluteEncoder openingAbsoluteEncoder;
+  // digital ID sensor is 3
 
+  private final VoltageOut leftWheelRequest = new VoltageOut(0.0);
+  final VelocityVoltage wheelVelocityRequest = new VelocityVoltage(0).withSlot(0);
 
   public ManipulatorIOPhoenixRev() {
 
@@ -65,7 +64,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
 
     PhoenixUtil.tryUntilOk(5, () -> leftWheel.getConfigurator().apply(config, 0.25));
-    
+
     SparkFlexConfig openingConfig = new SparkFlexConfig();
     openingConfig.inverted(true).idleMode(IdleMode.kBrake);
     openingConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
@@ -77,55 +76,62 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
             ManipulatorConstants.openingMotorI,
             ManipulatorConstants.openingMotorD);
     SparkUtil.tryUntilOk(
-        opening, 
-        5, 
+        opening,
+        5,
         () ->
-        opening.configure(
-            openingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+            opening.configure(
+                openingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
-     @Override
-    public void updateInputs(ManipulatorIOInputs inputs){
-        inputs.manipulatorLeftWheelMotorConnected = BaseStatusSignal.refreshAll(
-            leftWheel.getMotorVoltage(),
-            leftWheel.getSupplyCurrent(),
-            leftWheel.getVelocity())
-        .isOK();
-            // inputs.manipulatorOpeningMotorConnected = BaseStatusSignal.refreshAll(
-            // opening.getBusVoltage(),
-            // opening.getOutputCurrent())
-        // .isOK();
-        inputs.manipulatorLeftWheelMotorVoltage = leftWheel.getMotorVoltage().getValueAsDouble();
-        inputs.manipulatorLeftWheelMotorCurrent = leftWheel.getSupplyCurrent().getValueAsDouble();
-        inputs.manipulatorLeftRPM = leftWheel.getVelocity().getValueAsDouble();
-        inputs.manipulatorOpeningMotorVoltage = opening.getBusVoltage();
-        inputs.manipulatorOpeningMotorCurrent = opening.getOutputCurrent();
-        inputs.manipulatorOpeningMotorPos = openingAbsoluteEncoder.getPosition();
-        
-    }
-     @Override
-    public void setVoltage(double voltage){
-        leftWheel.setControl(leftWheelRequest.withOutput(MathUtil.clamp(voltage, -12, 12)));
-    }
-    @Override
-    public void setOpeningVoltage(double voltage){
-        opening.setVoltage(voltage);
-    }
-    @Override
-    public void setRPM(double RPM){
-        leftWheel.setControl(wheelVelocityRequest.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
-    }
-    @Override
-    public void setOpeningPos(double position){
-        opening.getClosedLoopController().setReference(position, SparkFlex.ControlType.kPosition);
-    }
-    @Override
-    public boolean getManipulatorSensor() {
-        return !manipulatorSensor.get();
-    }
-    public void setOpeningPower(double power) {
-        opening.set(power);
-    }
-    public void setWheelPower(double power) {
-        leftWheel.set(power);
-    }
+
+  @Override
+  public void updateInputs(ManipulatorIOInputs inputs) {
+    inputs.manipulatorLeftWheelMotorConnected =
+        BaseStatusSignal.refreshAll(
+                leftWheel.getMotorVoltage(), leftWheel.getSupplyCurrent(), leftWheel.getVelocity())
+            .isOK();
+    // inputs.manipulatorOpeningMotorConnected = BaseStatusSignal.refreshAll(
+    // opening.getBusVoltage(),
+    // opening.getOutputCurrent())
+    // .isOK();
+    inputs.manipulatorLeftWheelMotorVoltage = leftWheel.getMotorVoltage().getValueAsDouble();
+    inputs.manipulatorLeftWheelMotorCurrent = leftWheel.getSupplyCurrent().getValueAsDouble();
+    inputs.manipulatorLeftRPM = leftWheel.getVelocity().getValueAsDouble();
+    inputs.manipulatorOpeningMotorVoltage = opening.getBusVoltage();
+    inputs.manipulatorOpeningMotorCurrent = opening.getOutputCurrent();
+    inputs.manipulatorOpeningMotorPos = openingAbsoluteEncoder.getPosition();
+  }
+
+  @Override
+  public void setVoltage(double voltage) {
+    leftWheel.setControl(leftWheelRequest.withOutput(MathUtil.clamp(voltage, -12, 12)));
+  }
+
+  @Override
+  public void setOpeningVoltage(double voltage) {
+    opening.setVoltage(voltage);
+  }
+
+  @Override
+  public void setRPM(double RPM) {
+    leftWheel.setControl(
+        wheelVelocityRequest.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
+  }
+
+  @Override
+  public void setOpeningPos(double position) {
+    opening.getClosedLoopController().setReference(position, SparkFlex.ControlType.kPosition);
+  }
+
+  @Override
+  public boolean getManipulatorSensor() {
+    return !manipulatorSensor.get();
+  }
+
+  public void setOpeningPower(double power) {
+    opening.set(power);
+  }
+
+  public void setWheelPower(double power) {
+    leftWheel.set(power);
+  }
 }

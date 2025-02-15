@@ -25,7 +25,6 @@ public interface ElevatorIO {
     public double MotorLeftPos;
     public double MotorRightPos;
     public double HeightInInches;
-
   }
 
   default void setPos(double position) {}
@@ -39,15 +38,12 @@ public interface ElevatorIO {
   default double findPosInInches(double pos) {
 
     return pos;
-
   }
 
   default double findPosFromInches(double posInInches) {
 
     return posInInches;
-    
   }
 
-  default void setPower(double power){}
-
+  default void setPower(double power) {}
 }
