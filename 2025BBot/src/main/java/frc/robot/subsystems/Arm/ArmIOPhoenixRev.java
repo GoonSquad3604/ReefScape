@@ -70,6 +70,7 @@ public class ArmIOPhoenixRev implements ArmIO {
             ManipulatorConstants.openingMotorI,
             ManipulatorConstants.openingMotorD);
     wristConfig.softLimit.forwardSoftLimit(0);
+    wristConfig.softLimit.reverseSoftLimit(0);
 
     wrist.configure(wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -148,7 +149,8 @@ public class ArmIOPhoenixRev implements ArmIO {
 
   @Override
   public void setElbowPosition(double position) {
-    elbow.setControl(elbowRequest.withPosition(position));
+    // elbow.setControl(elbowRequest.withPosition(position));
+    elbow.setControl(positionTorqueCurrentRequest.withPosition(position));
   }
 
   @Override
