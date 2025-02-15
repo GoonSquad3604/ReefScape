@@ -3,6 +3,7 @@ package frc.robot.subsystems.Climber;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -14,13 +15,19 @@ public class ClimberIOPhoenix implements ClimberIO {
   // private CANcoder climberEncoder;
 
   // create a position closed-loop request, voltage output, slot 0 configs
-  private final PositionVoltage climberPositionrequest = new PositionVoltage(0).withSlot(0);
+  private final PositionVoltage climberPositionrequest;
+  private final PositionTorqueCurrentFOC positionTorqueCurrentRequest;
+
 
   public ClimberIOPhoenix() {
 
     // declare the motor and encoder
     climberMotor = new TalonFX(ClimberConstants.motorID);
     // climberEncoder = new CANcoder(ClimberConstants.encoderID);
+
+    climberPositionrequest = new PositionVoltage(0).withSlot(0);
+    positionTorqueCurrentRequest = new PositionTorqueCurrentFOC(0).withUpdateFreqHz(0);
+
 
     // motor configs
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -72,8 +79,8 @@ public class ClimberIOPhoenix implements ClimberIO {
 
   @Override
   public void setPosition(double position) {
-    // climberMotor.setPosition(position);
-    climberMotor.setControl(climberPositionrequest.withPosition(position));
+    // climberMotor.setControl(climberPositionrequest.withPosition(position));
+    climberMotor.setControl(positionTorqueCurrentRequest.withPosition(position));
   }
 
   public void setPower(double power) {
