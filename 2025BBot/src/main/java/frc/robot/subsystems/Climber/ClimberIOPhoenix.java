@@ -4,16 +4,14 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.robot.util.PhoenixUtil;
 
 public class ClimberIOPhoenix implements ClimberIO {
 
   private TalonFX climberMotor;
-  private CANcoder climberEncoder;
+  // private CANcoder climberEncoder;
 
   // create a position closed-loop request, voltage output, slot 0 configs
   private final PositionVoltage climberPositionrequest = new PositionVoltage(0).withSlot(0);
@@ -22,7 +20,7 @@ public class ClimberIOPhoenix implements ClimberIO {
 
     // declare the motor and encoder
     climberMotor = new TalonFX(ClimberConstants.motorID);
-    climberEncoder = new CANcoder(ClimberConstants.encoderID);
+    // climberEncoder = new CANcoder(ClimberConstants.encoderID);
 
     // motor configs
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -37,9 +35,9 @@ public class ClimberIOPhoenix implements ClimberIO {
 
     // encoder configs
     // CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
-    config.Feedback.FeedbackRemoteSensorID = ClimberConstants.encoderID;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    config.Feedback.withRemoteCANcoder(climberEncoder);
+    // config.Feedback.FeedbackRemoteSensorID = ClimberConstants.encoderID;
+    // config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    // config.Feedback.withRemoteCANcoder(climberEncoder);
 
     // apply configs
     PhoenixUtil.tryUntilOk(5, () -> climberMotor.getConfigurator().apply(config));
