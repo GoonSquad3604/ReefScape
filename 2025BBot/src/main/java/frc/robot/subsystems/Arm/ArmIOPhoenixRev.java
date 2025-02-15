@@ -59,15 +59,6 @@ public class ArmIOPhoenixRev implements ArmIO {
 
     CANcoderConfiguration CANfig = new CANcoderConfiguration();
 
-    var slot0Configs = new Slot0Configs();
-    slot0Configs.kS = 0.1;
-    slot0Configs.kV = 0.12;
-    slot0Configs.kP = ArmConstants.elbowP;
-    slot0Configs.kI = ArmConstants.elbowI;
-    slot0Configs.kD = ArmConstants.elbowD;
-
-    elbow.getConfigurator().apply(slot0Configs);
-
     SparkFlexConfig wristConfig = new SparkFlexConfig();
     wristConfig.inverted(true).idleMode(IdleMode.kBrake);
     wristConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
@@ -112,6 +103,15 @@ public class ArmIOPhoenixRev implements ArmIO {
                 torqueCurrent,
                 tempCelsius));
     PhoenixUtil.tryUntilOk(5, () -> elbow.optimizeBusUtilization(0, 1.0));
+
+    var slot0Configs = new Slot0Configs();
+    slot0Configs.kS = 0.1;
+    slot0Configs.kV = 0.12;
+    slot0Configs.kP = ArmConstants.elbowP;
+    slot0Configs.kI = ArmConstants.elbowI;
+    slot0Configs.kD = ArmConstants.elbowD;
+
+    elbow.getConfigurator().apply(slot0Configs);
   }
 
   @Override
