@@ -1,9 +1,12 @@
 package frc.robot.subsystems.Manipulator;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFXS;
@@ -18,6 +21,10 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.PhoenixUtil;
 import frc.robot.util.SparkUtil;
@@ -28,26 +35,32 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
   private SparkFlex opening;
   private DigitalInput manipulatorSensor;
   private AbsoluteEncoder openingAbsoluteEncoder;
+  private final StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Voltage> appliedVoltage;
+  private final StatusSignal<Current> supplyCurrent;
+  private final StatusSignal<Current> torqueCurrent;
   // digital ID sensor is 3
 
   private final VoltageOut leftWheelRequest = new VoltageOut(0.0);
-  final VelocityVoltage wheelVelocityRequest = new VelocityVoltage(0).withSlot(0);
+  private final VelocityVoltage wheelVelocityRequest = new VelocityVoltage(0).withSlot(0);
+    private final VelocityTorqueCurrentFOC torqueControlRequest;
 
   public ManipulatorIOPhoenixRev() {
 
-    var slot0Configs = new Slot0Configs();
-    slot0Configs.kS = 0.1; // Add 0.1 V output to overcome static friction
-    slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-    slot0Configs.kP = 0.11; // An error of 1 rps results in 0.11 V output
-    slot0Configs.kI = 0; // no output for integrated error
-    slot0Configs.kD = 0; // no output for error derivative
+    // var slot0Configs = new Slot0Configs();
+    // slot0Configs.kS = 0.1; // Add 0.1 V output to overcome static friction
+    // slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    // slot0Configs.kP = 0.11; // An error of 1 rps results in 0.11 V output
+    // slot0Configs.kI = 0; // no output for integrated error
+    // slot0Configs.kD = 0; // no output for error derivative
 
-    leftWheel.getConfigurator().apply(slot0Configs);
+    // leftWheel.getConfigurator().apply(slot0Configs);
 
     leftWheel = new TalonFXS(ManipulatorConstants.leftWheelMotorID);
     rightWheel = new TalonFXS(ManipulatorConstants.rightWheelMotorID);
     opening = new SparkFlex(ManipulatorConstants.openingMotorID, MotorType.kBrushless);
     manipulatorSensor = new DigitalInput(ManipulatorConstants.manipulatorSensorID);
+    torqueControlRequest = new VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
     openingAbsoluteEncoder = opening.getAbsoluteEncoder();
 
     rightWheel.setControl(new Follower(leftWheel.getDeviceID(), true));
@@ -63,6 +76,30 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     config.Voltage.PeakReverseVoltage = -12.0;
     config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
 
+    var slot0Configs = new Slot0Configs();
+    slot0Configs.kS = 0.1; // Add 0.1 V output to overcome static friction
+    slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    slot0Configs.kP = ManipulatorConstants.wheelP; // An error of 1 rps results in 0.11 V output
+    slot0Configs.kI = ManipulatorConstants.wheelI; // no output for integrated error
+    slot0Configs.kD = ManipulatorConstants.wheelD; // no output for error derivative
+
+    leftWheel.getConfigurator().apply(slot0Configs);
+
+    velocity = leftWheel.getVelocity();
+    appliedVoltage = leftWheel.getMotorVoltage();
+    supplyCurrent = leftWheel.getSupplyCurrent();
+    torqueCurrent = leftWheel.getTorqueCurrent();
+
+    PhoenixUtil.tryUntilOk(
+        5,
+        () ->
+            BaseStatusSignal.setUpdateFrequencyForAll(
+                50.0,
+                velocity,
+                appliedVoltage,
+                supplyCurrent,
+                torqueCurrent));
+                
     PhoenixUtil.tryUntilOk(5, () -> leftWheel.getConfigurator().apply(config, 0.25));
 
     SparkFlexConfig openingConfig = new SparkFlexConfig();
@@ -113,8 +150,9 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
 
   @Override
   public void setRPM(double RPM) {
-    leftWheel.setControl(
-        wheelVelocityRequest.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
+    // leftWheel.setControl(
+        // wheelVelocityRequest.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
+    leftWheel.setControl(torqueControlRequest.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
   }
 
   @Override
