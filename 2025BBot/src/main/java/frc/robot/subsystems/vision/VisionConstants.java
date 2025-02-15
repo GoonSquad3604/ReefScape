@@ -64,5 +64,5 @@ public class VisionConstants {
   public static double angularStdDevMegatag2Factor =
       Double.POSITIVE_INFINITY; // No rotation data available
 
-  public static int mitoCANdriaID = 42;
+  public static int mitoCANdriaID = 8;
 }
