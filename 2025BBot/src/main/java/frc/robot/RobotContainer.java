@@ -148,7 +148,7 @@ public class RobotContainer {
         break;
     }
     stateController = new StateController();
-    superStructure = new SuperStructure(manipulator, arm, elevator);
+    superStructure = new SuperStructure(manipulator, arm, elevator, stateController);
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
