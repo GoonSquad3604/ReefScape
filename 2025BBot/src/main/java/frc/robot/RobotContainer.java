@@ -49,6 +49,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.vision.MitoCANdriaIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -96,6 +97,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
+                new MitoCANdriaIO(),
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
                 new VisionIOPhotonVision(camera1Name, robotToCamera1),
                 new VisionIOPhotonVision(camera2Name, robotToCamera2),
@@ -119,8 +121,10 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
+                new MitoCANdriaIO(),
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
-                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose)
+                );
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
@@ -136,7 +140,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(drive::addVisionMeasurement, new MitoCANdriaIO(), new VisionIO() {}, new VisionIO() {});
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
@@ -165,9 +169,16 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Named Commands
-    NamedCommands.registerCommand("intake", superStructure.goToSource().andThen(superStructure.intake()));
-    NamedCommands.registerCommand("intakeUntilPiece", superStructure.intake().until(() -> manipulator.hasGamePiece()).andThen(superStructure.intakeOff()));
-    NamedCommands.registerCommand("fire", superStructure.fire().withTimeout(2).andThen(superStructure.intakeOff()));
+    NamedCommands.registerCommand(
+        "intake", superStructure.goToSource().andThen(superStructure.intake()));
+    NamedCommands.registerCommand(
+        "intakeUntilPiece",
+        superStructure
+            .intake()
+            .until(() -> manipulator.hasGamePiece())
+            .andThen(superStructure.intakeOff()));
+    NamedCommands.registerCommand(
+        "fire", superStructure.fire().withTimeout(2).andThen(superStructure.intakeOff()));
     NamedCommands.registerCommand("holdFire", superStructure.intakeOff());
     NamedCommands.registerCommand("goToL4", superStructure.goToL4Coral());
     NamedCommands.registerCommand("goToAlgae25", superStructure.goToL2Algae());
@@ -175,7 +186,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("goToSource", superStructure.goToSource());
     NamedCommands.registerCommand("goToProcessor", superStructure.goToProcessor());
     NamedCommands.registerCommand("goToBarge", superStructure.goToBarge());
-    
 
     // Configure the button bindings
     configureButtonBindings();
@@ -279,7 +289,7 @@ public class RobotContainer {
     // Intake
     operatorButtonBox
         .button(10)
-        .whileTrue(new ParallelCommandGroup(superStructure.goToSource(), superStructure.intake()));
+        .whileTrue(superStructure.goToSource().andThen(superStructure.intake().until(() -> manipulator.hasGamePiece()).andThen(superStructure.goHome())));
     operatorButtonBox
         .button(10)
         .onFalse(new ParallelCommandGroup(superStructure.intakeOff(), superStructure.goHome()));
