@@ -17,7 +17,8 @@ public class SuperStructure extends SubsystemBase {
   private StateController stateController;
 
   /** Creates a new SuperStructure. */
-  public SuperStructure(Manipulator manipulator, Arm arm, Elevator elevator, StateController stateController) {
+  public SuperStructure(
+      Manipulator manipulator, Arm arm, Elevator elevator, StateController stateController) {
     this.manipulator = manipulator;
     this.arm = arm;
     this.elevator = elevator;
@@ -125,13 +126,14 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command fire() {
-    return run(() -> {
-      if(stateController.isCoralMode()){
-        manipulator.fireCoral();
-      } else {
-        manipulator.fireAlgae();
-      }
-    });
+    return run(
+        () -> {
+          if (stateController.isCoralMode()) {
+            manipulator.fireCoral();
+          } else {
+            manipulator.fireAlgae();
+          }
+        });
   }
 
   @Override

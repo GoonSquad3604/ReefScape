@@ -18,7 +18,6 @@ public class ClimberIOPhoenix implements ClimberIO {
   private final PositionVoltage climberPositionrequest;
   private final PositionTorqueCurrentFOC positionTorqueCurrentRequest;
 
-
   public ClimberIOPhoenix() {
 
     // declare the motor and encoder
@@ -27,7 +26,6 @@ public class ClimberIOPhoenix implements ClimberIO {
 
     climberPositionrequest = new PositionVoltage(0).withSlot(0);
     positionTorqueCurrentRequest = new PositionTorqueCurrentFOC(0).withUpdateFreqHz(0);
-
 
     // motor configs
     TalonFXConfiguration config = new TalonFXConfiguration();
