@@ -90,6 +90,21 @@ public class Arm extends SubsystemBase {
     io.setElbowPosition(ArmConstants.homeElbow);
   }
 
+  public void moveUp() {
+    io.setElbowMotorVoltage(1);
+    io.setWristMotorVoltage(1);
+  }
+
+  public void moveDown() {
+    io.setElbowMotorVoltage(-1);
+    io.setWristMotorVoltage(-1);
+  }
+
+  public void stop() {
+    io.setElbowMotorVoltage(0);
+    io.setWristMotorVoltage(0);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

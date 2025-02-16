@@ -18,4 +18,6 @@ public interface ClimberIO {
   default void setVoltage(double voltage) {}
 
   default void setPosition(double position) {}
+
+  default void setPower(double power) {}
 }

@@ -59,6 +59,22 @@ public class Manipulator extends SubsystemBase {
     io.setRPM(ManipulatorConstants.zeroRPM);
   }
 
+  public void openUp() {
+    io.setOpeningVoltage(1);
+  }
+
+  public void close() {
+    io.setOpeningVoltage(-1);
+  }
+
+  public void stop() {
+    io.setOpeningVoltage(0);
+  }
+
+  public void runWheels() {
+    io.setVoltage(1);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

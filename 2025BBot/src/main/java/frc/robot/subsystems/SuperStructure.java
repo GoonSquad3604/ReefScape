@@ -136,6 +136,77 @@ public class SuperStructure extends SubsystemBase {
         });
   }
 
+  public Command moveArmUp() {
+    return run(
+        () -> {
+          arm.moveUp();
+        });
+  }
+
+  public Command moveArmDown() {
+    return run(
+        () -> {
+          arm.moveDown();
+        });
+  }
+
+  public Command moveElevatorUp() {
+    return run(
+        () -> {
+          elevator.moveUp();
+        });
+  }
+
+  public Command moveElevatorDown() {
+    return run(
+        () -> {
+          elevator.moveDown();
+        });
+  }
+
+  public Command manipulatorOpen() {
+    return run(
+        () -> {
+          manipulator.openUp();
+        });
+  }
+
+  public Command manipulatorClose() {
+    return run(
+        () -> {
+          manipulator.close();
+        });
+  }
+
+  public Command runWheels() {
+    return run(
+        () -> {
+          manipulator.runWheels();
+        });
+  }
+
+  public Command manipulatorStop() {
+    return run(
+        () -> {
+          manipulator.stop();
+        });
+  }
+  // public Command manipulatorRun() {
+
+  public Command armStop() {
+    return run(
+        () -> {
+          arm.stop();
+        });
+  }
+
+  public Command elevatorStop() {
+    return run(
+        () -> {
+          elevator.stop();
+        });
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
