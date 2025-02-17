@@ -38,6 +38,18 @@ public class Climber extends SubsystemBase {
     return run(() -> io.setPosition(ClimberConstants.positionHome));
   }
 
+  public Command moveClimberUp() {
+    return run(() -> io.setPower(1));
+  }
+
+  public Command moveClimberDown() {
+    return run(() -> io.setPower(-1));
+  }
+
+  public Command stop() {
+    return run(() -> io.setPower(0));
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

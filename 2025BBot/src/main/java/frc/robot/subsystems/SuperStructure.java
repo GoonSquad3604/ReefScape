@@ -17,7 +17,8 @@ public class SuperStructure extends SubsystemBase {
   private StateController stateController;
 
   /** Creates a new SuperStructure. */
-  public SuperStructure(Manipulator manipulator, Arm arm, Elevator elevator, StateController stateController) {
+  public SuperStructure(
+      Manipulator manipulator, Arm arm, Elevator elevator, StateController stateController) {
     this.manipulator = manipulator;
     this.arm = arm;
     this.elevator = elevator;
@@ -125,13 +126,85 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command fire() {
-    return run(() -> {
-      if(stateController.isCoralMode()){
-        manipulator.fireCoral();
-      } else {
-        manipulator.fireAlgae();
-      }
-    });
+    return run(
+        () -> {
+          if (stateController.isCoralMode()) {
+            manipulator.fireCoral();
+          } else {
+            manipulator.fireAlgae();
+          }
+        });
+  }
+
+  public Command moveArmUp() {
+    return run(
+        () -> {
+          arm.moveUp();
+        });
+  }
+
+  public Command moveArmDown() {
+    return run(
+        () -> {
+          arm.moveDown();
+        });
+  }
+
+  public Command moveElevatorUp() {
+    return run(
+        () -> {
+          elevator.moveUp();
+        });
+  }
+
+  public Command moveElevatorDown() {
+    return run(
+        () -> {
+          elevator.moveDown();
+        });
+  }
+
+  public Command manipulatorOpen() {
+    return run(
+        () -> {
+          manipulator.openUp();
+        });
+  }
+
+  public Command manipulatorClose() {
+    return run(
+        () -> {
+          manipulator.close();
+        });
+  }
+
+  public Command runWheels() {
+    return run(
+        () -> {
+          manipulator.runWheels();
+        });
+  }
+
+  public Command manipulatorStop() {
+    return run(
+        () -> {
+          manipulator.stop();
+        });
+  }
+  // public Command manipulatorRun() {
+
+  public Command armStop() {
+    return run(
+        () -> {
+          arm.stop();
+        });
+  }
+
+  public Command elevatorStop() {
+    return run(
+        () -> {
+          elevator.stop();
+        });
   }
 
   @Override

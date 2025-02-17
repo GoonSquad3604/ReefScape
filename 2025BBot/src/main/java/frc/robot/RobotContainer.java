@@ -55,7 +55,6 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.AllianceFlipUtil;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -78,6 +77,7 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandJoystick operatorButtonBox = new CommandJoystick(1);
+  private final CommandXboxController testController = new CommandXboxController(2);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -125,8 +125,7 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new MitoCANdriaIO(),
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
-                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose)
-                );
+                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
@@ -142,7 +141,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        vision = new Vision(drive::addVisionMeasurement, new MitoCANdriaIO(), new VisionIO() {}, new VisionIO() {});
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new MitoCANdriaIO(),
+                new VisionIO() {},
+                new VisionIO() {});
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
@@ -293,54 +297,82 @@ public class RobotContainer {
                 () -> (-driverController.getLeftY() * .5),
                 () -> (-driverController.getLeftX() * .5),
                 () -> (-driverController.getRightX() * .4)));
-    //Pathfinds based on State Controller
+    // Pathfinds based on State Controller
     driverController
-    .leftTrigger()
-    .and(coralMode)
-    .and(hasGamePiece)
-    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+        .leftTrigger()
+        .and(coralMode)
+        .and(hasGamePiece)
+        .whileTrue(
+            drive.defer(
+                () ->
+                    drive.pathfindToFieldPose(
+                        AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
 
     driverController
-    .leftTrigger()
-    .and(coralMode)
-    .and(hasNoGamePiece)
-    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestSource()))));
+        .leftTrigger()
+        .and(coralMode)
+        .and(hasNoGamePiece)
+        .whileTrue(
+            drive.defer(
+                () -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestSource()))));
 
     driverController
-    .leftTrigger()
-    .and(algaeMode)
-    .and(hasGamePiece)
-    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))));
+        .leftTrigger()
+        .and(algaeMode)
+        .and(hasGamePiece)
+        .whileTrue(
+            drive.defer(
+                () ->
+                    drive.pathfindToFieldPose(
+                        AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))));
 
     driverController
-    .leftTrigger()
-    .and(algaeMode)
-    .and(hasNoGamePiece)
-    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+        .leftTrigger()
+        .and(algaeMode)
+        .and(hasNoGamePiece)
+        .whileTrue(
+            drive.defer(
+                () ->
+                    drive.pathfindToFieldPose(
+                        AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
 
     driverController
-    .rightTrigger()
-    .and(coralMode)
-    .and(hasGamePiece)
-    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+        .rightTrigger()
+        .and(coralMode)
+        .and(hasGamePiece)
+        .whileTrue(
+            drive.defer(
+                () ->
+                    drive.pathfindToFieldPose(
+                        AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
 
     driverController
-    .rightTrigger()
-    .and(coralMode)
-    .and(hasNoGamePiece)
-    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestSource()))));
+        .rightTrigger()
+        .and(coralMode)
+        .and(hasNoGamePiece)
+        .whileTrue(
+            drive.defer(
+                () -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestSource()))));
 
     driverController
-    .rightTrigger()
-    .and(algaeMode)
-    .and(hasGamePiece)
-    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))));
+        .rightTrigger()
+        .and(algaeMode)
+        .and(hasGamePiece)
+        .whileTrue(
+            drive.defer(
+                () ->
+                    drive.pathfindToFieldPose(
+                        AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))));
 
     driverController
-    .rightTrigger()
-    .and(algaeMode)
-    .and(hasNoGamePiece)
-    .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+        .rightTrigger()
+        .and(algaeMode)
+        .and(hasNoGamePiece)
+        .whileTrue(
+            drive.defer(
+                () ->
+                    drive.pathfindToFieldPose(
+                        AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
     // // Goes to closest coral station
     // driverController
     //     .povDown()
@@ -373,10 +405,17 @@ public class RobotContainer {
     // Intake
     operatorButtonBox
         .button(10)
-        .whileTrue(superStructure.goToSource().andThen(superStructure.intake().until(() -> manipulator.hasGamePiece()).andThen(superStructure.goHome())));
-    operatorButtonBox
-        .button(10)
-        .onFalse(new ParallelCommandGroup(superStructure.intakeOff(), superStructure.goHome()));
+        .whileTrue(
+            superStructure
+                .goToSource()
+                .andThen(
+                    superStructure
+                        .intake()
+                        .until(() -> manipulator.hasGamePiece())
+                        .andThen(superStructure.goHome())));
+    // operatorButtonBox
+    //     .button(10)
+    //     .onFalse(new ParallelCommandGroup(superStructure.intakeOff(), superStructure.goHome()));
     // Vomit
     operatorButtonBox.button(11).whileTrue(superStructure.fire());
     operatorButtonBox.button(11).whileTrue(superStructure.intakeOff());
@@ -385,6 +424,40 @@ public class RobotContainer {
     operatorButtonBox
         .button(12)
         .onFalse(new ParallelCommandGroup(superStructure.intakeOff(), superStructure.goHome()));
+
+    testController.a().onTrue(climber.moveClimberUp());
+
+    testController.a().onFalse(climber.stop());
+
+    testController.start().onTrue(climber.moveClimberDown());
+
+    testController.start().onFalse(climber.stop());
+
+    testController.b().onTrue(superStructure.moveArmUp());
+
+    testController.b().onFalse(superStructure.armStop());
+
+    testController.rightBumper().onTrue(superStructure.moveArmDown());
+
+    testController.rightBumper().onFalse(superStructure.armStop());
+
+    testController.y().onTrue(superStructure.moveElevatorUp());
+
+    testController.y().onFalse(superStructure.elevatorStop());
+
+    testController.leftBumper().onTrue(superStructure.moveElevatorDown());
+
+    testController.leftBumper().onFalse(superStructure.elevatorStop());
+
+    testController.x().onTrue(superStructure.manipulatorOpen());
+
+    testController.x().onFalse(superStructure.manipulatorStop());
+
+    testController.rightTrigger().onTrue(superStructure.manipulatorClose());
+
+    testController.rightTrigger().onFalse(superStructure.manipulatorStop());
+
+    // testController.leftTrigger().onTrue();
   }
 
   /**

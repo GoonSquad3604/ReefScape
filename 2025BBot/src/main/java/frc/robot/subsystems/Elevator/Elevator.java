@@ -74,12 +74,24 @@ public class Elevator extends SubsystemBase {
     io.setPos(ElevatorConstants.processorPos);
   }
 
-  public void homingElv(){
-    io.setPos(ElevatorConstants.homePos);
-    //TODO: add a homing function
+  public void moveUp() {
+    io.setVoltage(1);
   }
 
-  @Override 
+  public void moveDown() {
+    io.setVoltage(-1);
+  }
+
+  public void stop() {
+    io.setVoltage(0);
+  }
+
+  public void homingElv() {
+    io.setPos(ElevatorConstants.homePos);
+    // TODO: add a homing function
+  }
+
+  @Override
   public void periodic() {
 
     // This method will be called once per scheduler run

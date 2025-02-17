@@ -5,7 +5,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -21,7 +20,6 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
@@ -43,7 +41,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
 
   private final VoltageOut leftWheelRequest = new VoltageOut(0.0);
   private final VelocityVoltage wheelVelocityRequest = new VelocityVoltage(0).withSlot(0);
-    private final VelocityTorqueCurrentFOC torqueControlRequest;
+  private final VelocityTorqueCurrentFOC torqueControlRequest;
 
   public ManipulatorIOPhoenixRev() {
 
@@ -94,12 +92,8 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
         5,
         () ->
             BaseStatusSignal.setUpdateFrequencyForAll(
-                50.0,
-                velocity,
-                appliedVoltage,
-                supplyCurrent,
-                torqueCurrent));
-                
+                50.0, velocity, appliedVoltage, supplyCurrent, torqueCurrent));
+
     PhoenixUtil.tryUntilOk(5, () -> leftWheel.getConfigurator().apply(config, 0.25));
 
     SparkFlexConfig openingConfig = new SparkFlexConfig();
@@ -151,8 +145,9 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
   @Override
   public void setRPM(double RPM) {
     // leftWheel.setControl(
-        // wheelVelocityRequest.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
-    leftWheel.setControl(torqueControlRequest.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
+    // wheelVelocityRequest.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
+    leftWheel.setControl(
+        torqueControlRequest.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
   }
 
   @Override

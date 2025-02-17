@@ -54,9 +54,25 @@ public class Manipulator extends SubsystemBase {
   public void fireAlgae() {
     io.setRPM(ManipulatorConstants.algaeRPM);
   }
-  
+
   public void stopWheels() {
     io.setRPM(ManipulatorConstants.zeroRPM);
+  }
+
+  public void openUp() {
+    io.setOpeningVoltage(1);
+  }
+
+  public void close() {
+    io.setOpeningVoltage(-1);
+  }
+
+  public void stop() {
+    io.setOpeningVoltage(0);
+  }
+
+  public void runWheels() {
+    io.setVoltage(1);
   }
 
   @Override
