@@ -40,4 +40,10 @@ public interface ManipulatorIO {
   default boolean getManipulatorSensor() {
     return false;
   }
+
+  default void setWheelPower(double power) {}
+
+  default void setOpeningPower(double power) {}
+
+  default void setCurrent(double current) {}
 }

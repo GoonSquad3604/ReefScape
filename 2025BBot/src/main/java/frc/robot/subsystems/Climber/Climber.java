@@ -39,11 +39,11 @@ public class Climber extends SubsystemBase {
   }
 
   public Command moveClimberUp() {
-    return run(() -> io.setPower(1));
+    return run(() -> io.setPower(-.4));
   }
 
   public Command moveClimberDown() {
-    return run(() -> io.setPower(-1));
+    return run(() -> io.setPower(.4));
   }
 
   public Command stop() {
