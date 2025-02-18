@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -49,11 +48,6 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.vision.MitoCANdriaIO;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.AllianceFlipUtil;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -66,7 +60,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Vision vision;
+  // private final Vision vision;
   private final StateController stateController;
   private final SuperStructure superStructure;
   private final Arm arm;
@@ -95,15 +89,21 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        // new Drive(
+        //     new GyroIO() {},
+        //     new ModuleIO() {},
+        //     new ModuleIO() {},
+        //     new ModuleIO() {},
+        //     new ModuleIO() {});
 
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new MitoCANdriaIO(),
-                new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                new VisionIOPhotonVision(camera1Name, robotToCamera1),
-                new VisionIOPhotonVision(camera2Name, robotToCamera2),
-                new VisionIOPhotonVision(camera3Name, robotToCamera3));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new MitoCANdriaIO(),
+        //         new VisionIOPhotonVision(camera0Name, robotToCamera0),
+        //         new VisionIOPhotonVision(camera1Name, robotToCamera1),
+        //         new VisionIOPhotonVision(camera2Name, robotToCamera2),
+        //         new VisionIOPhotonVision(camera3Name, robotToCamera3));
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
@@ -120,12 +120,12 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new MitoCANdriaIO(),
-                new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
-                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new MitoCANdriaIO(),
+        //         new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
+        //         new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
@@ -141,12 +141,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new MitoCANdriaIO(),
-                new VisionIO() {},
-                new VisionIO() {});
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new MitoCANdriaIO(),
+        //         new VisionIO() {},
+        //         new VisionIO() {});
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
@@ -423,41 +423,43 @@ public class RobotContainer {
     operatorButtonBox.button(12).whileTrue(superStructure.fire());
     operatorButtonBox
         .button(12)
-        .onFalse(new ParallelCommandGroup(superStructure.intakeOff(), superStructure.goHome()));
+        .onFalse(superStructure.intakeOff().andThen(superStructure.goHome()));
 
     testController.a().onTrue(climber.moveClimberUp());
-
     testController.a().onFalse(climber.stop());
 
     testController.start().onTrue(climber.moveClimberDown());
-
     testController.start().onFalse(climber.stop());
 
-    testController.b().onTrue(superStructure.moveArmUp());
+    testController.b().onTrue(superStructure.moveElbowUp());
+    testController.b().onFalse(superStructure.elbowStop());
 
-    testController.b().onFalse(superStructure.armStop());
+    testController.rightBumper().onTrue(superStructure.moveElbowDown());
+    testController.rightBumper().onFalse(superStructure.elbowStop());
 
-    testController.rightBumper().onTrue(superStructure.moveArmDown());
+    testController.povDown().onTrue(superStructure.moveWristUp());
+    testController.povDown().onFalse(superStructure.wristStop());
 
-    testController.rightBumper().onFalse(superStructure.armStop());
+    testController.povLeft().onTrue(superStructure.moveWristDown());
+    testController.povLeft().onFalse(superStructure.wristStop());
 
     testController.y().onTrue(superStructure.moveElevatorUp());
-
     testController.y().onFalse(superStructure.elevatorStop());
 
     testController.leftBumper().onTrue(superStructure.moveElevatorDown());
-
     testController.leftBumper().onFalse(superStructure.elevatorStop());
 
     testController.x().onTrue(superStructure.manipulatorOpen());
-
     testController.x().onFalse(superStructure.manipulatorStop());
 
     testController.rightTrigger().onTrue(superStructure.manipulatorClose());
-
     testController.rightTrigger().onFalse(superStructure.manipulatorStop());
 
-    // testController.leftTrigger().onTrue();
+    testController.leftTrigger().onTrue(superStructure.runWheels());
+    testController.leftTrigger().onFalse(superStructure.intakeOff());
+
+    testController.povUp().onTrue(superStructure.runWheelsBackwards());
+    testController.povUp().onFalse(superStructure.intakeOff());
   }
 
   /**

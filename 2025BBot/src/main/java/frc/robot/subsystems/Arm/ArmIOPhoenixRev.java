@@ -157,4 +157,14 @@ public class ArmIOPhoenixRev implements ArmIO {
   public void setWristPosition(double position) {
     wrist.getClosedLoopController().setReference(position, SparkFlex.ControlType.kPosition);
   }
+
+  @Override
+  public void setElbowPower(double power) {
+    elbow.set(power);
+  }
+
+  @Override
+  public void setWristPower(double power) {
+    wrist.set(power);
+  }
 }

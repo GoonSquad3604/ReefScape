@@ -136,17 +136,31 @@ public class SuperStructure extends SubsystemBase {
         });
   }
 
-  public Command moveArmUp() {
+  public Command moveElbowUp() {
     return run(
         () -> {
-          arm.moveUp();
+          arm.elbowUp();
         });
   }
 
-  public Command moveArmDown() {
+  public Command moveElbowDown() {
     return run(
         () -> {
-          arm.moveDown();
+          arm.elbowDown();
+        });
+  }
+
+  public Command moveWristUp() {
+    return run(
+        () -> {
+          arm.wristUp();
+        });
+  }
+
+  public Command moveWristDown() {
+    return run(
+        () -> {
+          arm.wristDown();
         });
   }
 
@@ -185,6 +199,13 @@ public class SuperStructure extends SubsystemBase {
         });
   }
 
+  public Command runWheelsBackwards() {
+    return run(
+        () -> {
+          manipulator.runWheelsBackwards();
+        });
+  }
+
   public Command manipulatorStop() {
     return run(
         () -> {
@@ -193,10 +214,17 @@ public class SuperStructure extends SubsystemBase {
   }
   // public Command manipulatorRun() {
 
-  public Command armStop() {
+  public Command elbowStop() {
     return run(
         () -> {
-          arm.stop();
+          arm.stopElbow();
+        });
+  }
+
+  public Command wristStop() {
+    return run(
+        () -> {
+          arm.stopWrist();
         });
   }
 

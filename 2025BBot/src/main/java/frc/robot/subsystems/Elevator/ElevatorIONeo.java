@@ -3,39 +3,39 @@ package frc.robot.subsystems.Elevator;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import frc.robot.util.SparkUtil;
 
 public class ElevatorIONeo implements ElevatorIO {
 
   // declares motors
-  private SparkMax leftMotor;
-  private SparkMax rightMotor;
+  private SparkFlex leftMotor;
+  private SparkFlex rightMotor;
   // private DigitalInput limitSwitchLeft;
   // private DigitalInput limitSwitchRight;
 
   public ElevatorIONeo() {
 
     // initializes motors
-    leftMotor = new SparkMax(ElevatorConstants.leftMotorID, MotorType.kBrushless);
-    rightMotor = new SparkMax(ElevatorConstants.rightMotorID, MotorType.kBrushless);
+    leftMotor = new SparkFlex(ElevatorConstants.leftMotorID, MotorType.kBrushless);
+    rightMotor = new SparkFlex(ElevatorConstants.rightMotorID, MotorType.kBrushless);
 
     // left motor config
-    SparkMaxConfig config = new SparkMaxConfig();
+    SparkFlexConfig config = new SparkFlexConfig();
 
     config.inverted(false).idleMode(IdleMode.kBrake);
-    config.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
+    // config.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     config
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pid(ElevatorConstants.elevatorP, ElevatorConstants.elevatorI, ElevatorConstants.elevatorD);
 
     // right motor config
-    SparkMaxConfig rightConfig = new SparkMaxConfig();
+    SparkFlexConfig rightConfig = new SparkFlexConfig();
 
     rightConfig.idleMode(IdleMode.kBrake).follow(ElevatorConstants.leftMotorID, true);
     rightConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
@@ -68,7 +68,7 @@ public class ElevatorIONeo implements ElevatorIO {
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
 
-    inputs.limitSwitchLeft = leftMotor.getForwardLimitSwitch().isPressed();
+    // inputs.limitSwitchLeft = leftMotor.getForwardLimitSwitch().isPressed();
     // inputs.limitSwitchRight = limitSwitchRight.get();
 
     double leftVoltage = leftMotor.getAppliedOutput() * leftMotor.getBusVoltage();

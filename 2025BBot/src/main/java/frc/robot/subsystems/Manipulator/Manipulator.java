@@ -56,23 +56,31 @@ public class Manipulator extends SubsystemBase {
   }
 
   public void stopWheels() {
-    io.setRPM(ManipulatorConstants.zeroRPM);
+    // io.setRPM(ManipulatorConstants.zeroRPM);
+    io.setWheelPower(0);
   }
 
   public void openUp() {
-    io.setOpeningVoltage(1);
+    // io.setOpeningVoltage(1);
+    io.setOpeningPower(.1);
   }
 
   public void close() {
-    io.setOpeningVoltage(-1);
+    // io.setOpeningVoltage(-1);
+    io.setOpeningPower(-.1);
   }
 
   public void stop() {
-    io.setOpeningVoltage(0);
+    // io.setOpeningVoltage(0);
+    io.setOpeningPower(0);
   }
 
   public void runWheels() {
-    io.setVoltage(1);
+    io.setWheelPower(.4);
+  }
+
+  public void runWheelsBackwards() {
+    io.setWheelPower(-.4);
   }
 
   @Override

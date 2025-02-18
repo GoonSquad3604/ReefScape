@@ -6,6 +6,7 @@ package frc.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
@@ -22,6 +23,9 @@ public class Elevator extends SubsystemBase {
     // whee elevator go up yippee
 
     io = elevatorIo;
+
+    final LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP");
+    final LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD");
 
     // will throw an error if a motor is disconnected
     leftDisconnected = new Alert("Left elevator motor is disconnected!", Alert.AlertType.kWarning);
@@ -75,15 +79,15 @@ public class Elevator extends SubsystemBase {
   }
 
   public void moveUp() {
-    io.setVoltage(1);
+    io.setPower(-0.2);
   }
 
   public void moveDown() {
-    io.setVoltage(-1);
+    io.setPower(0.2);
   }
 
   public void stop() {
-    io.setVoltage(0);
+    io.setPower(0);
   }
 
   public void homingElv() {

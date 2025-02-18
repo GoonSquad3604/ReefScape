@@ -32,4 +32,8 @@ public interface ArmIO {
   default void setElbowPosition(double position) {}
 
   default void setWristPosition(double position) {}
+
+  default void setElbowPower(double power) {}
+
+  default void setWristPower(double power) {}
 }

@@ -5,11 +5,13 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -41,7 +43,8 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
 
   private final VoltageOut leftWheelRequest = new VoltageOut(0.0);
   private final VelocityVoltage wheelVelocityRequest = new VelocityVoltage(0).withSlot(0);
-  private final VelocityTorqueCurrentFOC torqueControlRequest;
+  private final VelocityTorqueCurrentFOC velocityTorqueControlRequest;
+  private final TorqueCurrentFOC torqueControlRequest;
 
   public ManipulatorIOPhoenixRev() {
 
@@ -58,14 +61,16 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     rightWheel = new TalonFXS(ManipulatorConstants.rightWheelMotorID);
     opening = new SparkFlex(ManipulatorConstants.openingMotorID, MotorType.kBrushless);
     manipulatorSensor = new DigitalInput(ManipulatorConstants.manipulatorSensorID);
-    torqueControlRequest = new VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
+    velocityTorqueControlRequest = new VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
+    torqueControlRequest = new TorqueCurrentFOC(0).withUpdateFreqHz(0);
     openingAbsoluteEncoder = opening.getAbsoluteEncoder();
 
     rightWheel.setControl(new Follower(leftWheel.getDeviceID(), true));
 
     TalonFXSConfiguration config = new TalonFXSConfiguration();
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.CurrentLimits.SupplyCurrentLimit = 40;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -81,7 +86,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     slot0Configs.kI = ManipulatorConstants.wheelI; // no output for integrated error
     slot0Configs.kD = ManipulatorConstants.wheelD; // no output for error derivative
 
-    leftWheel.getConfigurator().apply(slot0Configs);
+    // leftWheel.getConfigurator().apply(slot0Configs);
 
     velocity = leftWheel.getVelocity();
     appliedVoltage = leftWheel.getMotorVoltage();
@@ -120,6 +125,12 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
         BaseStatusSignal.refreshAll(
                 leftWheel.getMotorVoltage(), leftWheel.getSupplyCurrent(), leftWheel.getVelocity())
             .isOK();
+    inputs.manipulatorRightWheelMotorConnected =
+        BaseStatusSignal.refreshAll(
+                rightWheel.getMotorVoltage(),
+                rightWheel.getSupplyCurrent(),
+                rightWheel.getVelocity())
+            .isOK();
     // inputs.manipulatorOpeningMotorConnected = BaseStatusSignal.refreshAll(
     // opening.getBusVoltage(),
     // opening.getOutputCurrent())
@@ -127,6 +138,9 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     inputs.manipulatorLeftWheelMotorVoltage = leftWheel.getMotorVoltage().getValueAsDouble();
     inputs.manipulatorLeftWheelMotorCurrent = leftWheel.getSupplyCurrent().getValueAsDouble();
     inputs.manipulatorLeftRPM = leftWheel.getVelocity().getValueAsDouble();
+    inputs.manipulatorRightWheelMotorVoltage = rightWheel.getMotorVoltage().getValueAsDouble();
+    inputs.manipulatorRightWheelMotorCurrent = rightWheel.getSupplyCurrent().getValueAsDouble();
+    inputs.manipulatorRightRPM = rightWheel.getVelocity().getValueAsDouble();
     inputs.manipulatorOpeningMotorVoltage = opening.getBusVoltage();
     inputs.manipulatorOpeningMotorCurrent = opening.getOutputCurrent();
     inputs.manipulatorOpeningMotorPos = openingAbsoluteEncoder.getPosition();
@@ -147,7 +161,14 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     // leftWheel.setControl(
     // wheelVelocityRequest.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
     leftWheel.setControl(
-        torqueControlRequest.withVelocity(RPM).withFeedForward(ManipulatorConstants.wheelFF));
+        velocityTorqueControlRequest
+            .withVelocity(RPM)
+            .withFeedForward(ManipulatorConstants.wheelFF));
+  }
+
+  @Override
+  public void setCurrent(double current) {
+    leftWheel.setControl(torqueControlRequest.withOutput(current));
   }
 
   @Override
