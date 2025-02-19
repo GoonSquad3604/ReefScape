@@ -113,8 +113,8 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
             ManipulatorConstants.openingMotorP,
             ManipulatorConstants.openingMotorI,
             ManipulatorConstants.openingMotorD)
-        .maxOutput(0.4)
-        .minOutput(-0.4);
+        .maxOutput(0.6)
+        .minOutput(-0.6);
     SparkUtil.tryUntilOk(
         opening,
         5,

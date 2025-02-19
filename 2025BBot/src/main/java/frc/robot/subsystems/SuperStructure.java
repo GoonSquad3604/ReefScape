@@ -129,7 +129,7 @@ public class SuperStructure extends SubsystemBase {
     return run(
         () -> {
           if (stateController.isCoralMode()) {
-            manipulator.fireCoral();
+            manipulator.runWheelsBackwards();
           } else {
             manipulator.fireAlgae();
           }

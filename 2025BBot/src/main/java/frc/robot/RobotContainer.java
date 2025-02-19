@@ -383,10 +383,10 @@ public class RobotContainer {
     //     .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(drive.getClosestReefPanel())));
 
     operatorButtonBox.button(1).onTrue(stateController.setCoralMode(manipulator));
-    operatorButtonBox.button(1).onFalse(superStructure.manipulatorStop());
+    // operatorButtonBox.button(1).onFalse(superStructure.manipulatorStop());
 
     operatorButtonBox.button(2).onTrue(stateController.setAlgaeMode(manipulator));
-    operatorButtonBox.button(2).onFalse(superStructure.manipulatorStop());
+    // operatorButtonBox.button(2).onFalse(superStructure.manipulatorStop());
     // goes to L4 positions
     operatorButtonBox.button(3).and(coralMode).onTrue(superStructure.goToL4Coral());
     operatorButtonBox.button(3).and(algaeMode).onTrue(superStructure.goToBarge());
