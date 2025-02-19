@@ -46,5 +46,7 @@ public interface ElevatorIO {
   }
 
   default void setPower(double power) {}
+
+  default void setPID(double kP, double kI, double kD) {}
 }
 // mandatory end comment

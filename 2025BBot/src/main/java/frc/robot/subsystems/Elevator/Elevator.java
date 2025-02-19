@@ -17,6 +17,9 @@ public class Elevator extends SubsystemBase {
   protected final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
   private final Alert leftDisconnected;
   private final Alert rightDisconnected;
+  private final LoggedTunableNumber kP;
+  private final LoggedTunableNumber kI;
+  private final LoggedTunableNumber kD;
 
   public Elevator(ElevatorIO elevatorIo) {
 
@@ -24,8 +27,13 @@ public class Elevator extends SubsystemBase {
 
     io = elevatorIo;
 
-    final LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP");
-    final LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD");
+    kP = new LoggedTunableNumber("Elevator/kP");
+    kI = new LoggedTunableNumber("Elevator/kI");
+    kD = new LoggedTunableNumber("Elevator/kD");
+
+    kP.initDefault(0);
+    kI.initDefault(0);
+    kD.initDefault(0);
 
     // will throw an error if a motor is disconnected
     leftDisconnected = new Alert("Left elevator motor is disconnected!", Alert.AlertType.kWarning);
@@ -105,5 +113,9 @@ public class Elevator extends SubsystemBase {
     // checks for disconnected motors
     leftDisconnected.set(!inputs.MotorLeftConnected);
     rightDisconnected.set(!inputs.MotorRightConnected);
+
+    if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
+      io.setPID(kP.get(), kI.get(), kD.get());
+    }
   }
 }

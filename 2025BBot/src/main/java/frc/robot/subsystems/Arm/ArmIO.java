@@ -36,4 +36,6 @@ public interface ArmIO {
   default void setElbowPower(double power) {}
 
   default void setWristPower(double power) {}
+
+  default void setPID(double kP, double kI, double kD) {}
 }

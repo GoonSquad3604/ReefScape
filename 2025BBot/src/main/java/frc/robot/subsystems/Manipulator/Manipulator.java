@@ -6,6 +6,7 @@ package frc.robot.subsystems.Manipulator;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Manipulator extends SubsystemBase {
@@ -15,10 +16,21 @@ public class Manipulator extends SubsystemBase {
   private final Alert openingDisconnected;
   private final Alert leftWheelDisconnected;
   private final Alert rightWheelDisconnected;
-
+  private final LoggedTunableNumber kP;
+  private final LoggedTunableNumber kI;
+  private final LoggedTunableNumber kD;
   /** Creates a new Manipulator. */
   public Manipulator(ManipulatorIO manipulatorIO) {
     io = manipulatorIO;
+
+    kP = new LoggedTunableNumber("Manipulator/kP");
+    kI = new LoggedTunableNumber("Manipulator/kI");
+    kD = new LoggedTunableNumber("Manipulator/kD");
+
+    kP.initDefault(0);
+    kI.initDefault(0);
+    kD.initDefault(0);
+
     leftWheelDisconnected =
         new Alert("Left wheel manipulator motor disconnected", Alert.AlertType.kWarning);
     rightWheelDisconnected =
@@ -91,5 +103,9 @@ public class Manipulator extends SubsystemBase {
     leftWheelDisconnected.set(!inputs.manipulatorLeftWheelMotorConnected);
     openingDisconnected.set(!inputs.manipulatorOpeningMotorConnected);
     rightWheelDisconnected.set(!inputs.manipulatorRightWheelMotorConnected);
+
+    // if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
+    //   io.setPID(kP.get(), kI.get(), kD.get());
+    // }
   }
 }

@@ -6,6 +6,7 @@ package frc.robot.subsystems.Arm;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
@@ -15,8 +16,21 @@ public class Arm extends SubsystemBase {
   private final Alert elbowDisconnected;
   private final Alert wristDisconnected;
 
+  private final LoggedTunableNumber kP;
+  private final LoggedTunableNumber kI;
+  private final LoggedTunableNumber kD;
+
   /** Creates a new Arm. */
   public Arm(ArmIO armIO) {
+
+    kP = new LoggedTunableNumber("Arm/kP");
+    kI = new LoggedTunableNumber("Arm/kI");
+    kD = new LoggedTunableNumber("Arm/kD");
+
+    kP.initDefault(0);
+    kI.initDefault(0);
+    kD.initDefault(0);
+
     io = armIO;
     elbowDisconnected = new Alert("ELBOW DISCONNECTED", Alert.AlertType.kWarning);
     wristDisconnected = new Alert("Wrist DISCONNECTED", Alert.AlertType.kWarning);
@@ -127,5 +141,9 @@ public class Arm extends SubsystemBase {
     Logger.processInputs("Arm", inputs);
     elbowDisconnected.set(!inputs.elbowMotorConnected);
     wristDisconnected.set(!inputs.wristMotorConnected);
+
+    if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
+      io.setPID(kP.get(), kI.get(), kD.get());
+    }
   }
 }

@@ -18,6 +18,8 @@ public class ElevatorIONeo implements ElevatorIO {
   // private DigitalInput limitSwitchLeft;
   // private DigitalInput limitSwitchRight;
 
+  private SparkFlexConfig config;
+
   public ElevatorIONeo() {
 
     // initializes motors
@@ -25,7 +27,7 @@ public class ElevatorIONeo implements ElevatorIO {
     rightMotor = new SparkFlex(ElevatorConstants.rightMotorID, MotorType.kBrushless);
 
     // left motor config
-    SparkFlexConfig config = new SparkFlexConfig();
+    config = new SparkFlexConfig();
 
     config.inverted(false).idleMode(IdleMode.kBrake);
     // config.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
@@ -140,5 +142,16 @@ public class ElevatorIONeo implements ElevatorIO {
 
     // sets the speed to a given power
     leftMotor.set(power);
+  }
+
+  @Override
+  public void setPID(double kP, double kI, double kD) {
+    config.closedLoop.pid(kP, kI, kD);
+    SparkUtil.tryUntilOk(
+        leftMotor,
+        5,
+        () ->
+            leftMotor.configure(
+                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 }

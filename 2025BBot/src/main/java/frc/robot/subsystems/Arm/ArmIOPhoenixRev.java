@@ -48,6 +48,8 @@ public class ArmIOPhoenixRev implements ArmIO {
   private final StatusSignal<Current> torqueCurrent;
   private final StatusSignal<Temperature> tempCelsius;
 
+  private TalonFXConfiguration elbowConfig;
+
   public ArmIOPhoenixRev() {
     wrist = new SparkFlex(ArmConstants.wristID, MotorType.kBrushless);
     elbow = new TalonFX(ArmConstants.elbowID);
@@ -74,7 +76,8 @@ public class ArmIOPhoenixRev implements ArmIO {
 
     wrist.configure(wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    TalonFXConfiguration elbowConfig = new TalonFXConfiguration();
+    elbowConfig = new TalonFXConfiguration();
+
     elbowConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     elbowConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     elbowConfig.CurrentLimits.SupplyCurrentLimit = ArmConstants.elbowCurrentLimit;
@@ -82,6 +85,7 @@ public class ArmIOPhoenixRev implements ArmIO {
     elbowConfig.Feedback.FeedbackRemoteSensorID = ArmConstants.elbowEncoderID;
     elbowConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     elbowConfig.Feedback.withRemoteCANcoder(elbowEncoder);
+    elbowConfig.Slot0 = new Slot0Configs().withKP(0).withKI(0).withKD(0);
 
     PhoenixUtil.tryUntilOk(5, () -> elbow.getConfigurator().apply(elbowConfig));
 
@@ -166,5 +170,13 @@ public class ArmIOPhoenixRev implements ArmIO {
   @Override
   public void setWristPower(double power) {
     wrist.set(power);
+  }
+
+  @Override
+  public void setPID(double kP, double kI, double kD) {
+    elbowConfig.Slot0.kP = kP;
+    elbowConfig.Slot0.kI = kI;
+    elbowConfig.Slot0.kD = kD;
+    PhoenixUtil.tryUntilOk(5, () -> elbow.getConfigurator().apply(elbowConfig));
   }
 }
