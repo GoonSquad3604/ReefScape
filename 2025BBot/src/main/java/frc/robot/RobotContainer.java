@@ -31,12 +31,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmIOPhoenixRev;
 import frc.robot.subsystems.Climber.Climber;
 import frc.robot.subsystems.Climber.ClimberIOPhoenix;
 import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorIONeo;
 import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.subsystems.Manipulator.ManipulatorIOPhoenixRev;
@@ -428,11 +430,11 @@ public class RobotContainer {
         .button(12)
         .onFalse(superStructure.intakeOff().andThen(superStructure.goHome()));
 
-    testController.a().onTrue(climber.moveClimberUp());
-    testController.a().onFalse(climber.stop());
+    // testController.a().onTrue(climber.moveClimberUp());
+    // testController.a().onFalse(climber.stop());
 
-    testController.start().onTrue(climber.moveClimberDown());
-    testController.start().onFalse(climber.stop());
+    // testController.y().onTrue(climber.moveClimberDown());
+    // testController.y().onFalse(climber.stop());
 
     testController.b().onTrue(superStructure.moveElbowUp());
     testController.b().onFalse(superStructure.elbowStop());
@@ -440,29 +442,41 @@ public class RobotContainer {
     testController.rightBumper().onTrue(superStructure.moveElbowDown());
     testController.rightBumper().onFalse(superStructure.elbowStop());
 
-    testController.povDown().onTrue(superStructure.moveWristUp());
-    testController.povDown().onFalse(superStructure.wristStop());
+    // testController.povDown().onTrue(superStructure.moveWristUp());
+    // testController.povDown().onFalse(superStructure.wristStop());
 
-    testController.povLeft().onTrue(superStructure.moveWristDown());
-    testController.povLeft().onFalse(superStructure.wristStop());
+    // testController.povLeft().onTrue(superStructure.moveWristDown());
+    // testController.povLeft().onFalse(superStructure.wristStop());
 
-    testController.y().onTrue(superStructure.moveElevatorUp());
-    testController.y().onFalse(superStructure.elevatorStop());
+    // testController.y().onTrue(superStructure.moveElevatorUp());
+    // testController.y().onFalse(superStructure.elevatorStop());
 
-    testController.leftBumper().onTrue(superStructure.moveElevatorDown());
-    testController.leftBumper().onFalse(superStructure.elevatorStop());
+    // testController.leftBumper().onTrue(superStructure.moveElevatorDown());
+    // testController.leftBumper().onFalse(superStructure.elevatorStop());
 
-    testController.x().onTrue(superStructure.manipulatorOpen());
-    testController.x().onFalse(superStructure.manipulatorStop());
+    // testController.x().onTrue(superStructure.manipulatorOpen());
+    // testController.x().onFalse(superStructure.manipulatorStop());
 
-    testController.rightTrigger().onTrue(superStructure.manipulatorClose());
-    testController.rightTrigger().onFalse(superStructure.manipulatorStop());
+    // testController.rightTrigger().onTrue(superStructure.manipulatorClose());
+    // testController.rightTrigger().onFalse(superStructure.manipulatorStop());
 
-    testController.leftTrigger().onTrue(superStructure.runWheels());
-    testController.leftTrigger().onFalse(superStructure.intakeOff());
+    // testController.leftTrigger().onTrue(superStructure.runWheels());
+    // testController.leftTrigger().onFalse(superStructure.intakeOff());
 
-    testController.povUp().onTrue(superStructure.runWheelsBackwards());
-    testController.povUp().onFalse(superStructure.intakeOff());
+    // testController.rightBumper().onTrue(superStructure.runWheelsBackwards());
+    // testController.rightBumper().onFalse(superStructure.intakeOff());
+
+    testController.a().onTrue(new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos));
+
+    testController.start().whileTrue(arm.elbowDynaForward());
+
+    testController.back().whileTrue(arm.elbowDynaBackward());
+
+    testController.leftStick().whileTrue(arm.elbowQuasiBackward());
+
+    testController.rightStick().whileTrue(arm.elbowQuasiForward());
+
+    testController.povDown().whileTrue(superStructure.goToL1Coral());
   }
 
   /**

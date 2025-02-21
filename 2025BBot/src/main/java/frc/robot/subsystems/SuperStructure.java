@@ -29,8 +29,8 @@ public class SuperStructure extends SubsystemBase {
     return run(
         () -> {
           arm.elbowCoralL1();
-          arm.wristCoralL1();
-          elevator.elevatorCL1();
+          // arm.wristCoralL1();
+          // elevator.elevatorCL1();
         });
   }
 
@@ -232,6 +232,20 @@ public class SuperStructure extends SubsystemBase {
     return run(
         () -> {
           elevator.stop();
+        });
+  }
+
+  public Command wristToPosition1() {
+    return run(
+        () -> {
+          arm.wristCoralL1();
+        });
+  }
+
+  public Command wristToPosition4() {
+    return run(
+        () -> {
+          arm.wristCoralL4();
         });
   }
 

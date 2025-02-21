@@ -20,6 +20,7 @@ public class Elevator extends SubsystemBase {
   private final LoggedTunableNumber kP;
   private final LoggedTunableNumber kI;
   private final LoggedTunableNumber kD;
+  boolean homed = false; // very false
 
   public Elevator(ElevatorIO elevatorIo) {
 
@@ -103,6 +104,11 @@ public class Elevator extends SubsystemBase {
     // TODO: add a homing function
   }
 
+  public void setPosWff(double pos, double arbFF) {
+
+    io.setPositionClosedLoopWithFF(pos, arbFF);
+  }
+
   @Override
   public void periodic() {
 
@@ -116,6 +122,17 @@ public class Elevator extends SubsystemBase {
 
     if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kI.get(), kD.get());
+    }
+
+    if (!homed && io.checkLimitSwitch()) {
+
+      io.setToZero();
+      io.setPower(0);
+      homed = true;
+
+    } else if (!io.checkLimitSwitch() && homed) {
+
+      homed = false;
     }
   }
 }

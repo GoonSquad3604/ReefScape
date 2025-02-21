@@ -4,8 +4,12 @@
 
 package frc.robot.subsystems.Manipulator;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -19,9 +23,22 @@ public class Manipulator extends SubsystemBase {
   private final LoggedTunableNumber kP;
   private final LoggedTunableNumber kI;
   private final LoggedTunableNumber kD;
+  private SysIdRoutine openSysID;
   /** Creates a new Manipulator. */
   public Manipulator(ManipulatorIO manipulatorIO) {
     io = manipulatorIO;
+
+    openSysID =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null, // Use default config
+                (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> this.openingVoltage(voltage.in(Volts)),
+                null, // No log consumer, since data is recorded by AdvantageKit
+                this));
 
     kP = new LoggedTunableNumber("Manipulator/kP");
     kI = new LoggedTunableNumber("Manipulator/kI");
@@ -88,11 +105,31 @@ public class Manipulator extends SubsystemBase {
   }
 
   public void runWheels() {
-    io.setWheelPower(.4);
+    io.setWheelPower(.21);
   }
 
   public void runWheelsBackwards() {
-    io.setWheelPower(-.4);
+    io.setWheelPower(-.21);
+  }
+
+  public void openingVoltage(double volts) {
+    io.setOpeningVoltage(volts);
+  }
+
+  public Command openQuasiForward() {
+    return openSysID.quasistatic(SysIdRoutine.Direction.kForward);
+  }
+
+  public Command openQuasiBackward() {
+    return openSysID.quasistatic(SysIdRoutine.Direction.kReverse);
+  }
+
+  public Command openDynaForward() {
+    return openSysID.dynamic(SysIdRoutine.Direction.kForward);
+  }
+
+  public Command openDynaBackward() {
+    return openSysID.dynamic(SysIdRoutine.Direction.kReverse);
   }
 
   @Override

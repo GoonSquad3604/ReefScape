@@ -7,8 +7,8 @@ public final class ManipulatorConstants {
   public static final int openingMotorID = 12;
   public static final int manipulatorSensorID = 3;
 
-  public static final double coralPos = 0.806;
-  public static final double algaePos = 0.883;
+  public static final double coralPos = 0.470;
+  public static final double algaePos = 0.529;
 
   public static final double wheelPower = .25; // Not true value
   public static final double intakeRPM = -2;
@@ -21,8 +21,8 @@ public final class ManipulatorConstants {
   public static final double wheelD = 0; // Not true value
   public static final double wheelFF = 0; // Not true value
 
-  public static final double openingMotorP = 7.1; // Not true value
+  public static final double openingMotorP = 6.1; // Not true value
   public static final double openingMotorI = 0; // Not true value
-  public static final double openingMotorD = 0; // Not true value
+  public static final double openingMotorD = 0.5; // Not true value
   public static final double openingMotorFF = 0; // Not true value
 }

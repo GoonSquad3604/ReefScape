@@ -27,6 +27,11 @@ public interface ElevatorIO {
     public double HeightInInches;
   }
 
+  default boolean checkLimitSwitch() {
+
+    return false;
+  }
+
   default void setPos(double position) {}
 
   default void setPosInches(double position) {}
@@ -40,6 +45,11 @@ public interface ElevatorIO {
     return pos;
   }
 
+  default double getPos() {
+
+    return 0;
+  }
+
   default double findPosFromInches(double posInInches) {
 
     return posInInches;
@@ -48,5 +58,7 @@ public interface ElevatorIO {
   default void setPower(double power) {}
 
   default void setPID(double kP, double kI, double kD) {}
+
+  default void setPositionClosedLoopWithFF(double position, double arbFF) {}
 }
 // mandatory end comment

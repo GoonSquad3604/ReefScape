@@ -16,6 +16,8 @@ public interface ArmIO {
     public boolean elbowMotorConnected = false;
     public double elbowMotorVoltage;
     public double elbowMotorCurrent;
+    public double elbowVelocity;
+    public double wristVelocity;
     public boolean wristMotorConnected = false;
     public double wristMotorVoltage;
     public double wristMotorCurrent;

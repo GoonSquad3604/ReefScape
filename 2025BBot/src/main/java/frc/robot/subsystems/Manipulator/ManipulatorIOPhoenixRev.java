@@ -115,6 +115,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
             ManipulatorConstants.openingMotorD)
         .maxOutput(0.6)
         .minOutput(-0.6);
+    openingConfig.closedLoopRampRate(0.5);
     SparkUtil.tryUntilOk(
         opening,
         5,
@@ -148,6 +149,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     inputs.manipulatorOpeningMotorVoltage = opening.getBusVoltage();
     inputs.manipulatorOpeningMotorCurrent = opening.getOutputCurrent();
     inputs.manipulatorOpeningMotorPos = openingAbsoluteEncoder.getPosition();
+    inputs.manipulatorOpeningMotorVelocity = openingAbsoluteEncoder.getVelocity();
   }
 
   @Override

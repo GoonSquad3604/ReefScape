@@ -1,5 +1,6 @@
 package frc.robot.subsystems.Elevator;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -30,7 +31,7 @@ public class ElevatorIONeo implements ElevatorIO {
     config = new SparkFlexConfig();
 
     config.inverted(false).idleMode(IdleMode.kBrake);
-    // config.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
+    config.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     config
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -40,7 +41,7 @@ public class ElevatorIONeo implements ElevatorIO {
     SparkFlexConfig rightConfig = new SparkFlexConfig();
 
     rightConfig.idleMode(IdleMode.kBrake).follow(ElevatorConstants.leftMotorID, true);
-    rightConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
+    // rightConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     rightConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -70,7 +71,7 @@ public class ElevatorIONeo implements ElevatorIO {
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
 
-    // inputs.limitSwitchLeft = leftMotor.getForwardLimitSwitch().isPressed();
+    inputs.limitSwitchLeft = leftMotor.getReverseLimitSwitch().isPressed();
     // inputs.limitSwitchRight = limitSwitchRight.get();
 
     double leftVoltage = leftMotor.getAppliedOutput() * leftMotor.getBusVoltage();
@@ -153,5 +154,25 @@ public class ElevatorIONeo implements ElevatorIO {
         () ->
             leftMotor.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+  }
+
+  @Override
+  public void setPositionClosedLoopWithFF(double position, double arbFF) {
+
+    leftMotor
+        .getClosedLoopController()
+        .setReference(position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
+  }
+
+  @Override
+  public boolean checkLimitSwitch() {
+
+    return leftMotor.getReverseLimitSwitch().isPressed();
+  }
+
+  @Override
+  public double getPos() {
+
+    return leftMotor.getEncoder().getPosition();
   }
 }

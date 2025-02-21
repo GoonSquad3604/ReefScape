@@ -25,6 +25,8 @@ public interface ManipulatorIO {
 
     public double manipulatorOpeningMotorPos;
 
+    public double manipulatorOpeningMotorVelocity;
+
     public double manipulatorRightRPM;
     public double manipulatorLeftRPM;
   }

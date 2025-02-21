@@ -12,17 +12,17 @@ public final class ArmConstants {
 
   public static final int wristID = 13;
 
-  public static final double elbowP = 0;
+  public static final double elbowP = 43.5;
   public static final double elbowI = 0;
-  public static final double elbowD = 0;
+  public static final double elbowD = Math.sin(Math.PI / 2);
   public static final double elbowFF = 0;
 
-  public static final double wristP = 0;
+  public static final double wristP = 1;
   public static final double wristI = 0;
   public static final double wristD = 0;
   public static final double wristFF = 0;
 
-  public static final double coralElbowL1 = 1;
+  public static final double coralElbowL1 = 0.25;
   public static final double coralElbowL2 = 2;
   public static final double coralElbowL3 = 3;
   public static final double coralElbowL4 = 4;
