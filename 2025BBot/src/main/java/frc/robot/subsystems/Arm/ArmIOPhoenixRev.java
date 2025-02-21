@@ -48,6 +48,8 @@ public class ArmIOPhoenixRev implements ArmIO {
   private final StatusSignal<Current> torqueCurrent;
   private final StatusSignal<Temperature> tempCelsius;
 
+  private TalonFXConfiguration elbowConfig;
+
   public ArmIOPhoenixRev() {
     wrist = new SparkFlex(ArmConstants.wristID, MotorType.kBrushless);
     elbow = new TalonFX(ArmConstants.elbowID);
@@ -55,9 +57,13 @@ public class ArmIOPhoenixRev implements ArmIO {
     elbowRequest = new PositionVoltage(0);
     torqueCurrentRequest = new TorqueCurrentFOC(0).withUpdateFreqHz(0);
     positionTorqueCurrentRequest = new PositionTorqueCurrentFOC(0).withUpdateFreqHz(0);
+
     elbowEncoder = new CANcoder(ArmConstants.elbowEncoderID);
 
     CANcoderConfiguration CANfig = new CANcoderConfiguration();
+
+    CANfig.MagnetSensor.MagnetOffset = 0.449;
+    elbowEncoder.getConfigurator().apply(CANfig);
 
     SparkFlexConfig wristConfig = new SparkFlexConfig();
     wristConfig.inverted(true).idleMode(IdleMode.kBrake);
@@ -74,14 +80,20 @@ public class ArmIOPhoenixRev implements ArmIO {
 
     wrist.configure(wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    TalonFXConfiguration elbowConfig = new TalonFXConfiguration();
+    elbowConfig = new TalonFXConfiguration();
+
     elbowConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     elbowConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     elbowConfig.CurrentLimits.SupplyCurrentLimit = ArmConstants.elbowCurrentLimit;
-    elbowConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    // elbowConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     elbowConfig.Feedback.FeedbackRemoteSensorID = ArmConstants.elbowEncoderID;
     elbowConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    elbowConfig.Feedback.withRemoteCANcoder(elbowEncoder);
+    // elbowConfig.Feedback.withRemoteCANcoder(elbowEncoder);
+    elbowConfig.Slot0 =
+        new Slot0Configs()
+            .withKP(ArmConstants.elbowP)
+            .withKI(ArmConstants.elbowI)
+            .withKD(ArmConstants.elbowD);
 
     PhoenixUtil.tryUntilOk(5, () -> elbow.getConfigurator().apply(elbowConfig));
 
@@ -106,7 +118,7 @@ public class ArmIOPhoenixRev implements ArmIO {
     PhoenixUtil.tryUntilOk(5, () -> elbow.optimizeBusUtilization(0, 1.0));
 
     var slot0Configs = new Slot0Configs();
-    slot0Configs.kS = 0.1;
+    slot0Configs.kS = 0.31;
     slot0Configs.kV = 0.12;
     slot0Configs.kP = ArmConstants.elbowP;
     slot0Configs.kI = ArmConstants.elbowI;
@@ -132,6 +144,10 @@ public class ArmIOPhoenixRev implements ArmIO {
     //         .isOK();
     inputs.elbowMotorVoltage = elbow.getMotorVoltage().getValueAsDouble();
     inputs.elbowMotorCurrent = elbow.getSupplyCurrent().getValueAsDouble();
+    inputs.elbowVelocity = elbowEncoder.getVelocity().getValueAsDouble();
+    inputs.elbowEncoderConnected = elbowEncoder.isConnected();
+    inputs.elbowPosition = elbowEncoder.getAbsolutePosition().getValueAsDouble();
+    inputs.wristVelocity = wristEncoder.getVelocity();
     inputs.wristMotorVoltage = wrist.getBusVoltage() * wrist.getAppliedOutput();
     inputs.wristMotorCurrent = wrist.getOutputCurrent();
     inputs.wristPosition = wristEncoder.getPosition();
@@ -149,8 +165,8 @@ public class ArmIOPhoenixRev implements ArmIO {
 
   @Override
   public void setElbowPosition(double position) {
-    // elbow.setControl(elbowRequest.withPosition(position));
-    elbow.setControl(positionTorqueCurrentRequest.withPosition(position));
+    elbow.setControl(elbowRequest.withPosition(position));
+    // elbow.setControl(positionTorqueCurrentRequest.withPosition(position));
   }
 
   @Override
@@ -166,5 +182,13 @@ public class ArmIOPhoenixRev implements ArmIO {
   @Override
   public void setWristPower(double power) {
     wrist.set(power);
+  }
+
+  @Override
+  public void setPID(double kP, double kI, double kD) {
+    elbowConfig.Slot0.kP = kP;
+    elbowConfig.Slot0.kI = kI;
+    elbowConfig.Slot0.kD = kD;
+    PhoenixUtil.tryUntilOk(5, () -> elbow.getConfigurator().apply(elbowConfig));
   }
 }

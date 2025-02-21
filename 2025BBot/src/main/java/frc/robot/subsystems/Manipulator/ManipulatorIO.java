@@ -25,6 +25,8 @@ public interface ManipulatorIO {
 
     public double manipulatorOpeningMotorPos;
 
+    public double manipulatorOpeningMotorVelocity;
+
     public double manipulatorRightRPM;
     public double manipulatorLeftRPM;
   }
@@ -46,4 +48,6 @@ public interface ManipulatorIO {
   default void setOpeningPower(double power) {}
 
   default void setCurrent(double current) {}
+
+  default void setPID(double kP, double kI, double kD) {}
 }

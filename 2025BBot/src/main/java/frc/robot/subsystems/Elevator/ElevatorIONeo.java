@@ -1,5 +1,6 @@
 package frc.robot.subsystems.Elevator;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -18,6 +19,8 @@ public class ElevatorIONeo implements ElevatorIO {
   // private DigitalInput limitSwitchLeft;
   // private DigitalInput limitSwitchRight;
 
+  private SparkFlexConfig config;
+
   public ElevatorIONeo() {
 
     // initializes motors
@@ -25,10 +28,10 @@ public class ElevatorIONeo implements ElevatorIO {
     rightMotor = new SparkFlex(ElevatorConstants.rightMotorID, MotorType.kBrushless);
 
     // left motor config
-    SparkFlexConfig config = new SparkFlexConfig();
+    config = new SparkFlexConfig();
 
     config.inverted(false).idleMode(IdleMode.kBrake);
-    // config.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
+    config.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     config
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -38,7 +41,7 @@ public class ElevatorIONeo implements ElevatorIO {
     SparkFlexConfig rightConfig = new SparkFlexConfig();
 
     rightConfig.idleMode(IdleMode.kBrake).follow(ElevatorConstants.leftMotorID, true);
-    rightConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
+    // rightConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     rightConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -68,7 +71,7 @@ public class ElevatorIONeo implements ElevatorIO {
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
 
-    // inputs.limitSwitchLeft = leftMotor.getForwardLimitSwitch().isPressed();
+    inputs.limitSwitchLeft = leftMotor.getReverseLimitSwitch().isPressed();
     // inputs.limitSwitchRight = limitSwitchRight.get();
 
     double leftVoltage = leftMotor.getAppliedOutput() * leftMotor.getBusVoltage();
@@ -140,5 +143,36 @@ public class ElevatorIONeo implements ElevatorIO {
 
     // sets the speed to a given power
     leftMotor.set(power);
+  }
+
+  @Override
+  public void setPID(double kP, double kI, double kD) {
+    config.closedLoop.pid(kP, kI, kD);
+    SparkUtil.tryUntilOk(
+        leftMotor,
+        5,
+        () ->
+            leftMotor.configure(
+                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+  }
+
+  @Override
+  public void setPositionClosedLoopWithFF(double position, double arbFF) {
+
+    leftMotor
+        .getClosedLoopController()
+        .setReference(position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
+  }
+
+  @Override
+  public boolean checkLimitSwitch() {
+
+    return leftMotor.getReverseLimitSwitch().isPressed();
+  }
+
+  @Override
+  public double getPos() {
+
+    return leftMotor.getEncoder().getPosition();
   }
 }

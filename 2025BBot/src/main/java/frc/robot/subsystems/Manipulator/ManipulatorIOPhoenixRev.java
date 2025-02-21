@@ -35,6 +35,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
   private SparkFlex opening;
   private DigitalInput manipulatorSensor;
   private AbsoluteEncoder openingAbsoluteEncoder;
+  private SparkFlexConfig openingConfig;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVoltage;
   private final StatusSignal<Current> supplyCurrent;
@@ -86,7 +87,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     slot0Configs.kI = ManipulatorConstants.wheelI; // no output for integrated error
     slot0Configs.kD = ManipulatorConstants.wheelD; // no output for error derivative
 
-    // leftWheel.getConfigurator().apply(slot0Configs);
+    leftWheel.getConfigurator().apply(slot0Configs);
 
     velocity = leftWheel.getVelocity();
     appliedVoltage = leftWheel.getMotorVoltage();
@@ -100,9 +101,10 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
                 50.0, velocity, appliedVoltage, supplyCurrent, torqueCurrent));
 
     PhoenixUtil.tryUntilOk(5, () -> leftWheel.getConfigurator().apply(config, 0.25));
+    PhoenixUtil.tryUntilOk(5, () -> rightWheel.getConfigurator().apply(config, 0.25));
 
-    SparkFlexConfig openingConfig = new SparkFlexConfig();
-    openingConfig.inverted(true).idleMode(IdleMode.kBrake);
+    openingConfig = new SparkFlexConfig();
+    openingConfig.inverted(false).idleMode(IdleMode.kBrake);
     openingConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     openingConfig
         .closedLoop
@@ -110,7 +112,10 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
         .pid(
             ManipulatorConstants.openingMotorP,
             ManipulatorConstants.openingMotorI,
-            ManipulatorConstants.openingMotorD);
+            ManipulatorConstants.openingMotorD)
+        .maxOutput(0.6)
+        .minOutput(-0.6);
+    openingConfig.closedLoopRampRate(0.5);
     SparkUtil.tryUntilOk(
         opening,
         5,
@@ -144,6 +149,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     inputs.manipulatorOpeningMotorVoltage = opening.getBusVoltage();
     inputs.manipulatorOpeningMotorCurrent = opening.getOutputCurrent();
     inputs.manipulatorOpeningMotorPos = openingAbsoluteEncoder.getPosition();
+    inputs.manipulatorOpeningMotorVelocity = openingAbsoluteEncoder.getVelocity();
   }
 
   @Override
@@ -187,5 +193,16 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
 
   public void setWheelPower(double power) {
     leftWheel.set(power);
+  }
+
+  @Override
+  public void setPID(double kP, double kI, double kD) {
+    openingConfig.closedLoop.pid(kP, kI, kD);
+    SparkUtil.tryUntilOk(
+        opening,
+        5,
+        () ->
+            opening.configure(
+                openingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 }

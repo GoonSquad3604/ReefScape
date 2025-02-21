@@ -18,6 +18,8 @@ public class ClimberIOPhoenix implements ClimberIO {
   private final PositionVoltage climberPositionrequest;
   private final PositionTorqueCurrentFOC positionTorqueCurrentRequest;
 
+  private Slot0Configs slot0Configs;
+
   public ClimberIOPhoenix() {
 
     // declare the motor and encoder
@@ -48,7 +50,7 @@ public class ClimberIOPhoenix implements ClimberIO {
     PhoenixUtil.tryUntilOk(5, () -> climberMotor.getConfigurator().apply(config));
 
     // configure PID, apply slot 0 gains
-    var slot0Configs = new Slot0Configs();
+    slot0Configs = new Slot0Configs();
     slot0Configs.kP = ClimberConstants.p;
     slot0Configs.kI = ClimberConstants.i;
     slot0Configs.kD = ClimberConstants.d;
@@ -83,5 +85,14 @@ public class ClimberIOPhoenix implements ClimberIO {
 
   public void setPower(double power) {
     climberMotor.set(power);
+  }
+
+  @Override
+  public void setPID(double kP, double kI, double kD) {
+    slot0Configs.kP = kP;
+    slot0Configs.kI = kI;
+    slot0Configs.kD = kD;
+
+    climberMotor.getConfigurator().apply(slot0Configs);
   }
 }

@@ -7,6 +7,7 @@ package frc.robot.subsystems.Climber;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
@@ -15,10 +16,22 @@ public class Climber extends SubsystemBase {
   protected final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
   private final Alert disconnected;
 
+  private final LoggedTunableNumber kP;
+  private final LoggedTunableNumber kI;
+  private final LoggedTunableNumber kD;
+
   /** Creates a new Climber. */
   public Climber(ClimberIO io) {
 
     this.io = io;
+
+    kP = new LoggedTunableNumber("Climber/kP");
+    kI = new LoggedTunableNumber("Climber/kI");
+    kD = new LoggedTunableNumber("Climber/kD");
+
+    kP.initDefault(0);
+    kI.initDefault(0);
+    kD.initDefault(0);
 
     disconnected = new Alert("Climber motor disconnected!", Alert.AlertType.kWarning);
   }
@@ -56,5 +69,9 @@ public class Climber extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Climber", inputs);
     disconnected.set(!inputs.climberMotorConnected);
+
+    if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
+      io.setPID(kP.get(), kI.get(), kD.get());
+    }
   }
 }

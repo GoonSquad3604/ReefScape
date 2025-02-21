@@ -20,4 +20,6 @@ public interface ClimberIO {
   default void setPosition(double position) {}
 
   default void setPower(double power) {}
+
+  default void setPID(double kP, double kI, double kD) {}
 }
