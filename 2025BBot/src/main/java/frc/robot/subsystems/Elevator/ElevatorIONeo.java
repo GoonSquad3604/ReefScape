@@ -30,12 +30,15 @@ public class ElevatorIONeo implements ElevatorIO {
     // left motor config
     config = new SparkFlexConfig();
 
-    config.inverted(false).idleMode(IdleMode.kBrake);
-    config.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
+    config.inverted(true).idleMode(IdleMode.kBrake);
+    config.encoder.positionConversionFactor(1).velocityConversionFactor(1);
     config
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(ElevatorConstants.elevatorP, ElevatorConstants.elevatorI, ElevatorConstants.elevatorD);
+        .pid(ElevatorConstants.elevatorP, ElevatorConstants.elevatorI, ElevatorConstants.elevatorD)
+        .maxOutput(0.7501)
+        .minOutput(-0.7499);
+    // config.closedLoopRampRate(1 - 0 + 0);
 
     // right motor config
     SparkFlexConfig rightConfig = new SparkFlexConfig();
@@ -82,9 +85,10 @@ public class ElevatorIONeo implements ElevatorIO {
 
     inputs.MotorLeftCurrent = leftMotor.getOutputCurrent();
     inputs.MotorRightCurrent = leftMotor.getOutputCurrent();
+    inputs.MotorLeftVelocity = leftMotor.getEncoder().getVelocity();
 
-    inputs.MotorLeftPos = leftMotor.getAbsoluteEncoder().getPosition();
-    inputs.MotorRightPos = rightMotor.getAbsoluteEncoder().getPosition();
+    inputs.MotorLeftPos = leftMotor.getEncoder().getPosition();
+    inputs.MotorRightPos = rightMotor.getEncoder().getPosition();
     inputs.HeightInInches =
         ElevatorConstants.homeOffset
             + leftMotor.getEncoder().getPosition()

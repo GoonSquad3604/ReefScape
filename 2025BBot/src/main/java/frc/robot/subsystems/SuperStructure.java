@@ -39,7 +39,7 @@ public class SuperStructure extends SubsystemBase {
         () -> {
           arm.elbowCoralL2();
           arm.wristCoralL2();
-          // elevator.elevatorCL2();
+          stateController.setL2();
         });
   }
 
@@ -48,7 +48,7 @@ public class SuperStructure extends SubsystemBase {
         () -> {
           arm.elbowCoralL3();
           arm.wristCoralL3();
-          elevator.elevatorCL3();
+          stateController.setL3();
         });
   }
 
@@ -108,7 +108,7 @@ public class SuperStructure extends SubsystemBase {
     return run(
         () -> {
           arm.home();
-          elevator.home();
+          // elevator.home();
         });
   }
 

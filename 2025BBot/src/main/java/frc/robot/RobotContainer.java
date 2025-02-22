@@ -31,10 +31,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmIOPhoenixRev;
 import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorIONeo;
 import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.subsystems.Manipulator.ManipulatorIOPhoenixRev;
@@ -380,19 +382,26 @@ public class RobotContainer {
     //     .povUp()
     //     .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(drive.getClosestReefPanel())));
 
-    operatorButtonBox.button(1).onTrue(stateController.setCoralMode(manipulator));
-    // operatorButtonBox.button(1).onFalse(superStructure.manipulatorStop());
+    // operatorButtonBox.button(1).onTrue(stateController.setCoralMode(manipulator));
+    // // operatorButtonBox.button(1).onFalse(superStructure.manipulatorStop());
 
-    operatorButtonBox.button(2).onTrue(stateController.setAlgaeMode(manipulator));
+    // operatorButtonBox.button(2).onTrue(stateController.setAlgaeMode(manipulator));
     // operatorButtonBox.button(2).onFalse(superStructure.manipulatorStop());
     // goes to L4 positions
     operatorButtonBox.button(3).and(coralMode).onTrue(superStructure.goToL4Coral());
     operatorButtonBox.button(3).and(algaeMode).onTrue(superStructure.goToBarge());
     // goes to L3 positions
-    operatorButtonBox.button(4).and(coralMode).onTrue(superStructure.goToL3Coral());
-    operatorButtonBox.button(4).and(algaeMode).onTrue(superStructure.goToL3Algae());
-    // goes to L2 positions
-    operatorButtonBox.button(5).onTrue(superStructure.goToL2Coral());
+    operatorButtonBox
+        .button(4)
+        .onTrue(
+            new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
+                .alongWith(superStructure.goToL3Coral()));
+    // goes to L2 position
+    operatorButtonBox
+        .button(5)
+        .onTrue(
+            new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)
+                .alongWith(superStructure.goToL2Coral()));
     // operatorButtonBox.button(5).and(algaeMode).onTrue(superStructure.goToL2Algae());
     // goes to L1 positions
     operatorButtonBox.button(6).and(coralMode).onTrue(superStructure.goToL1Coral());
@@ -427,17 +436,17 @@ public class RobotContainer {
     // testController.y().onTrue(climber.moveClimberDown());
     // testController.y().onFalse(climber.stop());
 
-    testController.b().onTrue(superStructure.moveElbowUp());
-    testController.b().onFalse(superStructure.elbowStop());
+    testController.b().onTrue(arm.elbowUp());
+    testController.b().onFalse(arm.stopElbow());
 
-    testController.rightBumper().onTrue(superStructure.moveElbowDown());
-    testController.rightBumper().onFalse(superStructure.elbowStop());
+    testController.rightBumper().onTrue(arm.elbowDown());
+    testController.rightBumper().onFalse(arm.stopElbow());
 
-    // testController.povDown().onTrue(superStructure.moveWristUp());
-    // testController.povDown().onFalse(superStructure.wristStop());
+    testController.povDown().onTrue(arm.wristUp());
+    testController.povDown().onFalse(arm.stopWrist());
 
-    // testController.povLeft().onTrue(superStructure.moveWristDown());
-    // testController.povLeft().onFalse(superStructure.wristStop());
+    testController.povLeft().onTrue(arm.wristDown());
+    testController.povLeft().onFalse(arm.stopWrist());
 
     // testController.y().onTrue(superStructure.moveElevatorUp());
     // testController.y().onFalse(superStructure.elevatorStop());
@@ -445,17 +454,35 @@ public class RobotContainer {
     // testController.leftBumper().onTrue(superStructure.moveElevatorDown());
     // testController.leftBumper().onFalse(superStructure.elevatorStop());
 
-    testController.leftTrigger().onTrue(superStructure.manipulatorOpen());
-    testController.leftTrigger().onFalse(superStructure.manipulatorStop());
+    // testController.leftTrigger().onTrue(superStructure.manipulatorOpen());
+    // testController.leftTrigger().onFalse(superStructure.manipulatorStop());
 
-    testController.rightTrigger().onTrue(superStructure.manipulatorClose());
-    testController.rightTrigger().onFalse(superStructure.manipulatorStop());
+    // testController.rightTrigger().onTrue(superStructure.manipulatorClose());
+    // testController.rightTrigger().onFalse(superStructure.manipulatorStop());
 
-    testController.x().onTrue(superStructure.setWheelCurrent());
-    testController.x().onFalse(superStructure.intakeOff());
+    // testController.x().onTrue(superStructure.setWheelCurrent());
+    // testController.x().onFalse(superStructure.intakeOff());
 
-    testController.leftBumper().onTrue(superStructure.runWheels());
-    testController.leftBumper().onFalse(superStructure.intakeOff());
+    // testController.leftBumper().onTrue(superStructure.runWheels());
+    // testController.leftBumper().onFalse(superStructure.intakeOff());
+
+    // testController.leftTrigger().onTrue(superStructure.moveElevatorUp());
+    // testController.leftTrigger().onFalse(superStructure.elevatorStop());
+
+    // testController.rightTrigger().onTrue(superStructure.moveElevatorDown());
+    // testController.rightTrigger().onFalse(superStructure.elevatorStop());
+
+    // testController.b().onTrue(elevator.elevatorQuasiUp());
+    // testController.b().onFalse(superStructure.elevatorStop());
+
+    // testController.a().onTrue(elevator.elevatorQuasiDown());
+    // testController.a().onFalse(superStructure.elevatorStop());
+
+    // testController.y().onTrue(elevator.elevatorDynaUp());
+    // testController.y().onFalse(superStructure.elevatorStop());
+
+    // testController.x().onTrue(elevator.elevatorDynaDown());
+    // testController.x().onFalse(superStructure.elevatorStop());
 
     // testController.rightBumper().onTrue(superStructure.runWheelsBackwards());
     // testController.rightBumper().onFalse(superStructure.intakeOff());
@@ -474,11 +501,23 @@ public class RobotContainer {
 
     testController.rightStick().whileTrue(superStructure.goToL2Algae());
 
-    testController.povRight().whileTrue(superStructure.moveWristUp());
-    testController.povRight().onFalse(superStructure.wristStop());
+    // testController.povRight().whileTrue(superStructure.moveWristUp());
+    // testController.povRight().onFalse(superStructure.wristStop());
 
-    testController.a().whileTrue(superStructure.moveWristDown());
-    testController.a().onFalse(superStructure.wristStop());
+    // testController.a().whileTrue(superStructure.moveWristDown());
+    // testController.a().onFalse(superStructure.wristStop());
+
+    operatorButtonBox.button(9).onTrue(new ElevatorToSetpoint(elevator, 6 - 3, false));
+    operatorButtonBox.button(1).onTrue(new ElevatorToSetpoint(elevator, 12, false));
+    operatorButtonBox.button(2).onTrue(new ElevatorToSetpoint(elevator, 30 - (-0.00), false));
+
+    // i love patrick mahomes
+    operatorButtonBox
+        .button(7)
+        .onTrue(
+            new ElevatorToSetpoint(elevator, 3, true)
+                .until(() -> !elevator.mahoming)
+                .alongWith(superStructure.goHome()));
   }
 
   /**

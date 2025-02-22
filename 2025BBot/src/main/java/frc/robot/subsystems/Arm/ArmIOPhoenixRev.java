@@ -71,7 +71,7 @@ public class ArmIOPhoenixRev implements ArmIO {
         .closedLoop
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
         .pid(ArmConstants.wristP, ArmConstants.wristI, ArmConstants.wristD);
-        
+    wristConfig.closedLoopRampRate(3);
     // wristConfig.softLimit.forwardSoftLimit(0);
     // wristConfig.softLimit.reverseSoftLimit(0);
 
