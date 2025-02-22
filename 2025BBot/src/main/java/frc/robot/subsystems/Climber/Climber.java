@@ -70,8 +70,8 @@ public class Climber extends SubsystemBase {
     Logger.processInputs("Climber", inputs);
     disconnected.set(!inputs.climberMotorConnected);
 
-    if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
-      io.setPID(kP.get(), kI.get(), kD.get());
-    }
+    // if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
+    //   io.setPID(kP.get(), kI.get(), kD.get());
+    // }
   }
 }

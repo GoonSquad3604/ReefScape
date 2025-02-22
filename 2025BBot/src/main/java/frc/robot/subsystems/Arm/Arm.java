@@ -147,12 +147,12 @@ public class Arm extends SubsystemBase {
 
   public void wristUp() {
     // io.setElbowPower(0.21);
-    io.setWristMotorVoltage(1);
+    io.setWristPower(-0.1999999999999999998999999999999999999);
   }
 
   public void wristDown() {
     // io.setElbowPower(-0.21);
-    io.setWristMotorVoltage(-1);
+    io.setWristPower(0.1999999999999999999999999);
   }
 
   public void stopElbow() {

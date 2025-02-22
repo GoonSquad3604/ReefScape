@@ -105,11 +105,11 @@ public class Manipulator extends SubsystemBase {
   }
 
   public void runWheels() {
-    io.setWheelPower(.21);
+    io.setWheelPower(.1);
   }
 
   public void runWheelsBackwards() {
-    io.setWheelPower(-.21);
+    io.setWheelPower(-1.0 / 2);
   }
 
   public void openingVoltage(double volts) {
@@ -130,6 +130,10 @@ public class Manipulator extends SubsystemBase {
 
   public Command openDynaBackward() {
     return openSysID.dynamic(SysIdRoutine.Direction.kReverse);
+  }
+
+  public void wheelCurrent() {
+    io.setCurrent(5);
   }
 
   @Override

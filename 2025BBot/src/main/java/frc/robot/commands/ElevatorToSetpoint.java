@@ -26,10 +26,13 @@ public class ElevatorToSetpoint extends Command {
 
   private ElevatorFeedforward feedforward;
 
-  private final TrapezoidProfile profile =
-      new TrapezoidProfile(new TrapezoidProfile.Constraints(1, 0.3));
+  private TrapezoidProfile profile;
   private TrapezoidProfile.State goal = new TrapezoidProfile.State();
   private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
+  // code
+  // code
+  // more code
+  // wow even more code
 
   public ElevatorToSetpoint(Elevator elevator, double userGoal) {
 
@@ -43,9 +46,9 @@ public class ElevatorToSetpoint extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(1, 0.3));
     goal = new TrapezoidProfile.State(userGoal, 0);
-    setpoint = new TrapezoidProfile.State();
+    setpoint = new TrapezoidProfile.State(elevator.getPos(), 0);
   }
 
   @Override

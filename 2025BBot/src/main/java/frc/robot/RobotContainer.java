@@ -31,14 +31,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmIOPhoenixRev;
-import frc.robot.subsystems.Climber.Climber;
-import frc.robot.subsystems.Climber.ClimberIOPhoenix;
 import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorIONeo;
 import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.subsystems.Manipulator.ManipulatorIOPhoenixRev;
@@ -67,7 +63,7 @@ public class RobotContainer {
   private final SuperStructure superStructure;
   private final Arm arm;
   private final Manipulator manipulator;
-  private final Climber climber;
+  // private final Climber climber;
   private final Elevator elevator;
 
   // Controller
@@ -109,7 +105,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        climber = new Climber(new ClimberIOPhoenix());
+        // climber = new Climber(new ClimberIOPhoenix());
         break;
 
       case SIM:
@@ -131,7 +127,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        climber = new Climber(new ClimberIOPhoenix());
+        // climber = new Climber(new ClimberIOPhoenix());
         break;
 
       default:
@@ -152,7 +148,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        climber = new Climber(new ClimberIOPhoenix());
+        // climber = new Climber(new ClimberIOPhoenix());
         break;
     }
     stateController = new StateController();
@@ -396,34 +392,29 @@ public class RobotContainer {
     operatorButtonBox.button(4).and(coralMode).onTrue(superStructure.goToL3Coral());
     operatorButtonBox.button(4).and(algaeMode).onTrue(superStructure.goToL3Algae());
     // goes to L2 positions
-    operatorButtonBox.button(5).and(coralMode).onTrue(superStructure.goToL2Coral());
-    operatorButtonBox.button(5).and(algaeMode).onTrue(superStructure.goToL2Algae());
+    operatorButtonBox.button(5).onTrue(superStructure.goToL2Coral());
+    // operatorButtonBox.button(5).and(algaeMode).onTrue(superStructure.goToL2Algae());
     // goes to L1 positions
     operatorButtonBox.button(6).and(coralMode).onTrue(superStructure.goToL1Coral());
     operatorButtonBox.button(6).and(algaeMode).onTrue(superStructure.goToProcessor());
     // goes home
 
     // Deploy Climber
-    operatorButtonBox.button(8).onTrue(climber.setClimberDown());
-    // Climbs
-    operatorButtonBox.button(9).onTrue(climber.setClimberUp());
+    // operatorButtonBox.button(8).onTrue(climber.setClimberDown());
+    // // Climbs
+    // operatorButtonBox.button(9).onTrue(climber.setClimberUp());
     // Intake
     operatorButtonBox
         .button(10)
-        .whileTrue(
-            superStructure
-                .goToSource()
-                .andThen(
-                    superStructure
-                        .intake()
-                        .until(() -> manipulator.hasGamePiece())
-                        .andThen(superStructure.goHome())));
+        .whileTrue(superStructure.goToSource().until(() -> manipulator.hasGamePiece()));
+    operatorButtonBox.button(10).onFalse(superStructure.intakeOff());
+    // .andThen(superStructure.goHome())));
     // operatorButtonBox
     //     .button(10)
     //     .onFalse(new ParallelCommandGroup(superStructure.intakeOff(), superStructure.goHome()));
     // Vomit
     operatorButtonBox.button(11).whileTrue(superStructure.fire());
-    operatorButtonBox.button(11).whileTrue(superStructure.intakeOff());
+    operatorButtonBox.button(11).onFalse(superStructure.intakeOff());
     // Fire
     operatorButtonBox.button(12).whileTrue(superStructure.fire());
     operatorButtonBox
@@ -454,29 +445,40 @@ public class RobotContainer {
     // testController.leftBumper().onTrue(superStructure.moveElevatorDown());
     // testController.leftBumper().onFalse(superStructure.elevatorStop());
 
-    // testController.x().onTrue(superStructure.manipulatorOpen());
-    // testController.x().onFalse(superStructure.manipulatorStop());
+    testController.leftTrigger().onTrue(superStructure.manipulatorOpen());
+    testController.leftTrigger().onFalse(superStructure.manipulatorStop());
 
-    // testController.rightTrigger().onTrue(superStructure.manipulatorClose());
-    // testController.rightTrigger().onFalse(superStructure.manipulatorStop());
+    testController.rightTrigger().onTrue(superStructure.manipulatorClose());
+    testController.rightTrigger().onFalse(superStructure.manipulatorStop());
 
-    // testController.leftTrigger().onTrue(superStructure.runWheels());
-    // testController.leftTrigger().onFalse(superStructure.intakeOff());
+    testController.x().onTrue(superStructure.setWheelCurrent());
+    testController.x().onFalse(superStructure.intakeOff());
+
+    testController.leftBumper().onTrue(superStructure.runWheels());
+    testController.leftBumper().onFalse(superStructure.intakeOff());
 
     // testController.rightBumper().onTrue(superStructure.runWheelsBackwards());
     // testController.rightBumper().onFalse(superStructure.intakeOff());
 
-    testController.a().onTrue(new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos));
+    // testController.a().onTrue(new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos));
 
-    testController.start().whileTrue(arm.elbowDynaForward());
+    // testController.start().whileTrue(arm.elbowDynaForward());
 
-    testController.back().whileTrue(arm.elbowDynaBackward());
+    // testController.back().whileTrue(arm.elbowDynaBackward());
 
-    testController.leftStick().whileTrue(arm.elbowQuasiBackward());
+    // testController.leftStick().whileTrue(arm.elbowQuasiBackward());
 
-    testController.rightStick().whileTrue(arm.elbowQuasiForward());
+    // testController.rightStick().whileTrue(arm.elbowQuasiForward());
 
-    testController.povDown().whileTrue(superStructure.goToL1Coral());
+    // testController.povDown().whileTrue(superStructure.goToL1Coral());
+
+    testController.rightStick().whileTrue(superStructure.goToL2Algae());
+
+    testController.povRight().whileTrue(superStructure.moveWristUp());
+    testController.povRight().onFalse(superStructure.wristStop());
+
+    testController.a().whileTrue(superStructure.moveWristDown());
+    testController.a().onFalse(superStructure.wristStop());
   }
 
   /**
