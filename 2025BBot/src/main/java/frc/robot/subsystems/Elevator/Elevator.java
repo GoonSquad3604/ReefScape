@@ -12,7 +12,7 @@ import org.littletonrobotics.junction.Logger;
 public class Elevator extends SubsystemBase {
 
   /** Creates a new Elevator. */
-  private ElevatorIO io;
+  public ElevatorIO io;
 
   protected final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
   private final Alert leftDisconnected;
@@ -107,6 +107,11 @@ public class Elevator extends SubsystemBase {
   public void setPosWff(double pos, double arbFF) {
 
     io.setPositionClosedLoopWithFF(pos, arbFF);
+  }
+
+  public double getPos() {
+
+    return io.getPos();
   }
 
   @Override

@@ -17,9 +17,6 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -60,11 +57,11 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
 
     leftWheel = new TalonFXS(ManipulatorConstants.leftWheelMotorID);
     rightWheel = new TalonFXS(ManipulatorConstants.rightWheelMotorID);
-    opening = new SparkFlex(ManipulatorConstants.openingMotorID, MotorType.kBrushless);
+    // opening = new SparkFlex(ManipulatorConstants.openingMotorID, MotorType.kBrushless);
     manipulatorSensor = new DigitalInput(ManipulatorConstants.manipulatorSensorID);
     velocityTorqueControlRequest = new VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
     torqueControlRequest = new TorqueCurrentFOC(0).withUpdateFreqHz(0);
-    openingAbsoluteEncoder = opening.getAbsoluteEncoder();
+    // openingAbsoluteEncoder = opening.getAbsoluteEncoder();
 
     rightWheel.setControl(new Follower(leftWheel.getDeviceID(), true));
 
@@ -103,25 +100,24 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     PhoenixUtil.tryUntilOk(5, () -> leftWheel.getConfigurator().apply(config, 0.25));
     PhoenixUtil.tryUntilOk(5, () -> rightWheel.getConfigurator().apply(config, 0.25));
 
-    openingConfig = new SparkFlexConfig();
-    openingConfig.inverted(false).idleMode(IdleMode.kBrake);
-    openingConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
-    openingConfig
-        .closedLoop
-        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-        .pid(
-            ManipulatorConstants.openingMotorP,
-            ManipulatorConstants.openingMotorI,
-            ManipulatorConstants.openingMotorD)
-        .maxOutput(0.6)
-        .minOutput(-0.6);
-    openingConfig.closedLoopRampRate(0.5);
-    SparkUtil.tryUntilOk(
-        opening,
-        5,
-        () ->
-            opening.configure(
-                openingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    // openingConfig = new SparkFlexConfig();
+    // openingConfig.inverted(true).idleMode(IdleMode.kBrake);
+    // openingConfig
+    //     .closedLoop
+    //     .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+    //     .pid(
+    //         ManipulatorConstants.openingMotorP,
+    //         ManipulatorConstants.openingMotorI,
+    //         ManipulatorConstants.openingMotorD)
+    //     .maxOutput(0.5)
+    //     .minOutput(-0.5);
+    // openingConfig.closedLoopRampRate(0.5);
+    // SparkUtil.tryUntilOk(
+    //     opening,
+    //     5,
+    //     () ->
+    //         opening.configure(
+    //             openingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
   @Override
@@ -146,10 +142,11 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     inputs.manipulatorRightWheelMotorVoltage = rightWheel.getMotorVoltage().getValueAsDouble();
     inputs.manipulatorRightWheelMotorCurrent = rightWheel.getSupplyCurrent().getValueAsDouble();
     inputs.manipulatorRightRPM = rightWheel.getVelocity().getValueAsDouble();
-    inputs.manipulatorOpeningMotorVoltage = opening.getBusVoltage();
-    inputs.manipulatorOpeningMotorCurrent = opening.getOutputCurrent();
-    inputs.manipulatorOpeningMotorPos = openingAbsoluteEncoder.getPosition();
-    inputs.manipulatorOpeningMotorVelocity = openingAbsoluteEncoder.getVelocity();
+    // inputs.manipulatorOpeningMotorVoltage = opening.getBusVoltage();
+    // inputs.manipulatorOpeningMotorCurrent = opening.getOutputCurrent();
+    // inputs.manipulatorOpeningMotorPos = openingAbsoluteEncoder.getPosition();
+    // inputs.manipulatorOpeningMotorVelocity = openingAbsoluteEncoder.getVelocity();
+    inputs.manipulatorSensor = !manipulatorSensor.get();
   }
 
   @Override

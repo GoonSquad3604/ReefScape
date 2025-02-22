@@ -26,7 +26,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.subsystems.Manipulator.ManipulatorConstants;
 import frc.robot.util.PhoenixUtil;
 
 public class ArmIOPhoenixRev implements ArmIO {
@@ -66,17 +65,15 @@ public class ArmIOPhoenixRev implements ArmIO {
     elbowEncoder.getConfigurator().apply(CANfig);
 
     SparkFlexConfig wristConfig = new SparkFlexConfig();
-    wristConfig.inverted(true).idleMode(IdleMode.kBrake);
-    wristConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
+    wristConfig.inverted(false).idleMode(IdleMode.kBrake);
+    // wristConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     wristConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-        .pid(
-            ManipulatorConstants.openingMotorP,
-            ManipulatorConstants.openingMotorI,
-            ManipulatorConstants.openingMotorD);
-    wristConfig.softLimit.forwardSoftLimit(0);
-    wristConfig.softLimit.reverseSoftLimit(0);
+        .pid(ArmConstants.wristP, ArmConstants.wristI, ArmConstants.wristD);
+        
+    // wristConfig.softLimit.forwardSoftLimit(0);
+    // wristConfig.softLimit.reverseSoftLimit(0);
 
     wrist.configure(wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -150,6 +147,7 @@ public class ArmIOPhoenixRev implements ArmIO {
     inputs.wristVelocity = wristEncoder.getVelocity();
     inputs.wristMotorVoltage = wrist.getBusVoltage() * wrist.getAppliedOutput();
     inputs.wristMotorCurrent = wrist.getOutputCurrent();
+
     inputs.wristPosition = wristEncoder.getPosition();
   }
 

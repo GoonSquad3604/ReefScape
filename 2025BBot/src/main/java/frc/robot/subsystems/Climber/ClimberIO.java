@@ -12,7 +12,10 @@ public interface ClimberIO {
     public boolean climberMotorConnected = false;
     public double climberMotorVoltage;
     public double climberMotorCurrent;
-    public double climberMotorPosition;
+
+    public boolean climberEncoderConnected = false;
+    public double climberEncoderPosition;
+    public double climberVelocity;
   }
 
   default void setVoltage(double voltage) {}

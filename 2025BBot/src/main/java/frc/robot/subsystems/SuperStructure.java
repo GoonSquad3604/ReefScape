@@ -39,7 +39,7 @@ public class SuperStructure extends SubsystemBase {
         () -> {
           arm.elbowCoralL2();
           arm.wristCoralL2();
-          elevator.elevatorCL2();
+          // elevator.elevatorCL2();
         });
   }
 
@@ -66,7 +66,7 @@ public class SuperStructure extends SubsystemBase {
         () -> {
           arm.elbowAlgaeL25();
           arm.wristAlgaeL25();
-          elevator.elevatorAL2();
+          // elevator.elevatorAL2();
         });
   }
 
@@ -80,11 +80,12 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command goToSource() {
-    return run(
-        () -> {
+    return run(() -> {
           arm.source();
           elevator.source();
-        });
+          manipulator.runWheels();
+        })
+        .andThen(intakeOff());
   }
 
   public Command goToProcessor() {
@@ -118,6 +119,13 @@ public class SuperStructure extends SubsystemBase {
         });
   }
 
+  public Command setWheelCurrent() {
+    return run(
+        () -> {
+          manipulator.wheelCurrent();
+        });
+  }
+
   public Command intakeOff() {
     return run(
         () -> {
@@ -128,11 +136,11 @@ public class SuperStructure extends SubsystemBase {
   public Command fire() {
     return run(
         () -> {
-          if (stateController.isCoralMode()) {
-            manipulator.runWheelsBackwards();
-          } else {
-            manipulator.fireAlgae();
-          }
+          // if (stateController.isCoralMode()) {
+          manipulator.runWheelsBackwards();
+          // } else {
+          //   manipulator.fireAlgae();
+          // }
         });
   }
 
