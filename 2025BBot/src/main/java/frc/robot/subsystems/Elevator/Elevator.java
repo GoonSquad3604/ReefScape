@@ -4,9 +4,16 @@
 
 package frc.robot.subsystems.Elevator;
 
+import static edu.wpi.first.units.Units.Volts;
+
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
@@ -20,13 +27,31 @@ public class Elevator extends SubsystemBase {
   private final LoggedTunableNumber kP;
   private final LoggedTunableNumber kI;
   private final LoggedTunableNumber kD;
-  boolean homed = false; // very false
+  private SysIdRoutine elevatorSysID;
+
+  @AutoLogOutput(key = "Elevator/atHome")
+  boolean atHome = false; // very false
+
+  @AutoLogOutput(key = "Elevator/mahoming")
+  public boolean mahoming = false; // falsish
 
   public Elevator(ElevatorIO elevatorIo) {
 
     // whee elevator go up yippee
 
     io = elevatorIo;
+
+    elevatorSysID =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                Volts.of(1).per(Units.Second),
+                Volts.of(2),
+                Time.ofBaseUnits(2.9999, Units.Second), // Use default config
+                (state) -> Logger.recordOutput("Elevator/SysIdTestState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> this.setVolts(voltage.in(Volts)),
+                null, // No log consumer, since data is recorded by AdvantageKit
+                this));
 
     kP = new LoggedTunableNumber("Elevator/kP");
     kI = new LoggedTunableNumber("Elevator/kI");
@@ -88,20 +113,15 @@ public class Elevator extends SubsystemBase {
   }
 
   public void moveUp() {
-    io.setPower(-0.2);
+    io.setPower(0.232);
   }
 
   public void moveDown() {
-    io.setPower(0.2);
+    io.setPower(-0.132);
   }
 
   public void stop() {
     io.setPower(0);
-  }
-
-  public void homingElv() {
-    io.setPos(ElevatorConstants.homePos);
-    // TODO: add a homing function
   }
 
   public void setPosWff(double pos, double arbFF) {
@@ -112,6 +132,30 @@ public class Elevator extends SubsystemBase {
   public double getPos() {
 
     return io.getPos();
+  }
+
+  public void setVolts(double volts) {
+    io.setVoltage(volts);
+  }
+
+  public Command elevatorQuasiDown() {
+    return elevatorSysID.quasistatic(SysIdRoutine.Direction.kReverse);
+  }
+
+  public Command elevatorQuasiUp() {
+    return elevatorSysID.quasistatic(SysIdRoutine.Direction.kForward);
+  }
+
+  public Command elevatorDynaDown() {
+    return elevatorSysID.dynamic(SysIdRoutine.Direction.kReverse);
+  }
+
+  public Command elevatorDynaUp() {
+    return elevatorSysID.dynamic(SysIdRoutine.Direction.kForward);
+  }
+
+  public Command setMahoming() {
+    return run(() -> mahoming = true);
   }
 
   @Override
@@ -125,19 +169,24 @@ public class Elevator extends SubsystemBase {
     leftDisconnected.set(!inputs.MotorLeftConnected);
     rightDisconnected.set(!inputs.MotorRightConnected);
 
-    if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
-      io.setPID(kP.get(), kI.get(), kD.get());
-    }
+    // if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
+    //   io.setPID(kP.get(), kI.get(), kD.get());
+    // }
 
-    if (!homed && io.checkLimitSwitch()) {
+    if (!atHome && io.checkLimitSwitch()) {
 
       io.setToZero();
       io.setPower(0);
-      homed = true;
+      atHome = true;
 
-    } else if (!io.checkLimitSwitch() && homed) {
+    } else if (!io.checkLimitSwitch() && atHome) {
 
-      homed = false;
+      atHome = false;
+    }
+    if (mahoming && (ElevatorConstants.mahomingThreshold > io.getPos())) {
+
+      stop();
+      mahoming = false;
     }
   }
 }

@@ -135,34 +135,34 @@ public class Arm extends SubsystemBase {
     io.setElbowPosition(ArmConstants.homeElbow);
   }
 
-  public void elbowUp() {
-    io.setElbowPower(0.21);
+  public Command elbowUp() {
+    return run(() -> io.setElbowPower(0.21));
     // io.setWristMotorVoltage(1);
   }
 
-  public void elbowDown() {
-    io.setElbowPower(-0.21);
+  public Command elbowDown() {
+    return run(() -> io.setElbowPower(-0.21));
     // io.setWristMotorVoltage(-1);
   }
 
-  public void wristUp() {
+  public Command wristUp() {
     // io.setElbowPower(0.21);
-    io.setWristPower(-0.1999999999999999998999999999999999999);
+    return run(() -> io.setWristPower(-0.1999999999999999998999999999999999999));
   }
 
-  public void wristDown() {
+  public Command wristDown() {
     // io.setElbowPower(-0.21);
-    io.setWristPower(0.1999999999999999999999999);
+    return run(() -> io.setWristPower(0.1999999999999999999999999));
   }
 
-  public void stopElbow() {
-    io.setElbowPower(0);
+  public Command stopElbow() {
+    return run(() -> io.setElbowPower(0));
     // io.setWristMotorVoltage(0);
   }
 
-  public void stopWrist() {
+  public Command stopWrist() {
     // io.setElbowPower(0);
-    io.setWristPower(0);
+    return run(() -> io.setWristPower(0));
   }
 
   public void elbowVoltage(double volts) {

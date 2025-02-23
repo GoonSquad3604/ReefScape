@@ -18,6 +18,7 @@ public interface ElevatorIO {
 
     public double MotorLeftVoltage;
     public double MotorRightVoltage;
+    public double MotorLeftVelocity;
 
     public double MotorLeftCurrent;
     public double MotorRightCurrent;
