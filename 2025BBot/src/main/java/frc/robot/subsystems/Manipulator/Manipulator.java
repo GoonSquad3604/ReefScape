@@ -112,6 +112,10 @@ public class Manipulator extends SubsystemBase {
     io.setWheelPower(-1.0 / 2);
   }
 
+  public void runWheels(double power) {
+    io.setWheelPower(power);
+  }
+
   public void openingVoltage(double volts) {
     io.setOpeningVoltage(volts);
   }

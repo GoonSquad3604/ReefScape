@@ -85,6 +85,8 @@ public class ArmIOPhoenixRev implements ArmIO {
     // elbowConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     elbowConfig.Feedback.FeedbackRemoteSensorID = ArmConstants.elbowEncoderID;
     elbowConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    elbowConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    elbowConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.5;
     // elbowConfig.Feedback.withRemoteCANcoder(elbowEncoder);
     elbowConfig.Slot0 =
         new Slot0Configs()

@@ -15,6 +15,7 @@ public class StateController extends SubsystemBase {
 
   public StateController() {
     setCoral();
+    setMahome();
   }
 
   public void setCoral() {
@@ -25,20 +26,24 @@ public class StateController extends SubsystemBase {
     m_Mode = RobotMode.ALGAE;
   }
 
-  public void setL1() {
-    m_Level = LevelState.L1;
+  public Command setL1() {
+    return runOnce(() -> m_Level = LevelState.L1);
   }
 
-  public void setL2() {
-    m_Level = LevelState.L2;
+  public Command setL2() {
+    return runOnce(() -> m_Level = LevelState.L2);
   }
 
-  public void setL3() {
-    m_Level = LevelState.L3;
+  public Command setL3() {
+    return runOnce(() -> m_Level = LevelState.L3);
   }
 
-  public void setL4() {
-    m_Level = LevelState.L1;
+  public Command setL4() {
+    return runOnce(() -> m_Level = LevelState.L4);
+  }
+
+  public Command setMahome() {
+    return runOnce(() -> m_Level = LevelState.MAHOME);
   }
 
   public boolean isL1() {
@@ -57,6 +62,10 @@ public class StateController extends SubsystemBase {
     return m_Level == LevelState.L4;
   }
 
+  public boolean isMahome() {
+    return m_Level == LevelState.MAHOME;
+  }
+
   public boolean isCoralMode() {
     return m_Mode == RobotMode.CORAL;
   }
@@ -71,6 +80,10 @@ public class StateController extends SubsystemBase {
 
   public RobotMode getMode() {
     return m_Mode;
+  }
+
+  public LevelState getLevel() {
+    return m_Level;
   }
 
   public Command setCoralMode(Manipulator manipulator) {
