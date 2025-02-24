@@ -25,4 +25,14 @@ public final class ManipulatorConstants {
   public static final double openingMotorI = 0.0001; // Not true value
   public static final double openingMotorD = 1.526; // Not true value
   public static final double openingMotorFF = 0; // Not true value
+
+  public static final double wheelL1Power = 0.21;
+  public static final double wheelL2Power = 0.21;
+  public static final double wheelL3Power = 0.21;
+  public static final double wheelL4Power = 0.12;
+
+  public static final double wheelL1RPM = 60;
+  public static final double wheelL2RPM = 60;
+  public static final double wheelL3RPM = 60;
+  public static final double wheelL4RPM = 59;
 }

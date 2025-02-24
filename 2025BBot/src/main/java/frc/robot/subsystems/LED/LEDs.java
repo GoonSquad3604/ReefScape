@@ -17,7 +17,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 /** Add your docs here. */
-public class LED extends SubsystemBase {
+public class LEDs extends SubsystemBase {
   private final AddressableLED leds;
   private final AddressableLEDBuffer buffer;
   private final int length = LEDConstants.STRIP_LENGTH;
@@ -33,7 +33,7 @@ public class LED extends SubsystemBase {
     SCALED_TARGET;
   }
 
-  public LED() {
+  public LEDs() {
     leds = new AddressableLED(LEDConstants.LED_ID);
     buffer = new AddressableLEDBuffer(LEDConstants.STRIP_LENGTH);
     leds.setLength(length);

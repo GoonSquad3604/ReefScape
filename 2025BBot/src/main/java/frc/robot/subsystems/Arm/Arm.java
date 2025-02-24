@@ -135,6 +135,15 @@ public class Arm extends SubsystemBase {
     io.setElbowPosition(ArmConstants.homeElbow);
   }
 
+  public void climb() {
+    io.setWristPosition(ArmConstants.wristClimb);
+    io.setElbowPosition(ArmConstants.elbowClimb);
+  }
+
+  public void layup() {
+    io.setWristPosition(ArmConstants.alleyOop);
+  }
+
   public Command elbowUp() {
     return run(() -> io.setElbowPower(0.21));
     // io.setWristMotorVoltage(1);

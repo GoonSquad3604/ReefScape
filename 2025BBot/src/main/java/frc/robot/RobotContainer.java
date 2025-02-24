@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -35,9 +36,12 @@ import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmIOPhoenixRev;
+import frc.robot.subsystems.Climber.Climber;
+import frc.robot.subsystems.Climber.ClimberIOPhoenix;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorIONeo;
+import frc.robot.subsystems.LED.LEDs;
 import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.subsystems.Manipulator.ManipulatorIOPhoenixRev;
 import frc.robot.subsystems.StateController;
@@ -65,8 +69,9 @@ public class RobotContainer {
   private final SuperStructure superStructure;
   private final Arm arm;
   private final Manipulator manipulator;
-  // private final Climber climber;
+  private final Climber climber;
   private final Elevator elevator;
+  private final LEDs lED;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -75,6 +80,9 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  // Commands
+  private Command goHome;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -107,7 +115,8 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        // climber = new Climber(new ClimberIOPhoenix());
+        climber = new Climber(new ClimberIOPhoenix());
+        lED = new LEDs();
         break;
 
       case SIM:
@@ -129,7 +138,8 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        // climber = new Climber(new ClimberIOPhoenix());
+        climber = new Climber(new ClimberIOPhoenix());
+        lED = new LEDs();
         break;
 
       default:
@@ -150,7 +160,8 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        // climber = new Climber(new ClimberIOPhoenix());
+        climber = new Climber(new ClimberIOPhoenix());
+        lED = new LEDs();
         break;
     }
     stateController = new StateController();
@@ -174,6 +185,12 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    // usable commands
+    goHome =
+        new ElevatorToSetpoint(elevator, 3, true)
+            .until(() -> !elevator.mahoming)
+            .alongWith(superStructure.goHome());
+
     // Named Commands
     NamedCommands.registerCommand(
         "intake", superStructure.goToSource().andThen(superStructure.intake()));
@@ -192,6 +209,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("goToSource", superStructure.goToSource());
     NamedCommands.registerCommand("goToProcessor", superStructure.goToProcessor());
     NamedCommands.registerCommand("goToBarge", superStructure.goToBarge());
+    NamedCommands.registerCommand("goHome", goHome);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -211,6 +229,11 @@ public class RobotContainer {
     Trigger algaeMode = new Trigger(() -> stateController.isAlgaeMode());
     Trigger hasGamePiece = new Trigger(() -> stateController.hasGamePiece(manipulator));
     Trigger hasNoGamePiece = new Trigger(() -> !stateController.hasGamePiece(manipulator));
+    Trigger L4 = new Trigger(() -> stateController.isL4());
+    Trigger L1 = new Trigger(() -> stateController.isL1());
+    Trigger L2 = new Trigger(() -> stateController.isL2());
+    Trigger LMahome = new Trigger(() -> stateController.isMahome());
+    Trigger L3 = new Trigger(() -> stateController.isL3());
 
     rumbleTime.onTrue(
         new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 1))
@@ -388,30 +411,41 @@ public class RobotContainer {
     // operatorButtonBox.button(2).onTrue(stateController.setAlgaeMode(manipulator));
     // operatorButtonBox.button(2).onFalse(superStructure.manipulatorStop());
     // goes to L4 positions
-    operatorButtonBox.button(3).and(coralMode).onTrue(superStructure.goToL4Coral());
-    operatorButtonBox.button(3).and(algaeMode).onTrue(superStructure.goToBarge());
+    operatorButtonBox
+        .button(3)
+        .and(coralMode)
+        .onTrue(superStructure.goToL4Coral().alongWith(stateController.setL4()));
+    // operatorButtonBox.button(3).and(algaeMode).onTrue(superStructure.goToBarge());
     // goes to L3 positions
     operatorButtonBox
         .button(4)
         .onTrue(
             new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
-                .alongWith(superStructure.goToL3Coral()));
+                .alongWith(superStructure.goToL3Coral().alongWith(stateController.setL2())));
     // goes to L2 position
     operatorButtonBox
         .button(5)
         .onTrue(
             new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)
-                .alongWith(superStructure.goToL2Coral()));
+                .alongWith(superStructure.goToL2Coral().alongWith(stateController.setL2())));
     // operatorButtonBox.button(5).and(algaeMode).onTrue(superStructure.goToL2Algae());
     // goes to L1 positions
-    operatorButtonBox.button(6).and(coralMode).onTrue(superStructure.goToL1Coral());
+    operatorButtonBox
+        .button(6)
+        .and(coralMode)
+        .onTrue(superStructure.goToL1Coral().alongWith(stateController.setL1()));
     operatorButtonBox.button(6).and(algaeMode).onTrue(superStructure.goToProcessor());
+
     // goes home
 
     // Deploy Climber
-    // operatorButtonBox.button(8).onTrue(climber.setClimberDown());
-    // // Climbs
-    // operatorButtonBox.button(9).onTrue(climber.setClimberUp());
+    operatorButtonBox
+        .button(8)
+        .onTrue(superStructure.armClimb().alongWith(climber.setClimberDown()));
+
+    // Climbs
+    operatorButtonBox.button(9).onTrue(climber.setClimberUp());
+
     // Intake
     operatorButtonBox
         .button(10)
@@ -425,16 +459,87 @@ public class RobotContainer {
     operatorButtonBox.button(11).whileTrue(superStructure.fire());
     operatorButtonBox.button(11).onFalse(superStructure.intakeOff());
     // Fire
-    operatorButtonBox.button(12).whileTrue(superStructure.fire());
     operatorButtonBox
         .button(12)
-        .onFalse(superStructure.intakeOff().andThen(superStructure.goHome()));
+        .and(L4)
+        .whileTrue(
+            superStructure
+                .fire()
+                .until(() -> !manipulator.hasGamePiece())
+                .andThen(superStructure.layup()));
+    operatorButtonBox
+        .button(12)
+        .and(L4)
+        .onFalse(
+            superStructure
+                .intakeOff()
+                .andThen(
+                    new ElevatorToSetpoint(elevator, 3, true)
+                        .until(() -> !elevator.mahoming)
+                        .alongWith(superStructure.goHome())));
 
-    // testController.a().onTrue(climber.moveClimberUp());
-    // testController.a().onFalse(climber.stop());
+    operatorButtonBox
+        .button(12)
+        .and(L1)
+        .whileTrue(
+            superStructure
+                .fire()
+                .until(() -> !manipulator.hasGamePiece())
+                .andThen(superStructure.layup()));
+    operatorButtonBox
+        .button(12)
+        .and(L1)
+        .onFalse(
+            superStructure
+                .intakeOff()
+                .andThen(
+                    new ElevatorToSetpoint(elevator, 3, true)
+                        .until(() -> !elevator.mahoming)
+                        .alongWith(superStructure.goHome())));
 
-    // testController.y().onTrue(climber.moveClimberDown());
-    // testController.y().onFalse(climber.stop());
+    operatorButtonBox
+        .button(12)
+        .and(L2)
+        .whileTrue(
+            superStructure
+                .fire()
+                .until(() -> !manipulator.hasGamePiece())
+                .andThen(superStructure.layup()));
+    operatorButtonBox
+        .button(12)
+        .and(L2)
+        .onFalse(
+            superStructure
+                .intakeOff()
+                .andThen(
+                    new ElevatorToSetpoint(elevator, 3, true)
+                        .until(() -> !elevator.mahoming)
+                        .alongWith(superStructure.goHome())));
+
+    operatorButtonBox
+        .button(12)
+        .and(L3)
+        .whileTrue(
+            superStructure
+                .fire()
+                .until(() -> !manipulator.hasGamePiece())
+                .andThen(superStructure.layup()));
+    operatorButtonBox
+        .button(12)
+        .and(L3)
+        .onFalse(
+            superStructure
+                .intakeOff()
+                .andThen(
+                    new ElevatorToSetpoint(elevator, 3, true)
+                        .until(() -> !elevator.mahoming)
+                        .alongWith(superStructure.goHome())));
+
+    testController.a().onTrue(climber.moveClimberUp());
+    testController.a().onFalse(climber.stop());
+
+    testController.y().onTrue(climber.moveClimberDown());
+    testController.y().onFalse(climber.stop());
 
     testController.b().onTrue(arm.elbowUp());
     testController.b().onFalse(arm.stopElbow());
@@ -507,9 +612,11 @@ public class RobotContainer {
     // testController.a().whileTrue(superStructure.moveWristDown());
     // testController.a().onFalse(superStructure.wristStop());
 
-    operatorButtonBox.button(9).onTrue(new ElevatorToSetpoint(elevator, 6 - 3, false));
+    testController.x().onTrue(climber.setClimberHome());
+
+    // operatorButtonBox.button(9).onTrue(new ElevatorToSetpoint(elevator, 6 - 3, false));
     operatorButtonBox.button(1).onTrue(new ElevatorToSetpoint(elevator, 12, false));
-    operatorButtonBox.button(2).onTrue(new ElevatorToSetpoint(elevator, 30 - (-0.00), false));
+    operatorButtonBox.button(2).onTrue(lED.solidCommand(Color.kOrange));
 
     // i love patrick mahomes
     operatorButtonBox
@@ -517,7 +624,7 @@ public class RobotContainer {
         .onTrue(
             new ElevatorToSetpoint(elevator, 3, true)
                 .until(() -> !elevator.mahoming)
-                .alongWith(superStructure.goHome()));
+                .alongWith(superStructure.goHome().alongWith(stateController.setMahome())));
   }
 
   /**

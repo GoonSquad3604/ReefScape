@@ -26,7 +26,7 @@ public final class ArmConstants {
   public static final double coralElbowL2 = 0.338;
   // public static final double coralElbowL2 = 0.243;
   public static final double coralElbowL3 = 0.338;
-  public static final double coralElbowL4 = 0.338;
+  public static final double coralElbowL4 = 0.290;
 
   public static final double coralWristL1 = 1;
   public static final double coralWristL2 = 0.842;
@@ -53,4 +53,9 @@ public final class ArmConstants {
   public static final double homeElbow = 0.309;
 
   public static final double elbowCurrentLimit = 40;
+
+  public static final double elbowClimb = 0.114;
+  public static final double wristClimb = 0.379;
+
+  public static final double alleyOop = 0.675;
 }

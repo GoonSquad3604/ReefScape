@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Manipulator.Manipulator;
+import frc.robot.subsystems.Manipulator.ManipulatorConstants;
 
 public class SuperStructure extends SubsystemBase {
   private Manipulator manipulator;
@@ -127,7 +128,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command intakeOff() {
-    return run(
+    return runOnce(
         () -> {
           manipulator.stopWheels();
         });
@@ -136,11 +137,22 @@ public class SuperStructure extends SubsystemBase {
   public Command fire() {
     return run(
         () -> {
-          // if (stateController.isCoralMode()) {
-          manipulator.runWheelsBackwards();
-          // } else {
-          //   manipulator.fireAlgae();
-          // }
+          switch (stateController.getLevel()) {
+            case L1:
+              manipulator.runWheels(-ManipulatorConstants.wheelL1Power);
+              break;
+            case L2:
+              manipulator.runWheels(-ManipulatorConstants.wheelL2Power);
+              break;
+            case L3:
+              manipulator.runWheels(-ManipulatorConstants.wheelL3Power);
+              break;
+            case L4:
+              manipulator.runWheels(-ManipulatorConstants.wheelL4Power);
+              break;
+            default:
+              manipulator.runWheels(0);
+          }
         });
   }
 
@@ -254,6 +266,20 @@ public class SuperStructure extends SubsystemBase {
     return run(
         () -> {
           arm.wristCoralL4();
+        });
+  }
+
+  public Command armClimb() {
+    return run(
+        () -> {
+          arm.climb();
+        });
+  }
+
+  public Command layup() {
+    return run(
+        () -> {
+          arm.layup();
         });
   }
 
