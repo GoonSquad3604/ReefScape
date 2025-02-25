@@ -88,7 +88,7 @@ public class ElevatorToSetpoint extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    elevator.stop();
+    // elevator.stop();
   }
 
   // Returns true when the command should end.

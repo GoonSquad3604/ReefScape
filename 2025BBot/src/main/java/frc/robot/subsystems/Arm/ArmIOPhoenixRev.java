@@ -141,6 +141,7 @@ public class ArmIOPhoenixRev implements ArmIO {
     //                 wrist.getDeviceTemp(),
     //                 wrist.getVelocity())
     //         .isOK();
+    inputs.wristEncoderConnected = wrist.getBusVoltage() < 5000 && wrist.getBusVoltage() > -5000;
     inputs.elbowMotorVoltage = elbow.getMotorVoltage().getValueAsDouble();
     inputs.elbowMotorCurrent = elbow.getSupplyCurrent().getValueAsDouble();
     inputs.elbowVelocity = elbowEncoder.getVelocity().getValueAsDouble();

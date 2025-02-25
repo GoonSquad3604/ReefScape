@@ -105,7 +105,7 @@ public class Manipulator extends SubsystemBase {
   }
 
   public void runWheels() {
-    io.setWheelPower(.1);
+    io.setWheelPower(ManipulatorConstants.wheelPower);
   }
 
   public void runWheelsBackwards() {

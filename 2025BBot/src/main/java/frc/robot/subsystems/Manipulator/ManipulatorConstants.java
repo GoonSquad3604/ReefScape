@@ -10,7 +10,8 @@ public final class ManipulatorConstants {
   public static final double coralPos = 0.67;
   public static final double algaePos = 0.574;
 
-  public static final double wheelPower = .25; // Not true value
+  public static final double wheelPower = .2;
+  public static final double backwardsWheelPower = -1.0 / 3;
   public static final double intakeRPM = -2;
   public static final double fireRPM = 2;
   public static final double coralRPM = 5;
@@ -26,10 +27,10 @@ public final class ManipulatorConstants {
   public static final double openingMotorD = 1.526; // Not true value
   public static final double openingMotorFF = 0; // Not true value
 
-  public static final double wheelL1Power = 0.21;
+  public static final double wheelL1Power = 0.05;
   public static final double wheelL2Power = 0.21;
   public static final double wheelL3Power = 0.21;
-  public static final double wheelL4Power = 0.12;
+  public static final double wheelL4Power = 0.18;
 
   public static final double wheelL1RPM = 60;
   public static final double wheelL2RPM = 60;
