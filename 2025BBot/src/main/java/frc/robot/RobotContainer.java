@@ -227,11 +227,13 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     List<Color> stripes = new ArrayList<>();
-    stripes.add(Color.kIndigo);
-    stripes.add(Color.kDarkGreen);
+    stripes.add(Color.kRed);
     stripes.add(Color.kOrange);
+    stripes.add(Color.kYellow);
+    stripes.add(Color.kGreen);
+    stripes.add(Color.kBlue);
+    stripes.add(Color.kPurple);
 
-    // RumBLe
     Trigger rumbleTime = new Trigger(() -> Timer.getMatchTime() <= 20 && Timer.getMatchTime() > 18);
     Trigger coralMode = new Trigger(() -> stateController.isCoralMode());
     Trigger algaeMode = new Trigger(() -> stateController.isAlgaeMode());
@@ -243,10 +245,12 @@ public class RobotContainer {
     Trigger LMahome = new Trigger(() -> stateController.isMahome());
     Trigger L3 = new Trigger(() -> stateController.isL3());
 
+    // rumble controler for 2s when endgame
     rumbleTime.onTrue(
         new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 1))
             .andThen(new WaitCommand(1))
             .andThen(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0)));
+
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -266,6 +270,8 @@ public class RobotContainer {
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
                 () -> AllianceFlipUtil.apply(drive.getClosestReefPanel()).getRotation()));
+
+    // angle towards source if no game piece
     driverController
         .a()
         .and(coralMode)
@@ -276,6 +282,8 @@ public class RobotContainer {
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
                 () -> AllianceFlipUtil.apply(drive.getClosestSource()).getRotation()));
+
+    // angle towards processor if game piece
     driverController
         .a()
         .and(algaeMode)
@@ -286,6 +294,8 @@ public class RobotContainer {
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
                 () -> AllianceFlipUtil.apply(FieldConstants.Processor.centerFace).getRotation()));
+
+    // angle towards source if no game piece
     driverController
         .a()
         .and(algaeMode)
@@ -296,6 +306,7 @@ public class RobotContainer {
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
                 () -> AllianceFlipUtil.apply(drive.getClosestReefPanel()).getRotation()));
+
     // Robot Relative Drive
     driverController
         .b()
@@ -319,6 +330,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
     // Slow Mode
     driverController
         .y()
@@ -328,6 +340,7 @@ public class RobotContainer {
                 () -> (-driverController.getLeftY() * .5),
                 () -> (-driverController.getLeftX() * .5),
                 () -> (-driverController.getRightX() * .4)));
+
     // Pathfinds based on State Controller
     driverController
         .leftTrigger()
@@ -404,6 +417,7 @@ public class RobotContainer {
                 () ->
                     drive.pathfindToFieldPose(
                         AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+
     driverController.povUpLeft().onTrue(lED.rainbowCommand(0.5, 3));
     driverController
         .povDownRight()
@@ -412,20 +426,6 @@ public class RobotContainer {
     driverController.povUpRight().onTrue(lED.stripeCommand(stripes, LEDConstants.STRIP_LENGTH, 1));
     driverController.back().onTrue(lED.waveCommand(Color.kTomato, Color.kChocolate, 1, 1));
 
-    // // Goes to closest coral station
-    // driverController
-    //     .povDown()
-    //     .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(drive.getClosestSource())));
-    // // Goes to closest reef panel
-    // driverController
-    //     .povUp()
-    //     .whileTrue(drive.defer(() -> drive.pathfindToFieldPose(drive.getClosestReefPanel())));
-
-    // operatorButtonBox.button(1).onTrue(stateController.setCoralMode(manipulator));
-    // // operatorButtonBox.button(1).onFalse(superStructure.manipulatorStop());
-
-    // operatorButtonBox.button(2).onTrue(stateController.setAlgaeMode(manipulator));
-    // operatorButtonBox.button(2).onFalse(superStructure.manipulatorStop());
     // goes to L4 positions
     operatorButtonBox
         .button(3)
@@ -435,30 +435,75 @@ public class RobotContainer {
                 .goToL4Coral()
                 .andThen(stateController.setL4())
                 .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)));
-    // operatorButtonBox.button(3).and(algaeMode).onTrue(superStructure.goToBarge());
+
     // goes to L3 positions
     operatorButtonBox
         .button(4)
+        .and(coralMode)
         .onTrue(
             new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
                 .alongWith(superStructure.goToL3Coral().alongWith(stateController.setL3())));
+
     // goes to L2 position
     operatorButtonBox
         .button(5)
+        .and(coralMode)
         .onTrue(
             new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)
                 .alongWith(superStructure.goToL2Coral().alongWith(stateController.setL2())));
-    // operatorButtonBox.button(5).and(algaeMode).onTrue(superStructure.goToL2Algae());
+
     // goes to L1 positions
     operatorButtonBox
         .button(6)
+        .and(algaeMode)
         .onTrue(
             new ElevatorToSetpoint(elevator, ElevatorConstants.l1Pos, true)
                 .alongWith(superStructure.goToL1Coral())
                 .alongWith(stateController.setL1()));
-    // operatorButtonBox.button(6).and(algaeMode).onTrue(superStructure.goToProcessor());
 
-    // goes home
+    // goes to L4 positions
+    operatorButtonBox
+        .button(3)
+        .and(algaeMode)
+        .onTrue(
+            superStructure
+                .goToL4Coral()
+                .andThen(stateController.setL4())
+                .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)));
+
+    // goes to L3 positions
+    operatorButtonBox
+        .button(4)
+        .and(algaeMode)
+        .onTrue(
+            new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
+                .alongWith(superStructure.goToL3Coral().alongWith(stateController.setL3())));
+
+    // goes to L2 position
+    operatorButtonBox
+        .button(5)
+        .and(algaeMode)
+        .onTrue(
+            new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)
+                .alongWith(superStructure.goToL2Coral().alongWith(stateController.setL2())));
+
+    // goes to L1 positions
+    operatorButtonBox
+        .button(6)
+        .and(algaeMode)
+        .onTrue(
+            new ElevatorToSetpoint(elevator, ElevatorConstants.l1Pos, true)
+                .alongWith(superStructure.goToL1Coral())
+                .alongWith(stateController.setL1()));
+
+    // goes home -- i love patrick mahomes
+    operatorButtonBox
+        .button(7)
+        .onTrue(
+            new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                .until(() -> !elevator.mahoming)
+                .andThen(elevator.runOnce(() -> elevator.stop()))
+                .alongWith(superStructure.goHome().alongWith(stateController.setMahome())));
 
     // Deploy Climber
     operatorButtonBox
@@ -642,17 +687,8 @@ public class RobotContainer {
     // testController.x().onTrue(climber.setClimberHome());
 
     // operatorButtonBox.button(9).onTrue(new ElevatorToSetpoint(elevator, 6 - 3, false));
-    operatorButtonBox.button(1).onTrue(new ElevatorToSetpoint(elevator, 12, false));
+    // operatorButtonBox.button(1).onTrue(new ElevatorToSetpoint(elevator, 12, false));
     operatorButtonBox.button(2).onTrue(lED.solidCommand(Color.kOrange));
-
-    // i love patrick mahomes
-    operatorButtonBox
-        .button(7)
-        .onTrue(
-            new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                .until(() -> !elevator.mahoming)
-                .andThen(elevator.runOnce(() -> elevator.stop()))
-                .alongWith(superStructure.goHome().alongWith(stateController.setMahome())));
   }
 
   /**
