@@ -85,16 +85,24 @@ public class FieldConstants {
     public static final ArrayList<Map<ReefHeight, Pose3d>> branchPositions =
         new ArrayList<>(13); // Starting at the right branch facing the driver station in clockwise
 
+    public static final ArrayList<Pose2d> rightRobotBranchPoses = new ArrayList<>(6);
+    public static final ArrayList<Pose2d> LeftRobotBranchPoses = new ArrayList<>(6);
+         
+
     static {
       // Initialize branch positions
       for (int face = 0; face < 6; face++) {
         Map<ReefHeight, Pose3d> fillRight = new HashMap<>();
         Map<ReefHeight, Pose3d> fillLeft = new HashMap<>();
-        for (var level : ReefHeight.values()) {
-          Pose2d poseDirection = new Pose2d(center, Rotation2d.fromDegrees(180 - (60 * face)));
+        Pose2d robotRight;
+        Pose2d robotLeft;
+        Pose2d poseDirection = new Pose2d(center, Rotation2d.fromDegrees(180 - (60 * face)));
+          Pose2d poseDirectionRobot = new Pose2d(center, Rotation2d.fromDegrees(0 -(60 * face))); // rotation of robot if it was to score at branch
           double adjustX = Units.inchesToMeters(30.738);
           double adjustY = Units.inchesToMeters(6.469);
-
+          double robotCenterDistanceFromBranch = Units.inchesToMeters(12); // placeholder - represents distance of robot center from branch
+        for (var level : ReefHeight.values()) {
+          
           fillRight.put(
               level,
               new Pose3d(
@@ -125,11 +133,35 @@ public class FieldConstants {
                       0,
                       Units.degreesToRadians(level.pitch),
                       poseDirection.getRotation().getRadians())));
+            
         }
+        robotRight = new Pose2d(
+                new Translation2d(
+                    poseDirectionRobot
+                    .transformBy(new Transform2d(adjustX + robotCenterDistanceFromBranch, adjustY, new Rotation2d()))
+                    .getX(),
+                    poseDirectionRobot
+                    .transformBy(new Transform2d(adjustX + robotCenterDistanceFromBranch, adjustY, new Rotation2d()))
+                    .getY()), 
+                poseDirectionRobot.getRotation());
+        robotLeft = new Pose2d(
+            new Translation2d(
+                poseDirectionRobot
+                .transformBy(new Transform2d(adjustX + robotCenterDistanceFromBranch, -adjustY, new Rotation2d()))
+                .getX(),
+                poseDirectionRobot
+                .transformBy(new Transform2d(adjustX + robotCenterDistanceFromBranch, -adjustY, new Rotation2d()))
+                .getY()), 
+            poseDirectionRobot.getRotation());    
+
         branchPositions.add(fillLeft);
         branchPositions.add(fillRight);
+        rightRobotBranchPoses.add(robotRight);
+        LeftRobotBranchPoses.add(robotLeft);
+
       }
     }
+
   }
 
   public static class StagingPositions {
