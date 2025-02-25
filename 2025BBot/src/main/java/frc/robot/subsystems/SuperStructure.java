@@ -30,7 +30,7 @@ public class SuperStructure extends SubsystemBase {
     return run(
         () -> {
           arm.elbowCoralL1();
-          // arm.wristCoralL1();
+          arm.wristCoralL1();
           // elevator.elevatorCL1();
         });
   }
@@ -54,11 +54,10 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command goToL4Coral() {
-    return run(
+    return runOnce(
         () -> {
           arm.elbowCoralL4();
           arm.wristCoralL4();
-          elevator.elevatorCL4();
         });
   }
 
@@ -81,12 +80,11 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command goToSource() {
-    return run(() -> {
+    return runOnce(
+        () -> {
           arm.source();
-          elevator.source();
-          manipulator.runWheels();
-        })
-        .andThen(intakeOff());
+          manipulator.runWheels(ManipulatorConstants.wheelPower);
+        });
   }
 
   public Command goToProcessor() {
@@ -153,6 +151,13 @@ public class SuperStructure extends SubsystemBase {
             default:
               manipulator.runWheels(0);
           }
+        });
+  }
+
+  public Command vomit() {
+    return run(
+        () -> {
+          manipulator.runWheels(ManipulatorConstants.backwardsWheelPower);
         });
   }
 

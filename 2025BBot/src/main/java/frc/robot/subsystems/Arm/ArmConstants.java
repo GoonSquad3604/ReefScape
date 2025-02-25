@@ -22,13 +22,12 @@ public final class ArmConstants {
   public static final double wristD = 1.0 / 2;
   public static final double wristFF = 0;
 
-  public static final double coralElbowL1 = 0;
+  public static final double coralElbowL1 = 0.338;
   public static final double coralElbowL2 = 0.338;
-  // public static final double coralElbowL2 = 0.243;
   public static final double coralElbowL3 = 0.338;
   public static final double coralElbowL4 = 0.290;
 
-  public static final double coralWristL1 = 1;
+  public static final double coralWristL1 = 0.842;
   public static final double coralWristL2 = 0.842;
   public static final double coralWristL3 = 0.842;
   public static final double coralWristL4 = 0.842;
@@ -42,7 +41,7 @@ public final class ArmConstants {
   public static final double processorWrist = 1;
   public static final double processorElbow = 2;
 
-  public static final double sourceWrist = 0.361;
+  public static final double sourceWrist = 0.3 + 0.07;
   public static final double sourceElbow = 0.249;
 
   public static final double bargeWrist = 1;

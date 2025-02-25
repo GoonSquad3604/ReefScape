@@ -30,9 +30,9 @@ public final class ElevatorConstants {
   public static final double homePos = 3;
 
   // each coral branch height
-  public static final double l1Pos = 0;
-  public static final double l2Pos = 6.35;
-  public static final double l3Pos = 15;
+  public static final double l1Pos = 3;
+  public static final double l2Pos = 6.35 - 1;
+  public static final double l3Pos = 14.0;
   public static final double l4Pos = 31.50000000000000;
 
   // algae on reef heights
