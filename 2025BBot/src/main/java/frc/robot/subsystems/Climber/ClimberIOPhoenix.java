@@ -87,6 +87,7 @@ public class ClimberIOPhoenix implements ClimberIO {
 
     inputs.climberMotorVoltage = climberMotor.getMotorVoltage().getValueAsDouble();
     inputs.climberMotorCurrent = climberMotor.getSupplyCurrent().getValueAsDouble();
+    inputs.climberStatorCurrent = climberMotor.getStatorCurrent().getValueAsDouble();
 
     inputs.climberEncoderConnected = climberEncoder.isConnected();
     inputs.climberEncoderPosition = climberEncoder.getAbsolutePosition().getValueAsDouble();
@@ -100,7 +101,8 @@ public class ClimberIOPhoenix implements ClimberIO {
 
   @Override
   public void setPosition(double position) {
-    climberMotor.setControl(climberPositionRequest.withPosition(position));
+    climberMotor.setControl(
+        climberPositionRequest.withPosition(position).withFeedForward(ClimberConstants.ff));
   }
 
   public void setPower(double power) {

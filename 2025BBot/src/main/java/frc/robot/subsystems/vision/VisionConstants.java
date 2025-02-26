@@ -17,6 +17,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 
 public class VisionConstants {
   // AprilTag layout
@@ -24,24 +25,44 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "camera_0";
-  public static String camera1Name = "camera_1";
-  public static String camera2Name = "camera_2";
-  public static String camera3Name = "camera_3";
+  public static String camera4Name = "Camera4";
+  public static String camera1Name = "Camera1";
+  public static String camera2Name = "Camera2";
+  public static String camera3Name = "Camera3";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
-  public static Transform3d robotToCamera0 =
-      new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
+  // General Purposes Kamera
+  public static Transform3d robotToCamera4 =
+      new Transform3d(
+          Units.inchesToMeters(-10.375),
+          Units.inchesToMeters(-10.375),
+          Units.inchesToMeters(7.6875),
+          new Rotation3d(Math.PI * 0.0, -24 * (2 * Math.PI / 360), 225 * (3 * Math.PI / 540)));
+  // Front Left Camura
   public static Transform3d robotToCamera1 =
-      new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+      new Transform3d(
+          Units.inchesToMeters(10.5),
+          Units.inchesToMeters(9.75),
+          Units.inchesToMeters(7.6875),
+          new Rotation3d(Math.PI * 0.0, -24 * (Math.PI / 180), 0 * Math.PI));
+  // Intake Cammera
   public static Transform3d robotToCamera2 =
-      new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+      new Transform3d(
+          Units.inchesToMeters(-8.875),
+          Units.inchesToMeters(7.0625),
+          Units.inchesToMeters(32.1875),
+          new Rotation3d(0.0, 0, Math.PI));
+  // Front Right Camerra
   public static Transform3d robotToCamera3 =
-      new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+      new Transform3d(
+          Units.inchesToMeters(10.5),
+          Units.inchesToMeters(-9.75),
+          Units.inchesToMeters(7.6875),
+          new Rotation3d(Math.PI * 0.0, -24 * (Math.PI / 180), Math.PI * 0));
 
   // Basic filtering thresholds
-  public static double maxAmbiguity = 0.3;
+  public static double maxAmbiguity = 0.19; // was 0.3
   public static double maxZError = 0.75;
 
   // Standard deviation baselines, for 1 meter distance and 1 tag

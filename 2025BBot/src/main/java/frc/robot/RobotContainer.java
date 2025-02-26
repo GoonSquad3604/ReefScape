@@ -36,8 +36,6 @@ import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmIOPhoenixRev;
-import frc.robot.subsystems.Climber.Climber;
-import frc.robot.subsystems.Climber.ClimberIOPhoenix;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorIONeo;
@@ -53,6 +51,11 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.vision.MitoCANdriaIO;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,12 +70,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  // private final Vision vision;
+  private final Vision vision;
   private final StateController stateController;
   private final SuperStructure superStructure;
   private final Arm arm;
   private final Manipulator manipulator;
-  private final Climber climber;
+  //   private final Climber climber;
   private final Elevator elevator;
   private final LEDs lED;
 
@@ -100,25 +103,19 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        // new Drive(
-        //     new GyroIO() {},
-        //     new ModuleIO() {},
-        //     new ModuleIO() {},
-        //     new ModuleIO() {},
-        //     new ModuleIO() {});
 
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new MitoCANdriaIO(),
-        //         new VisionIOPhotonVision(camera0Name, robotToCamera0),
-        //         new VisionIOPhotonVision(camera1Name, robotToCamera1),
-        //         new VisionIOPhotonVision(camera2Name, robotToCamera2),
-        //         new VisionIOPhotonVision(camera3Name, robotToCamera3));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new MitoCANdriaIO(),
+                new VisionIOPhotonVision(camera4Name, robotToCamera4),
+                new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                new VisionIOPhotonVision(camera2Name, robotToCamera2),
+                new VisionIOPhotonVision(camera3Name, robotToCamera3));
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        climber = new Climber(new ClimberIOPhoenix());
+        // climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
 
@@ -132,16 +129,16 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new MitoCANdriaIO(),
-        //         new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
-        //         new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new MitoCANdriaIO(),
+                new VisionIOPhotonVisionSim(camera4Name, robotToCamera4, drive::getPose),
+                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        climber = new Climber(new ClimberIOPhoenix());
+        // climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
 
@@ -154,16 +151,16 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new MitoCANdriaIO(),
-        //         new VisionIO() {},
-        //         new VisionIO() {});
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new MitoCANdriaIO(),
+                new VisionIO() {},
+                new VisionIO() {});
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        climber = new Climber(new ClimberIOPhoenix());
+        // climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
     }
@@ -206,15 +203,24 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "fire", superStructure.fire().withTimeout(2).andThen(superStructure.intakeOff()));
     NamedCommands.registerCommand("holdFire", superStructure.intakeOff());
-    NamedCommands.registerCommand("goToL4", superStructure.goToL4Coral());
+    NamedCommands.registerCommand(
+        "goToL4",
+        superStructure
+            .goToL4Coral()
+            .andThen(stateController.setL4())
+            .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)));
     NamedCommands.registerCommand("goToAlgae25", superStructure.goToL2Algae());
     NamedCommands.registerCommand("goToAlgae35", superStructure.goToL3Algae());
     NamedCommands.registerCommand("goToSource", superStructure.goToSource());
     NamedCommands.registerCommand("goToProcessor", superStructure.goToProcessor());
     NamedCommands.registerCommand("goToBarge", superStructure.goToBarge());
-    NamedCommands.registerCommand("goHome", goHome);
+    NamedCommands.registerCommand(
+        "goHome",
+        new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+            .until(() -> !elevator.mahoming)
+            .andThen(elevator.runOnce(() -> elevator.stop()))
+            .alongWith(superStructure.goHome().alongWith(stateController.setMahome())));
 
-    // Configure the button bindings
     configureButtonBindings();
   }
 
@@ -425,6 +431,8 @@ public class RobotContainer {
     driverController.povDownLeft().onTrue(lED.strobeCommand(Color.kPeru, 1));
     driverController.povUpRight().onTrue(lED.stripeCommand(stripes, LEDConstants.STRIP_LENGTH, 1));
     driverController.back().onTrue(lED.waveCommand(Color.kTomato, Color.kChocolate, 1, 1));
+    // driverController.povDown().onTrue(climber.moveClimberUp());
+    // driverController.povDown().onFalse(climber.stop());
 
     // goes to L4 positions
     operatorButtonBox
@@ -505,17 +513,17 @@ public class RobotContainer {
                 .andThen(elevator.runOnce(() -> elevator.stop()))
                 .alongWith(superStructure.goHome().alongWith(stateController.setMahome())));
 
-    // Deploy Climber
-    operatorButtonBox
-        .button(8)
-        .onTrue(
-            superStructure
-                .armClimb()
-                .alongWith(climber.setClimberDown())
-                .alongWith(lED.stripeCommand(stripes, LEDConstants.STRIP_LENGTH, 1)));
+    // // Deploy Climber
+    // operatorButtonBox
+    //     .button(8)
+    //     .onTrue(
+    //         superStructure
+    //             .armClimb()
+    //             .alongWith(climber.setClimberDown())
+    //             .alongWith(lED.stripeCommand(stripes, LEDConstants.STRIP_LENGTH, 1)));
 
     // Climbs
-    operatorButtonBox.button(9).onTrue(climber.setClimberUp());
+    // operatorButtonBox.button(9).onTrue(climber.setClimberUp());
 
     // Intake
     operatorButtonBox

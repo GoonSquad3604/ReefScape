@@ -16,6 +16,7 @@ public interface ClimberIO {
     public boolean climberEncoderConnected = false;
     public double climberEncoderPosition;
     public double climberVelocity;
+    public double climberStatorCurrent;
   }
 
   default void setVoltage(double voltage) {}
