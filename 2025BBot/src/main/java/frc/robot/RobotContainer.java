@@ -53,6 +53,11 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.vision.MitoCANdriaIO;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +72,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  // private final Vision vision;
+  private final Vision vision;
   private final StateController stateController;
   private final SuperStructure superStructure;
   private final Arm arm;
@@ -100,21 +105,15 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        // new Drive(
-        //     new GyroIO() {},
-        //     new ModuleIO() {},
-        //     new ModuleIO() {},
-        //     new ModuleIO() {},
-        //     new ModuleIO() {});
 
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new MitoCANdriaIO(),
-        //         new VisionIOPhotonVision(camera0Name, robotToCamera0),
-        //         new VisionIOPhotonVision(camera1Name, robotToCamera1),
-        //         new VisionIOPhotonVision(camera2Name, robotToCamera2),
-        //         new VisionIOPhotonVision(camera3Name, robotToCamera3));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new MitoCANdriaIO(),
+                new VisionIOPhotonVision(camera4Name, robotToCamera4),
+                new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                new VisionIOPhotonVision(camera2Name, robotToCamera2),
+                new VisionIOPhotonVision(camera3Name, robotToCamera3));
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
@@ -132,12 +131,12 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new MitoCANdriaIO(),
-        //         new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
-        //         new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new MitoCANdriaIO(),
+                new VisionIOPhotonVisionSim(camera4Name, robotToCamera4, drive::getPose),
+                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
@@ -154,12 +153,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new MitoCANdriaIO(),
-        //         new VisionIO() {},
-        //         new VisionIO() {});
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new MitoCANdriaIO(),
+                new VisionIO() {},
+                new VisionIO() {});
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
@@ -169,6 +168,8 @@ public class RobotContainer {
     }
     stateController = new StateController();
     superStructure = new SuperStructure(manipulator, arm, elevator, stateController);
+
+    lED.setDefaultCommand(lED.solidCommand(Color.kDarkViolet));
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -200,21 +201,32 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "intakeUntilPiece",
         superStructure
-            .intake()
-            .until(() -> manipulator.hasGamePiece())
-            .andThen(superStructure.intakeOff()));
+            .goToSource()
+            .alongWith(
+                lED.strobeCommand(Color.kCrimson, 0.32)
+                    .until(() -> manipulator.hasGamePiece())
+                    .andThen(lED.solidCommand(Color.kDarkOliveGreen))));
     NamedCommands.registerCommand(
         "fire", superStructure.fire().withTimeout(2).andThen(superStructure.intakeOff()));
     NamedCommands.registerCommand("holdFire", superStructure.intakeOff());
-    NamedCommands.registerCommand("goToL4", superStructure.goToL4Coral());
+    NamedCommands.registerCommand(
+        "goToL4",
+        superStructure
+            .goToL4Coral()
+            .andThen(stateController.setL4())
+            .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)));
     NamedCommands.registerCommand("goToAlgae25", superStructure.goToL2Algae());
     NamedCommands.registerCommand("goToAlgae35", superStructure.goToL3Algae());
     NamedCommands.registerCommand("goToSource", superStructure.goToSource());
     NamedCommands.registerCommand("goToProcessor", superStructure.goToProcessor());
     NamedCommands.registerCommand("goToBarge", superStructure.goToBarge());
-    NamedCommands.registerCommand("goHome", goHome);
+    NamedCommands.registerCommand(
+        "goHome",
+        new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+            .until(() -> !elevator.mahoming)
+            .andThen(elevator.runOnce(() -> elevator.stop()))
+            .alongWith(superStructure.goHome().alongWith(stateController.setMahome())));
 
-    // Configure the button bindings
     configureButtonBindings();
   }
 
@@ -259,9 +271,9 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
 
-    // Lock to goal when A button is held
+    // Lock to goal when B button is held
     driverController
-        .a()
+        .b()
         .and(coralMode)
         .and(hasGamePiece)
         .whileTrue(
@@ -273,7 +285,7 @@ public class RobotContainer {
 
     // angle towards source if no game piece
     driverController
-        .a()
+        .b()
         .and(coralMode)
         .and(hasNoGamePiece)
         .whileTrue(
@@ -285,7 +297,7 @@ public class RobotContainer {
 
     // angle towards processor if game piece
     driverController
-        .a()
+        .b()
         .and(algaeMode)
         .and(hasGamePiece)
         .whileTrue(
@@ -297,7 +309,7 @@ public class RobotContainer {
 
     // angle towards source if no game piece
     driverController
-        .a()
+        .b()
         .and(algaeMode)
         .and(hasNoGamePiece)
         .whileTrue(
@@ -309,7 +321,7 @@ public class RobotContainer {
 
     // Robot Relative Drive
     driverController
-        .b()
+        .a()
         .whileTrue(
             DriveCommands.joystickRobotRelativeDrive(
                 drive,
@@ -333,7 +345,7 @@ public class RobotContainer {
 
     // Slow Mode
     driverController
-        .y()
+        .rightTrigger()
         .whileTrue(
             DriveCommands.joystickDrive(
                 drive,
@@ -343,17 +355,19 @@ public class RobotContainer {
 
     // Pathfinds based on State Controller
     driverController
-        .leftTrigger()
+        .leftBumper()
         .and(coralMode)
         .and(hasGamePiece)
         .whileTrue(
-            drive.defer(
-                () ->
-                    drive.pathfindToFieldPose(
-                        AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+            drive
+                .defer(
+                    () ->
+                        drive.pathfindToFieldPose(
+                            AllianceFlipUtil.apply(drive.getClosestReefPanel())))
+                .andThen(lED.strobeCommand(Color.kDarkOrange, Math.PI / 10)));
 
     driverController
-        .leftTrigger()
+        .leftBumper()
         .and(coralMode)
         .and(hasNoGamePiece)
         .whileTrue(
@@ -361,7 +375,7 @@ public class RobotContainer {
                 () -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestSource()))));
 
     driverController
-        .leftTrigger()
+        .leftBumper()
         .and(algaeMode)
         .and(hasGamePiece)
         .whileTrue(
@@ -371,7 +385,7 @@ public class RobotContainer {
                         AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))));
 
     driverController
-        .leftTrigger()
+        .leftBumper()
         .and(algaeMode)
         .and(hasNoGamePiece)
         .whileTrue(
@@ -381,7 +395,7 @@ public class RobotContainer {
                         AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
 
     driverController
-        .rightTrigger()
+        .rightBumper()
         .and(coralMode)
         .and(hasGamePiece)
         .whileTrue(
@@ -391,7 +405,7 @@ public class RobotContainer {
                         AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
 
     driverController
-        .rightTrigger()
+        .rightBumper()
         .and(coralMode)
         .and(hasNoGamePiece)
         .whileTrue(
@@ -399,7 +413,7 @@ public class RobotContainer {
                 () -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestSource()))));
 
     driverController
-        .rightTrigger()
+        .rightBumper()
         .and(algaeMode)
         .and(hasGamePiece)
         .whileTrue(
@@ -409,7 +423,7 @@ public class RobotContainer {
                         AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))));
 
     driverController
-        .rightTrigger()
+        .rightBumper()
         .and(algaeMode)
         .and(hasNoGamePiece)
         .whileTrue(
@@ -421,10 +435,23 @@ public class RobotContainer {
     driverController.povUpLeft().onTrue(lED.rainbowCommand(0.5, 3));
     driverController
         .povDownRight()
-        .onTrue(lED.breatheCommand(Color.kBlanchedAlmond, Color.kCornflowerBlue, 1));
+        .onTrue(lED.breatheCommand(Color.kPurple, Color.kBlue, 1));
     driverController.povDownLeft().onTrue(lED.strobeCommand(Color.kPeru, 1));
     driverController.povUpRight().onTrue(lED.stripeCommand(stripes, LEDConstants.STRIP_LENGTH, 1));
     driverController.back().onTrue(lED.waveCommand(Color.kTomato, Color.kChocolate, 1, 1));
+
+    operatorButtonBox
+        .button(1)
+        .onTrue(
+            stateController
+                .setCoralMode(manipulator)
+                .alongWith(lED.solidCommand(Color.kWhite)));
+    operatorButtonBox
+        .button(2)
+        .onTrue(
+            stateController
+                .setAlgaeMode(manipulator)
+                .alongWith(lED.solidCommand(Color.kAquamarine)));
 
     // goes to L4 positions
     operatorButtonBox
@@ -455,7 +482,7 @@ public class RobotContainer {
     // goes to L1 positions
     operatorButtonBox
         .button(6)
-        .and(algaeMode)
+        .and(coralMode)
         .onTrue(
             new ElevatorToSetpoint(elevator, ElevatorConstants.l1Pos, true)
                 .alongWith(superStructure.goToL1Coral())
@@ -476,16 +503,16 @@ public class RobotContainer {
         .button(4)
         .and(algaeMode)
         .onTrue(
-            new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
-                .alongWith(superStructure.goToL3Coral().alongWith(stateController.setL3())));
+            new ElevatorToSetpoint(elevator, ElevatorConstants.l3PosAlgae)
+                .alongWith(superStructure.goToL3Algae().alongWith(stateController.setL3())));
 
     // goes to L2 position
     operatorButtonBox
         .button(5)
         .and(algaeMode)
         .onTrue(
-            new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)
-                .alongWith(superStructure.goToL2Coral().alongWith(stateController.setL2())));
+            new ElevatorToSetpoint(elevator, ElevatorConstants.l2PosAlgae)
+                .alongWith(superStructure.goToL2Algae().alongWith(stateController.setL2())));
 
     // goes to L1 positions
     operatorButtonBox
@@ -524,12 +551,16 @@ public class RobotContainer {
             superStructure
                 .goToSource()
                 .alongWith(
-                    lED.strobeCommand(Color.kCornsilk, 0.32)
+                    lED.strobeCommand(Color.kCrimson, 0.32)
                         .until(() -> manipulator.hasGamePiece())
-                        .andThen(lED.solidCommand(Color.kBlue))));
+                        .andThen(lED.solidCommand(Color.kDarkOliveGreen))));
     operatorButtonBox
         .button(10)
-        .onFalse(superStructure.intakeOff().andThen(superStructure.goHome()));
+        .onFalse(
+            superStructure
+                .intakeOff()
+                .andThen(superStructure.goHome())
+                .alongWith(lED.solidCommand(Color.kWhite)));
 
     // .andThen(superStructure.goHome())));
     // operatorButtonBox
@@ -607,11 +638,11 @@ public class RobotContainer {
                         .andThen(elevator.runOnce(() -> elevator.stop()))
                         .alongWith(superStructure.goHome())));
 
-    // testController.a().onTrue(climber.moveClimberUp());
-    // testController.a().onFalse(climber.stop());
+    testController.a().onTrue(climber.moveClimberUp());
+    testController.a().onFalse(climber.stop());
 
-    // testController.y().onTrue(climber.moveClimberDown());
-    // testController.y().onFalse(climber.stop());
+    testController.y().onTrue(climber.moveClimberDown());
+    testController.y().onFalse(climber.stop());
 
     // testController.b().onTrue(arm.elbowUp());
     // testController.b().onFalse(arm.stopElbow());
@@ -686,9 +717,6 @@ public class RobotContainer {
 
     // testController.x().onTrue(climber.setClimberHome());
 
-    // operatorButtonBox.button(9).onTrue(new ElevatorToSetpoint(elevator, 6 - 3, false));
-    // operatorButtonBox.button(1).onTrue(new ElevatorToSetpoint(elevator, 12, false));
-    operatorButtonBox.button(2).onTrue(lED.solidCommand(Color.kOrange));
   }
 
   /**

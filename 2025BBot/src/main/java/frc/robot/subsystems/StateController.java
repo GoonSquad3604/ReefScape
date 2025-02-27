@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Manipulator.Manipulator;
@@ -12,6 +13,8 @@ public class StateController extends SubsystemBase {
 
   @AutoLogOutput private RobotMode m_Mode;
   @AutoLogOutput private LevelState m_Level;
+  @AutoLogOutput private RobotTarget m_Target;
+  @AutoLogOutput private Pose2d m_TragetPose;
 
   public StateController() {
     setCoral();
@@ -90,7 +93,6 @@ public class StateController extends SubsystemBase {
     return run(
         () -> {
           setCoral();
-          manipulator.setOpeningToCoral();
         });
   }
 
@@ -98,7 +100,12 @@ public class StateController extends SubsystemBase {
     return run(
         () -> {
           setAlgae();
-          manipulator.setOpeningToAlgae();
         });
+  }
+
+  public enum RobotTarget {
+    REEF,
+    PROCESSOR,
+    SOURCE
   }
 }
