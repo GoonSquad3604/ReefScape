@@ -66,7 +66,7 @@ public class SuperStructure extends SubsystemBase {
         () -> {
           arm.elbowAlgaeL25();
           arm.wristAlgaeL25();
-          // elevator.elevatorAL2();
+          manipulator.runWheels(ManipulatorConstants.wheelAL2Power);
         });
   }
 
@@ -75,7 +75,7 @@ public class SuperStructure extends SubsystemBase {
         () -> {
           arm.elbowAlgaeL35();
           arm.wristAlgaeL35();
-          elevator.elevatorAL3();
+          manipulator.runWheels(ManipulatorConstants.wheelAL3Power);
         });
   }
 

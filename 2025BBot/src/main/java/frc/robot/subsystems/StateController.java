@@ -93,7 +93,6 @@ public class StateController extends SubsystemBase {
     return run(
         () -> {
           setCoral();
-          manipulator.setOpeningToCoral();
         });
   }
 
@@ -101,7 +100,6 @@ public class StateController extends SubsystemBase {
     return run(
         () -> {
           setAlgae();
-          manipulator.setOpeningToAlgae();
         });
   }
 

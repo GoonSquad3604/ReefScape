@@ -33,10 +33,10 @@ public final class ArmConstants {
   public static final double coralWristL4 = 0.842;
 
   public static final double algaeElbowL25 = 0.25;
-  public static final double algaeElbowL35 = 2;
+  public static final double algaeElbowL35 = 0.23456891;
 
-  public static final double algaeWristL25 = 0.5;
-  public static final double algaeWristL35 = 2;
+  public static final double algaeWristL25 = 0.71;
+  public static final double algaeWristL35 = 0.345678912;
 
   public static final double processorWrist = 1;
   public static final double processorElbow = 2;
