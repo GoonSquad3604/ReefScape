@@ -31,13 +31,13 @@ public final class ElevatorConstants {
 
   // each coral branch height
   public static final double l1Pos = 3;
-  public static final double l2Pos = 6.35 - 1;
+  public static final double l2Pos = 5.35;
   public static final double l3Pos = 14.0;
-  public static final double l4Pos = 31.50000000000000;
+  public static final double l4Pos = 31.5;
 
   // each coral branch height (ALGAE REMOVAL)
-  public static final double l2PosAlgae = 16.35 - 1;
-  public static final double l3PosAlgae = 18.000;
+  public static final double l2PosAlgae = 10;
+  public static final double l3PosAlgae = 19;
 
   // algae on reef heights
   public static final double algaeL2Pos = 0; // placeholder
@@ -59,3 +59,7 @@ public final class ElevatorConstants {
 
 }
 // this is cleam code
+
+// who wrote these comments, smh
+
+// it is I, the great and powerful composter, the one who makes all things grow

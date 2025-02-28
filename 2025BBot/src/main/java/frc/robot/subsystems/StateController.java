@@ -18,7 +18,7 @@ public class StateController extends SubsystemBase {
 
   public StateController() {
     setCoral();
-    setMahome();
+    m_Level = LevelState.MAHOME;
   }
 
   public void setCoral() {

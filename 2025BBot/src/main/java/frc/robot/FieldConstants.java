@@ -47,6 +47,10 @@ public class FieldConstants {
             Units.inchesToMeters(33.526),
             Units.inchesToMeters(25.824),
             Rotation2d.fromDegrees(144.011 - 90));
+    public static final Pose2d rightCenterIntakePos =
+        new Pose2d(1.605, 0.759, Rotation2d.fromDegrees(144.011 - 90));
+    public static final Pose2d leftCenterIntakePos =
+        new Pose2d(1.605, 7.291, Rotation2d.fromDegrees(-51.633));
   }
 
   public static class Reef {
@@ -100,12 +104,16 @@ public class FieldConstants {
             new Pose2d(
                 center,
                 Rotation2d.fromDegrees(
-                    0 - (60 * face))); // rotation of robot if it was to score at branch
+                    180 - (60 * face))); // rotation of robot if it was to score at branch
         double adjustX = Units.inchesToMeters(30.738);
         double adjustY = Units.inchesToMeters(6.469);
         double robotCenterDistanceFromBranch =
             Units.inchesToMeters(
-                20 + 3.0 / 4); // placeholder - represents distance of robot center from branch
+                28); // placeholder - represents distance of robot center from branch 30.75
+        // 20 + 3.0
+        // / 4 + 12
+        // - 2
+        double robotWhyAdjust = Units.inchesToMeters(3);
         for (var level : ReefHeight.values()) {
 
           fillRight.put(
@@ -145,14 +153,18 @@ public class FieldConstants {
                     poseDirectionRobot
                         .transformBy(
                             new Transform2d(
-                                adjustX + robotCenterDistanceFromBranch, adjustY, new Rotation2d()))
+                                adjustX + robotCenterDistanceFromBranch,
+                                adjustY - robotWhyAdjust,
+                                new Rotation2d()))
                         .getX(),
                     poseDirectionRobot
                         .transformBy(
                             new Transform2d(
-                                adjustX + robotCenterDistanceFromBranch, adjustY, new Rotation2d()))
+                                adjustX + robotCenterDistanceFromBranch,
+                                adjustY - robotWhyAdjust,
+                                new Rotation2d()))
                         .getY()),
-                poseDirectionRobot.getRotation());
+                poseDirectionRobot.getRotation().rotateBy(Rotation2d.k180deg));
         robotLeft =
             new Pose2d(
                 new Translation2d(
@@ -160,17 +172,17 @@ public class FieldConstants {
                         .transformBy(
                             new Transform2d(
                                 adjustX + robotCenterDistanceFromBranch,
-                                -adjustY,
+                                -adjustY - robotWhyAdjust,
                                 new Rotation2d()))
                         .getX(),
                     poseDirectionRobot
                         .transformBy(
                             new Transform2d(
                                 adjustX + robotCenterDistanceFromBranch,
-                                -adjustY,
+                                -adjustY - robotWhyAdjust,
                                 new Rotation2d()))
                         .getY()),
-                poseDirectionRobot.getRotation());
+                poseDirectionRobot.getRotation().rotateBy(Rotation2d.k180deg));
 
         branchPositions.add(fillLeft);
         branchPositions.add(fillRight);
