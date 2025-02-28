@@ -105,6 +105,9 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+  private int closestLeftPanel;
+  private int closestRightPanel;
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -158,8 +161,11 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
+    Logger.recordOutput("LeftReefPositions", FieldConstants.Reef.leftRobotBranchPoses.get(4));
+    Logger.recordOutput("RightReefPositions", FieldConstants.Reef.rightRobotBranchPoses.get(4));
     Logger.processInputs("Drive/Gyro", gyroInputs);
     for (var module : modules) {
       module.periodic();
@@ -213,6 +219,40 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    double smallestDistanceLeft = 9999999;
+    closestLeftPanel = 0;
+    for (int i = 0; i < 6; i++) {
+      if (FieldConstants.Reef.leftRobotBranchPoses
+              .get(i)
+              .getTranslation()
+              .getDistance(getPose().getTranslation())
+          <= smallestDistanceLeft) {
+        smallestDistanceLeft =
+            FieldConstants.Reef.leftRobotBranchPoses
+                .get(i)
+                .getTranslation()
+                .getDistance(getPose().getTranslation());
+        closestLeftPanel = i;
+      }
+    }
+
+    double smallestDistanceRight = 9999999;
+    closestRightPanel = 0;
+    for (int i = 0; i < 6; i++) {
+      if (FieldConstants.Reef.leftRobotBranchPoses
+              .get(i)
+              .getTranslation()
+              .getDistance(getPose().getTranslation())
+          <= smallestDistanceRight) {
+        smallestDistanceRight =
+            FieldConstants.Reef.leftRobotBranchPoses
+                .get(i)
+                .getTranslation()
+                .getDistance(getPose().getTranslation());
+        closestRightPanel = i;
+      }
+    }
   }
 
   /**
@@ -367,8 +407,8 @@ public class Drive extends SubsystemBase {
   public Command pathfindToFieldPose(Pose2d targetPose) {
     PathConstraints constraints =
         new PathConstraints(
-            TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
-            PATH_MAX_ACCEL,
+            PF_MAX_SPEED_OR_SOMETHING,
+            PF_MAX_ACCEL,
             Units.degreesToRadians(PATH_MAX_ANGULAR_VELO),
             Units.degreesToRadians(PATH_MAX_ANGULAR_ACCEL));
 
@@ -419,5 +459,51 @@ public class Drive extends SubsystemBase {
       }
     }
     return FieldConstants.Reef.centerFaces[closestPanel];
+  }
+
+  public Pose2d getClosestReefBranch(boolean isLeft) {
+    // double smallestDistance = 9999999;
+    // int closestPanel = 0;
+    // if (isLeft) {
+    //   for (int i = 0; i < 6; i++) {
+    //     if (FieldConstants.Reef.leftRobotBranchPoses
+    //             .get(i)
+    //             .getTranslation()
+    //             .getDistance(getPose().getTranslation())
+    //         <= smallestDistance) {
+    //       smallestDistance =
+    //           FieldConstants.Reef.leftRobotBranchPoses
+    //               .get(i)
+    //               .getTranslation()
+    //               .getDistance(getPose().getTranslation());
+    //       closestPanel = i;
+    //     }
+    //   }
+
+    //   return FieldConstants.Reef.leftRobotBranchPoses.get(closestPanel);
+    // } else {
+    //   for (int i = 0; i < 6; i++) {
+    //     if (FieldConstants.Reef.rightRobotBranchPoses
+    //             .get(i)
+    //             .getTranslation()
+    //             .getDistance(getPose().getTranslation())
+    //         <= smallestDistance) {
+    //       smallestDistance =
+    //           FieldConstants.Reef.rightRobotBranchPoses
+    //               .get(i)
+    //               .getTranslation()
+    //               .getDistance(getPose().getTranslation());
+    //       closestPanel = i;
+    //     }
+    //   }
+
+    //   return FieldConstants.Reef.rightRobotBranchPoses.get(closestPanel);
+    // }
+
+    if (isLeft) {
+      return FieldConstants.Reef.leftRobotBranchPoses.get(closestLeftPanel);
+    } else {
+      return FieldConstants.Reef.leftRobotBranchPoses.get(closestRightPanel);
+    }
   }
 }

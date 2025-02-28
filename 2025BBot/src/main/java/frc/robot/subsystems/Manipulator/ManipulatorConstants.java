@@ -29,9 +29,9 @@ public final class ManipulatorConstants {
 
   public static final double wheelL1Power = 0.1;
   public static final double wheelL2Power = 0.21;
-  public static final double wheelAL2Power = 0.4000;
+  public static final double wheelAL2Power = -0.4000;
   public static final double wheelL3Power = 0.21;
-  public static final double wheelAL3Power = 0.4000;
+  public static final double wheelAL3Power = -0.4000;
   public static final double wheelL4Power = 0.18;
 
   public static final double wheelL1RPM = 60;

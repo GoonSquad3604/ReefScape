@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
@@ -61,6 +60,7 @@ import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -169,33 +169,31 @@ public class RobotContainer {
     stateController = new StateController();
     superStructure = new SuperStructure(manipulator, arm, elevator, stateController);
 
-    lED.setDefaultCommand(lED.solidCommand(Color.kDarkViolet));
+    lED.setDefaultCommand(lED.waveCommand(Color.kDarkViolet, Color.kBlack, 1, 1));
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Forward)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Reverse)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // usable commands
-    goHome =
-        new ElevatorToSetpoint(elevator, 3, true)
-            .until(() -> !elevator.mahoming)
-            .alongWith(superStructure.goHome());
+
+    // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Named Commands
+    NamedCommands.registerCommand("lEDTest", lED.solidCommand(Color.kBlanchedAlmond));
     NamedCommands.registerCommand(
         "intake", superStructure.goToSource().andThen(superStructure.intake()));
     NamedCommands.registerCommand(
@@ -203,9 +201,9 @@ public class RobotContainer {
         superStructure
             .goToSource()
             .alongWith(
-                lED.strobeCommand(Color.kCrimson, 0.32)
+                lED.strobeCommand(Color.kRed, 0.32)
                     .until(() -> manipulator.hasGamePiece())
-                    .andThen(lED.solidCommand(Color.kDarkOliveGreen))));
+                    .andThen(lED.solidCommand(Color.kGreen))));
     NamedCommands.registerCommand(
         "fire", superStructure.fire().withTimeout(2).andThen(superStructure.intakeOff()));
     NamedCommands.registerCommand("holdFire", superStructure.intakeOff());
@@ -215,6 +213,12 @@ public class RobotContainer {
             .goToL4Coral()
             .andThen(stateController.setL4())
             .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)));
+    NamedCommands.registerCommand(
+        "fireL4",
+        superStructure
+            .fire()
+            .until(() -> !manipulator.hasGamePiece())
+            .andThen(superStructure.layup()));
     NamedCommands.registerCommand("goToAlgae25", superStructure.goToL2Algae());
     NamedCommands.registerCommand("goToAlgae35", superStructure.goToL3Algae());
     NamedCommands.registerCommand("goToSource", superStructure.goToSource());
@@ -226,8 +230,8 @@ public class RobotContainer {
             .until(() -> !elevator.mahoming)
             .andThen(elevator.runOnce(() -> elevator.stop()))
             .alongWith(superStructure.goHome().alongWith(stateController.setMahome())));
-
     configureButtonBindings();
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
   }
 
   /**
@@ -239,6 +243,12 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     List<Color> stripes = new ArrayList<>();
+    stripes.add(Color.kRed);
+    stripes.add(Color.kOrange);
+    stripes.add(Color.kYellow);
+    stripes.add(Color.kGreen);
+    stripes.add(Color.kBlue);
+    stripes.add(Color.kPurple);
     stripes.add(Color.kRed);
     stripes.add(Color.kOrange);
     stripes.add(Color.kYellow);
@@ -257,9 +267,9 @@ public class RobotContainer {
     Trigger LMahome = new Trigger(() -> stateController.isMahome());
     Trigger L3 = new Trigger(() -> stateController.isL3());
 
-    // rumble controler for 2s when endgame
+    // rumble controler for 1s when endgame
     rumbleTime.onTrue(
-        new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 1))
+        new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, .8))
             .andThen(new WaitCommand(1))
             .andThen(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0)));
 
@@ -271,7 +281,7 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
 
-    // Lock to goal when B button is held
+    // angle towards reef panel if game piece
     driverController
         .b()
         .and(coralMode)
@@ -295,7 +305,7 @@ public class RobotContainer {
                 () -> -driverController.getLeftX(),
                 () -> AllianceFlipUtil.apply(drive.getClosestSource()).getRotation()));
 
-    // angle towards processor if game piece
+    // angle towards processor if game piece and algae mode
     driverController
         .b()
         .and(algaeMode)
@@ -307,7 +317,7 @@ public class RobotContainer {
                 () -> -driverController.getLeftX(),
                 () -> AllianceFlipUtil.apply(FieldConstants.Processor.centerFace).getRotation()));
 
-    // angle towards source if no game piece
+    // angle towards reef if no game piece and algae mode
     driverController
         .b()
         .and(algaeMode)
@@ -329,7 +339,7 @@ public class RobotContainer {
                 () -> -driverController.getLeftX(),
                 () -> -driverController.getRightX()));
 
-    // Switch to X pattern when X button is pressed
+    // Switch to X pattern when X button is pressed (lock drive train)
     driverController.x().whileTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when start button is pressed
@@ -349,50 +359,68 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.joystickDrive(
                 drive,
-                () -> (-driverController.getLeftY() * .5),
-                () -> (-driverController.getLeftX() * .5),
+                () -> (-driverController.getLeftY() * .4),
+                () -> (-driverController.getLeftX() * .4),
                 () -> (-driverController.getRightX() * .4)));
 
     // Pathfinds based on State Controller
+    // driverController
+    //     .leftBumper()
+    //     .and(coralMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         drive
+    //             .defer(
+    //                 () ->
+    //                     drive.pathfindToFieldPose(
+    //                         AllianceFlipUtil.apply(drive.getClosestReefBranch(true))))
+    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+
     driverController
         .leftBumper()
         .and(coralMode)
         .and(hasGamePiece)
         .whileTrue(
-            drive
-                .defer(
+            Commands.defer(
                     () ->
                         drive.pathfindToFieldPose(
-                            AllianceFlipUtil.apply(drive.getClosestReefPanel())))
-                .andThen(lED.strobeCommand(Color.kDarkOrange, Math.PI / 10)));
-
+                            AllianceFlipUtil.apply(drive.getClosestReefBranch(true))),
+                    Set.of(drive))
+                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
     driverController
         .leftBumper()
         .and(coralMode)
         .and(hasNoGamePiece)
         .whileTrue(
             drive.defer(
-                () -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestSource()))));
-
-    driverController
-        .leftBumper()
-        .and(algaeMode)
-        .and(hasGamePiece)
-        .whileTrue(
-            drive.defer(
                 () ->
-                    drive.pathfindToFieldPose(
-                        AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))));
+                    drive
+                        .pathfindToFieldPose(
+                            AllianceFlipUtil.apply(FieldConstants.CoralStation.leftCenterIntakePos))
+                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
-    driverController
-        .leftBumper()
-        .and(algaeMode)
-        .and(hasNoGamePiece)
-        .whileTrue(
-            drive.defer(
-                () ->
-                    drive.pathfindToFieldPose(
-                        AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+    // driverController
+    //     .leftBumper()
+    //     .and(algaeMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         drive.defer(
+    //             () ->
+    //                 drive
+    //                     .pathfindToFieldPose(
+    //                         AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))
+    //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
+
+    // driverController
+    //     .leftBumper()
+    //     .and(algaeMode)
+    //     .and(hasNoGamePiece)
+    //     .whileTrue(
+    //         drive.defer(
+    //             () ->
+    //                 drive
+    //                     .pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))
+    //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
     driverController
         .rightBumper()
@@ -401,8 +429,10 @@ public class RobotContainer {
         .whileTrue(
             drive.defer(
                 () ->
-                    drive.pathfindToFieldPose(
-                        AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+                    drive
+                        .pathfindToFieldPose(
+                            AllianceFlipUtil.apply(drive.getClosestReefBranch(false)))
+                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
     driverController
         .rightBumper()
@@ -410,48 +440,52 @@ public class RobotContainer {
         .and(hasNoGamePiece)
         .whileTrue(
             drive.defer(
-                () -> drive.pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestSource()))));
-
-    driverController
-        .rightBumper()
-        .and(algaeMode)
-        .and(hasGamePiece)
-        .whileTrue(
-            drive.defer(
                 () ->
-                    drive.pathfindToFieldPose(
-                        AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))));
+                    drive
+                        .pathfindToFieldPose(
+                            AllianceFlipUtil.apply(
+                                FieldConstants.CoralStation.rightCenterIntakePos))
+                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
-    driverController
-        .rightBumper()
-        .and(algaeMode)
-        .and(hasNoGamePiece)
-        .whileTrue(
-            drive.defer(
-                () ->
-                    drive.pathfindToFieldPose(
-                        AllianceFlipUtil.apply(drive.getClosestReefPanel()))));
+    // driverController
+    //     .rightBumper()
+    //     .and(algaeMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         drive.defer(
+    //             () ->
+    //                 drive
+    //                     .pathfindToFieldPose(
+    //                         AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))
+    //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
-    driverController.povUpLeft().onTrue(lED.rainbowCommand(0.5, 3));
-    driverController
-        .povDownRight()
-        .onTrue(lED.breatheCommand(Color.kPurple, Color.kBlue, 1));
-    driverController.povDownLeft().onTrue(lED.strobeCommand(Color.kPeru, 1));
+    // driverController
+    //     .rightBumper()
+    //     .and(algaeMode)
+    //     .and(hasNoGamePiece)
+    //     .whileTrue(
+    //         drive.defer(
+    //             () ->
+    //                 drive
+    //                     .pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))
+    //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
+
+    // silly led buttons :)
+    driverController.povUpLeft().onTrue(lED.rainbowCommand(0.333, 2.5));
+    driverController.povDownRight().onTrue(lED.breatheCommand(Color.kCrimson, Color.kBlack, 1));
+    driverController.povDownLeft().onTrue(lED.solidCommand(Color.kDarkViolet));
     driverController.povUpRight().onTrue(lED.stripeCommand(stripes, LEDConstants.STRIP_LENGTH, 1));
-    driverController.back().onTrue(lED.waveCommand(Color.kTomato, Color.kChocolate, 1, 1));
+    driverController.back().onTrue(lED.waveCommand(Color.kDarkViolet, Color.kBlack, 1, 1));
 
     operatorButtonBox
         .button(1)
         .onTrue(
             stateController
                 .setCoralMode(manipulator)
-                .alongWith(lED.solidCommand(Color.kWhite)));
+                .alongWith(lED.solidCommand(Color.kGhostWhite)));
     operatorButtonBox
         .button(2)
-        .onTrue(
-            stateController
-                .setAlgaeMode(manipulator)
-                .alongWith(lED.solidCommand(Color.kAquamarine)));
+        .onTrue(stateController.setAlgaeMode(manipulator).alongWith(lED.solidCommand(Color.kTeal)));
 
     // goes to L4 positions
     operatorButtonBox
@@ -523,14 +557,15 @@ public class RobotContainer {
                 .alongWith(superStructure.goToL1Coral())
                 .alongWith(stateController.setL1()));
 
-    // goes home -- i love patrick mahomes
+    // goes home - i love patrick mahomes
     operatorButtonBox
         .button(7)
         .onTrue(
             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                .andThen(superStructure.intakeOff())
                 .until(() -> !elevator.mahoming)
                 .andThen(elevator.runOnce(() -> elevator.stop()))
-                .alongWith(superStructure.goHome().alongWith(stateController.setMahome())));
+                .andThen(superStructure.goHome().alongWith(stateController.setMahome())));
 
     // Deploy Climber
     operatorButtonBox
@@ -551,7 +586,7 @@ public class RobotContainer {
             superStructure
                 .goToSource()
                 .alongWith(
-                    lED.strobeCommand(Color.kCrimson, 0.32)
+                    lED.strobeCommand(Color.kRed, 0.32)
                         .until(() -> manipulator.hasGamePiece())
                         .andThen(lED.solidCommand(Color.kDarkOliveGreen))));
     operatorButtonBox
@@ -562,10 +597,6 @@ public class RobotContainer {
                 .andThen(superStructure.goHome())
                 .alongWith(lED.solidCommand(Color.kWhite)));
 
-    // .andThen(superStructure.goHome())));
-    // operatorButtonBox
-    //     .button(10)
-    //     .onFalse(new ParallelCommandGroup(superStructure.intakeOff(), superStructure.goHome()));
     // Vomit
     operatorButtonBox
         .button(11)
@@ -638,11 +669,11 @@ public class RobotContainer {
                         .andThen(elevator.runOnce(() -> elevator.stop()))
                         .alongWith(superStructure.goHome())));
 
-    testController.a().onTrue(climber.moveClimberUp());
-    testController.a().onFalse(climber.stop());
+    // testController.a().onTrue(climber.moveClimberUp());
+    // testController.a().onFalse(climber.stop());
 
-    testController.y().onTrue(climber.moveClimberDown());
-    testController.y().onFalse(climber.stop());
+    // testController.y().onTrue(climber.moveClimberDown());
+    // testController.y().onFalse(climber.stop());
 
     // testController.b().onTrue(arm.elbowUp());
     // testController.b().onFalse(arm.stopElbow());
@@ -650,8 +681,8 @@ public class RobotContainer {
     // testController.rightBumper().onTrue(arm.elbowDown());
     // testController.rightBumper().onFalse(arm.stopElbow());
 
-    // testController.povDown().onTrue(arm.wristUp());
-    // testController.povDown().onFalse(arm.stopWrist());
+    driverController.povDown().whileTrue(climber.setClimberHome());
+    driverController.povDown().onFalse(climber.stop());
 
     // testController.povLeft().onTrue(arm.wristDown());
     // testController.povLeft().onFalse(arm.stopWrist());

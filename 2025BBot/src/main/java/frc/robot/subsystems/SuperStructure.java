@@ -104,7 +104,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command goHome() {
-    return run(
+    return runOnce(
         () -> {
           arm.home();
           // elevator.home();
