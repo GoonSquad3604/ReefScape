@@ -35,12 +35,9 @@ import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmIOPhoenixRev;
-import frc.robot.subsystems.Climber.Climber;
-import frc.robot.subsystems.Climber.ClimberIOPhoenix;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorIONeo;
-import frc.robot.subsystems.LED.LEDConstants;
 import frc.robot.subsystems.LED.LEDs;
 import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.subsystems.Manipulator.ManipulatorIOPhoenixRev;
@@ -77,7 +74,7 @@ public class RobotContainer {
   private final SuperStructure superStructure;
   private final Arm arm;
   private final Manipulator manipulator;
-  private final Climber climber;
+  //   private final Climber climber;
   private final Elevator elevator;
   private final LEDs lED;
 
@@ -117,7 +114,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        climber = new Climber(new ClimberIOPhoenix());
+        // climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
 
@@ -140,7 +137,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        climber = new Climber(new ClimberIOPhoenix());
+        // climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
 
@@ -162,14 +159,15 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        climber = new Climber(new ClimberIOPhoenix());
+        // climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
     }
     stateController = new StateController();
     superStructure = new SuperStructure(manipulator, arm, elevator, stateController);
 
-    lED.setDefaultCommand(lED.waveCommand(Color.kDarkViolet, Color.kBlack, 1, 1));
+    lED.setDefaultCommand(lED.defaultLeds(() -> stateController.getMode()));
+
     // Set up auto routines
 
     // Set up SysId routines
@@ -243,12 +241,6 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     List<Color> stripes = new ArrayList<>();
-    stripes.add(Color.kRed);
-    stripes.add(Color.kOrange);
-    stripes.add(Color.kYellow);
-    stripes.add(Color.kGreen);
-    stripes.add(Color.kBlue);
-    stripes.add(Color.kPurple);
     stripes.add(Color.kRed);
     stripes.add(Color.kOrange);
     stripes.add(Color.kYellow);
@@ -384,7 +376,7 @@ public class RobotContainer {
             Commands.defer(
                     () ->
                         drive.pathfindToFieldPose(
-                            AllianceFlipUtil.apply(drive.getClosestReefBranch(true))),
+                            () -> AllianceFlipUtil.apply(drive.getClosestReefBranch(true))),
                     Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
     driverController
@@ -392,12 +384,14 @@ public class RobotContainer {
         .and(coralMode)
         .and(hasNoGamePiece)
         .whileTrue(
-            drive.defer(
-                () ->
-                    drive
-                        .pathfindToFieldPose(
-                            AllianceFlipUtil.apply(FieldConstants.CoralStation.leftCenterIntakePos))
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
+            Commands.defer(
+                    () ->
+                        drive.pathfindToFieldPose(
+                            () ->
+                                AllianceFlipUtil.apply(
+                                    FieldConstants.CoralStation.leftCenterIntakePos)),
+                    Set.of(drive))
+                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     // driverController
     //     .leftBumper()
@@ -427,25 +421,27 @@ public class RobotContainer {
         .and(coralMode)
         .and(hasGamePiece)
         .whileTrue(
-            drive.defer(
-                () ->
-                    drive
-                        .pathfindToFieldPose(
-                            AllianceFlipUtil.apply(drive.getClosestReefBranch(false)))
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
+            Commands.defer(
+                    () ->
+                        drive.pathfindToFieldPose(
+                            () -> AllianceFlipUtil.apply(drive.getClosestReefBranch(false))),
+                    Set.of(drive))
+                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     driverController
         .rightBumper()
         .and(coralMode)
         .and(hasNoGamePiece)
         .whileTrue(
-            drive.defer(
+            Commands.defer(
                 () ->
                     drive
                         .pathfindToFieldPose(
-                            AllianceFlipUtil.apply(
-                                FieldConstants.CoralStation.rightCenterIntakePos))
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
+                            () ->
+                                AllianceFlipUtil.apply(
+                                    FieldConstants.CoralStation.rightCenterIntakePos))
+                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
+                Set.of(drive)));
 
     // driverController
     //     .rightBumper()
@@ -471,11 +467,12 @@ public class RobotContainer {
     //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
     // silly led buttons :)
-    driverController.povUpLeft().onTrue(lED.rainbowCommand(0.333, 2.5));
-    driverController.povDownRight().onTrue(lED.breatheCommand(Color.kCrimson, Color.kBlack, 1));
-    driverController.povDownLeft().onTrue(lED.solidCommand(Color.kDarkViolet));
-    driverController.povUpRight().onTrue(lED.stripeCommand(stripes, LEDConstants.STRIP_LENGTH, 1));
-    driverController.back().onTrue(lED.waveCommand(Color.kDarkViolet, Color.kBlack, 1, 1));
+    // driverController.povUpLeft().onTrue(lED.rainbowCommand(0.333, 2.5));
+    // driverController.povDownRight().onTrue(lED.breatheCommand(Color.kCrimson, Color.kBlack, 1));
+    // driverController.povDownLeft().onTrue(lED.solidCommand(Color.kDarkViolet));
+    // driverController.povUpRight().onTrue(lED.stripeCommand(stripes, LEDConstants.STRIP_LENGTH,
+    // 1));
+    // driverController.back().onTrue(lED.waveCommand(Color.kDarkViolet, Color.kBlack, 1, 1));
 
     operatorButtonBox
         .button(1)
@@ -485,7 +482,7 @@ public class RobotContainer {
                 .alongWith(lED.solidCommand(Color.kGhostWhite)));
     operatorButtonBox
         .button(2)
-        .onTrue(stateController.setAlgaeMode(manipulator).alongWith(lED.solidCommand(Color.kTeal)));
+        .onTrue(stateController.setAlgaeMode(manipulator).alongWith(lED.solidCommand(Color.kBlue)));
 
     // goes to L4 positions
     operatorButtonBox
@@ -568,16 +565,16 @@ public class RobotContainer {
                 .andThen(superStructure.goHome().alongWith(stateController.setMahome())));
 
     // Deploy Climber
-    operatorButtonBox
-        .button(8)
-        .onTrue(
-            superStructure
-                .armClimb()
-                .alongWith(climber.setClimberDown())
-                .alongWith(lED.stripeCommand(stripes, LEDConstants.STRIP_LENGTH, 1)));
+    // operatorButtonBox
+    //     .button(8)
+    //     .onTrue(
+    //         superStructure
+    //             .armClimb()
+    //             .alongWith(climber.setClimberDown())
+    //             .alongWith(lED.stripeCommand(stripes, LEDConstants.STRIP_LENGTH, 1)));
 
     // Climbs
-    operatorButtonBox.button(9).onTrue(climber.setClimberUp());
+    // operatorButtonBox.button(9).onTrue(climber.setClimberUp());
 
     // Intake
     operatorButtonBox
@@ -595,7 +592,7 @@ public class RobotContainer {
             superStructure
                 .intakeOff()
                 .andThen(superStructure.goHome())
-                .alongWith(lED.solidCommand(Color.kWhite)));
+                .alongWith(lED.defaultLeds(() -> stateController.getMode())));
 
     // Vomit
     operatorButtonBox
@@ -681,8 +678,8 @@ public class RobotContainer {
     // testController.rightBumper().onTrue(arm.elbowDown());
     // testController.rightBumper().onFalse(arm.stopElbow());
 
-    driverController.povDown().whileTrue(climber.setClimberHome());
-    driverController.povDown().onFalse(climber.stop());
+    // driverController.povDown().whileTrue(climber.setClimberHome());
+    // driverController.povDown().onFalse(climber.stop());
 
     // testController.povLeft().onTrue(arm.wristDown());
     // testController.povLeft().onFalse(arm.stopWrist());
