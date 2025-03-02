@@ -35,6 +35,8 @@ import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmIOPhoenixRev;
+import frc.robot.subsystems.Climber.Climber;
+import frc.robot.subsystems.Climber.ClimberIOPhoenix;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorIONeo;
@@ -74,7 +76,7 @@ public class RobotContainer {
   private final SuperStructure superStructure;
   private final Arm arm;
   private final Manipulator manipulator;
-  //   private final Climber climber;
+  private final Climber climber;
   private final Elevator elevator;
   private final LEDs lED;
 
@@ -114,7 +116,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        // climber = new Climber(new ClimberIOPhoenix());
+        climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
 
@@ -137,7 +139,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        // climber = new Climber(new ClimberIOPhoenix());
+        climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
 
@@ -159,7 +161,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        // climber = new Climber(new ClimberIOPhoenix());
+        climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
     }
@@ -564,7 +566,7 @@ public class RobotContainer {
                 .andThen(elevator.runOnce(() -> elevator.stop()))
                 .andThen(superStructure.goHome().alongWith(stateController.setMahome())));
 
-    // Deploy Climber
+    // // Deploy Climber
     // operatorButtonBox
     //     .button(8)
     //     .onTrue(
@@ -573,7 +575,7 @@ public class RobotContainer {
     //             .alongWith(climber.setClimberDown())
     //             .alongWith(lED.stripeCommand(stripes, LEDConstants.STRIP_LENGTH, 1)));
 
-    // Climbs
+    // // Climbs
     // operatorButtonBox.button(9).onTrue(climber.setClimberUp());
 
     // Intake
@@ -666,11 +668,11 @@ public class RobotContainer {
                         .andThen(elevator.runOnce(() -> elevator.stop()))
                         .alongWith(superStructure.goHome())));
 
-    // testController.a().onTrue(climber.moveClimberUp());
-    // testController.a().onFalse(climber.stop());
+    testController.a().onTrue(climber.moveClimberUp());
+    testController.a().onFalse(climber.stop());
 
-    // testController.y().onTrue(climber.moveClimberDown());
-    // testController.y().onFalse(climber.stop());
+    testController.y().onTrue(climber.moveClimberDown());
+    testController.y().onFalse(climber.stop());
 
     // testController.b().onTrue(arm.elbowUp());
     // testController.b().onFalse(arm.stopElbow());

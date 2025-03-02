@@ -17,7 +17,7 @@ public final class ArmConstants {
   public static final double elbowD = Math.sin(Math.PI / 2);
   public static final double elbowFF = 0;
 
-  public static final double wristP = 2.5000;
+  public static final double wristP = 2.0001;
   public static final double wristI = 0.000;
   public static final double wristD = 0.1;
   public static final double wristFF = 0;
