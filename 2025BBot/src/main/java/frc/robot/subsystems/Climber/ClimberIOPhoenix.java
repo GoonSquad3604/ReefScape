@@ -61,7 +61,7 @@ public class ClimberIOPhoenix implements ClimberIO {
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     config.Feedback.withRemoteCANcoder(climberEncoder);
     encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    encoderConfig.MagnetSensor.MagnetOffset = 0.1;
+    encoderConfig.MagnetSensor.MagnetOffset = 0.4;
 
     // apply configs
     PhoenixUtil.tryUntilOk(5, () -> climberMotor.getConfigurator().apply(config));

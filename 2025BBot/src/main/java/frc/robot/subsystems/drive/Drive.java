@@ -55,6 +55,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -240,13 +241,13 @@ public class Drive extends SubsystemBase {
     double smallestDistanceRight = 9999999;
     closestRightPanel = 0;
     for (int i = 0; i < 6; i++) {
-      if (FieldConstants.Reef.leftRobotBranchPoses
+      if (FieldConstants.Reef.rightRobotBranchPoses
               .get(i)
               .getTranslation()
               .getDistance(getPose().getTranslation())
           <= smallestDistanceRight) {
         smallestDistanceRight =
-            FieldConstants.Reef.leftRobotBranchPoses
+            FieldConstants.Reef.rightRobotBranchPoses
                 .get(i)
                 .getTranslation()
                 .getDistance(getPose().getTranslation());
@@ -404,7 +405,7 @@ public class Drive extends SubsystemBase {
     };
   }
 
-  public Command pathfindToFieldPose(Pose2d targetPose) {
+  public Command pathfindToFieldPose(Supplier<Pose2d> targetPose) {
     PathConstraints constraints =
         new PathConstraints(
             PF_MAX_SPEED_OR_SOMETHING,
@@ -412,7 +413,7 @@ public class Drive extends SubsystemBase {
             Units.degreesToRadians(PATH_MAX_ANGULAR_VELO),
             Units.degreesToRadians(PATH_MAX_ANGULAR_ACCEL));
 
-    return AutoBuilder.pathfindToPose(targetPose, constraints, 0);
+    return AutoBuilder.pathfindToPose(targetPose.get(), constraints, 0);
   }
 
   public Command pathfindToPath(PathPlannerPath path) {
@@ -503,7 +504,7 @@ public class Drive extends SubsystemBase {
     if (isLeft) {
       return FieldConstants.Reef.leftRobotBranchPoses.get(closestLeftPanel);
     } else {
-      return FieldConstants.Reef.leftRobotBranchPoses.get(closestRightPanel);
+      return FieldConstants.Reef.rightRobotBranchPoses.get(closestRightPanel);
     }
   }
 }

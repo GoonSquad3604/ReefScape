@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2PieceP1"
+            "pathName": "LeftOnePieceP1"
           }
         },
         {
@@ -42,13 +42,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "fireL4"
+                  "name": "fire"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.5
+                  "waitTime": 1.0
                 }
               }
             ]
@@ -82,7 +82,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2PieceP2"
+            "pathName": "LeftOnePieceP2"
           }
         },
         {
@@ -113,7 +113,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2PieceP3"
+            "pathName": "Left2Piece"
           }
         },
         {
@@ -140,15 +140,15 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 1.0
+                  "name": "fire"
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "fireL4"
+                  "waitTime": 1.0
                 }
               }
             ]

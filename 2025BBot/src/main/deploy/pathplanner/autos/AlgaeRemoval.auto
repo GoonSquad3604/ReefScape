@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2PieceP1"
+            "pathName": "CenterBranchOrWhatever"
           }
         },
         {
@@ -29,7 +29,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.19
+                  "waitTime": 2.5
                 }
               }
             ]
@@ -42,13 +42,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "fireL4"
+                  "name": "fire"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.5
+                  "waitTime": 1.0
                 }
               }
             ]
@@ -73,7 +73,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.76
+                  "waitTime": 2.5
                 }
               }
             ]
@@ -82,7 +82,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2PieceP2"
+            "pathName": "ThisPathCentersTheRobotOnTheAlgae"
           }
         },
         {
@@ -92,13 +92,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "intakeUntilPiece"
+                  "name": "algaeRemoval"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 4.01
+                  "waitTime": 3.0
                 }
               }
             ]
@@ -111,59 +111,22 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "2PieceP3"
-          }
-        },
-        {
           "type": "race",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "goToL4"
+                  "name": "goHome"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.19
+                  "waitTime": 2.5
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "fireL4"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "holdFire"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "goHome"
           }
         }
       ]

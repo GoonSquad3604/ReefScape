@@ -17,8 +17,9 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private Pose2d m_TragetPose;
 
   public StateController() {
-    setCoral();
+    // setCoral();
     m_Level = LevelState.MAHOME;
+    m_Mode = RobotMode.IDLE;
   }
 
   public void setCoral() {
