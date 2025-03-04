@@ -231,6 +231,10 @@ public class RobotContainer {
             .andThen(elevator.runOnce(() -> elevator.stop()))
             .alongWith(superStructure.goHome().alongWith(stateController.setMahome())));
     configureButtonBindings();
+    NamedCommands.registerCommand(
+        "algaeRemoval",
+        new ElevatorToSetpoint(elevator, ElevatorConstants.l3PosAlgae)
+            .alongWith(superStructure.goToL3Algae().alongWith(stateController.setL3())));
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
   }
 
