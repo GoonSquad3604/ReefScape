@@ -557,6 +557,8 @@ public class RobotContainer {
                 .andThen(elevator.runOnce(() -> elevator.stop()))
                 .andThen(superStructure.goHome().alongWith(stateController.setMahome())));
 
+    // operatorButtonBox.button(7).onTrue(superStructure.armClimb());
+
     // Deploy Climber
     operatorButtonBox
         .button(8)
@@ -565,6 +567,7 @@ public class RobotContainer {
 
     // Climbs
     operatorButtonBox.button(9).and(climbMode).onTrue(climber.setClimberUp());
+    // operatorButtonBox.button(11).onTrue(climber.setClimberUp());
 
     // Intake
     operatorButtonBox
@@ -576,6 +579,10 @@ public class RobotContainer {
                     lED.strobeCommand(Color.kRed, 0.32)
                         .until(() -> manipulator.hasGamePiece())
                         .andThen(lED.solidCommand(Color.kGreen))));
+
+    // operatorButtonBox
+    //     .button(10)
+    //     .onTrue(superStructure.armClimb().alongWith(climber.setClimberDown()));
 
     operatorButtonBox
         .button(10)

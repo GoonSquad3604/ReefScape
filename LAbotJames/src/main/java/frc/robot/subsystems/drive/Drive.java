@@ -52,6 +52,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -223,15 +224,13 @@ public class Drive extends SubsystemBase {
 
     double smallestDistanceLeft = 9999999;
     closestLeftPanel = 0;
-    for (int i = 0; i < 6; i++) {
-      if (FieldConstants.Reef.leftRobotBranchPoses
-              .get(i)
+    for (int i = 0; i < FieldConstants.Reef.leftRobotBranchPoses.size(); i++) {
+      if (AllianceFlipUtil.apply(FieldConstants.Reef.leftRobotBranchPoses.get(i))
               .getTranslation()
               .getDistance(getPose().getTranslation())
           <= smallestDistanceLeft) {
         smallestDistanceLeft =
-            FieldConstants.Reef.leftRobotBranchPoses
-                .get(i)
+            AllianceFlipUtil.apply(FieldConstants.Reef.leftRobotBranchPoses.get(i))
                 .getTranslation()
                 .getDistance(getPose().getTranslation());
         closestLeftPanel = i;
@@ -241,14 +240,12 @@ public class Drive extends SubsystemBase {
     double smallestDistanceRight = 9999999;
     closestRightPanel = 0;
     for (int i = 0; i < 6; i++) {
-      if (FieldConstants.Reef.rightRobotBranchPoses
-              .get(i)
+      if (AllianceFlipUtil.apply(FieldConstants.Reef.rightRobotBranchPoses.get(i))
               .getTranslation()
               .getDistance(getPose().getTranslation())
           <= smallestDistanceRight) {
         smallestDistanceRight =
-            FieldConstants.Reef.rightRobotBranchPoses
-                .get(i)
+            AllianceFlipUtil.apply(FieldConstants.Reef.rightRobotBranchPoses.get(i))
                 .getTranslation()
                 .getDistance(getPose().getTranslation());
         closestRightPanel = i;
@@ -430,17 +427,17 @@ public class Drive extends SubsystemBase {
 
   public Pose2d getClosestSource() {
     double leftDistance =
-        FieldConstants.CoralStation.leftCenterFace
+        AllianceFlipUtil.apply(FieldConstants.CoralStation.leftCenterFace)
             .getTranslation()
             .getDistance(getPose().getTranslation());
     double rightDistance =
-        FieldConstants.CoralStation.rightCenterFace
+        AllianceFlipUtil.apply(FieldConstants.CoralStation.rightCenterFace)
             .getTranslation()
             .getDistance(getPose().getTranslation());
     if (leftDistance >= rightDistance) {
-      return FieldConstants.CoralStation.rightCenterFace;
+      return AllianceFlipUtil.apply(FieldConstants.CoralStation.rightCenterFace);
     } else {
-      return FieldConstants.CoralStation.leftCenterFace;
+      return AllianceFlipUtil.apply(FieldConstants.CoralStation.leftCenterFace);
     }
   }
 
