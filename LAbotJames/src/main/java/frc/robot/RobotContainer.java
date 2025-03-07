@@ -19,6 +19,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.AutoAline.Target;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
@@ -58,6 +60,7 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.Set;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -68,7 +71,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  private final Drive drive;
+  public final Drive drive;
   private final Vision vision;
   private final StateController stateController;
   private final SuperStructure superStructure;
@@ -82,6 +85,8 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandJoystick operatorButtonBox = new CommandJoystick(1);
   private final CommandXboxController testController = new CommandXboxController(2);
+  private final Supplier<Translation2d> joystickSupplier =
+      () -> new Translation2d(driverController.getLeftY(), driverController.getLeftX());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -107,7 +112,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new MitoCANdriaIO(),
-                new VisionIOPhotonVision(camera4Name, robotToCamera4),
+                // new VisionIOPhotonVision(camera4Name, robotToCamera4),
                 new VisionIOPhotonVision(camera1Name, robotToCamera1),
                 new VisionIOPhotonVision(camera2Name, robotToCamera2),
                 new VisionIOPhotonVision(camera3Name, robotToCamera3));
@@ -366,15 +371,25 @@ public class RobotContainer {
     //                         AllianceFlipUtil.apply(drive.getClosestReefBranch(true))))
     //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
+    // driverController
+    //     .leftBumper()
+    //     .and(coralMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         Commands.defer(
+    //                 () ->
+    //                     drive.pathfindToFieldPose(
+    //                         () -> AllianceFlipUtil.apply(drive.getClosestReefBranch(true))),
+    //                 Set.of(drive))
+    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+
     driverController
         .leftBumper()
         .and(coralMode)
         .and(hasGamePiece)
         .whileTrue(
             Commands.defer(
-                    () ->
-                        drive.pathfindToFieldPose(
-                            () -> AllianceFlipUtil.apply(drive.getClosestReefBranch(true))),
+                    () -> AutoAline.autoAlineTo(Target.LEFT_POLE, this, joystickSupplier),
                     Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
@@ -415,15 +430,25 @@ public class RobotContainer {
     //                     .pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))
     //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
+    // driverController
+    //     .rightBumper()
+    //     .and(coralMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         Commands.defer(
+    //                 () ->
+    //                     drive.pathfindToFieldPose(
+    //                         () -> AllianceFlipUtil.apply(drive.getClosestReefBranch(false))),
+    //                 Set.of(drive))
+    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+
     driverController
         .rightBumper()
         .and(coralMode)
         .and(hasGamePiece)
         .whileTrue(
             Commands.defer(
-                    () ->
-                        drive.pathfindToFieldPose(
-                            () -> AllianceFlipUtil.apply(drive.getClosestReefBranch(false))),
+                    () -> AutoAline.autoAlineTo(Target.RIGHT_POLE, this, joystickSupplier),
                     Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 

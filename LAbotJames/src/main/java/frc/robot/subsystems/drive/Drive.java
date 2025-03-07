@@ -445,18 +445,20 @@ public class Drive extends SubsystemBase {
     double smallestDistance = 9999999;
     int closestPanel = 0;
     for (int i = 0; i < 6; i++) {
-      if (FieldConstants.Reef.centerFaces[i]
+      if (FieldConstants.Reef.centerFaces
+              .get(i)
               .getTranslation()
               .getDistance(getPose().getTranslation())
           <= smallestDistance) {
         smallestDistance =
-            FieldConstants.Reef.centerFaces[i]
+            FieldConstants.Reef.centerFaces
+                .get(i)
                 .getTranslation()
                 .getDistance(getPose().getTranslation());
         closestPanel = i;
       }
     }
-    return FieldConstants.Reef.centerFaces[closestPanel];
+    return FieldConstants.Reef.centerFaces.get(closestPanel);
   }
 
   public Pose2d getClosestReefBranch(boolean isLeft) {
