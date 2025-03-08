@@ -413,6 +413,17 @@ public class Drive extends SubsystemBase {
     return AutoBuilder.pathfindToPose(targetPose.get(), constraints, 0);
   }
 
+  public Command pathfindToFieldPose(Pose2d targetPose) {
+    PathConstraints constraints =
+        new PathConstraints(
+            PF_MAX_SPEED_OR_SOMETHING,
+            PF_MAX_ACCEL,
+            Units.degreesToRadians(PATH_MAX_ANGULAR_VELO),
+            Units.degreesToRadians(PATH_MAX_ANGULAR_ACCEL));
+
+    return AutoBuilder.pathfindToPose(targetPose, constraints, 0);
+  }
+
   public Command pathfindToPath(PathPlannerPath path) {
 
     PathConstraints constraints =
@@ -505,5 +516,21 @@ public class Drive extends SubsystemBase {
     } else {
       return FieldConstants.Reef.rightRobotBranchPoses.get(closestRightPanel);
     }
+  }
+
+  public Translation2d getLinearSpeedsVector() {
+    ChassisSpeeds speeds =
+        ChassisSpeeds.fromRobotRelativeSpeeds(
+            kinematics.toChassisSpeeds(getModuleStates()), getRotation());
+    return new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+  }
+
+  /** Returns the current linear speed in meters per sec. */
+  public double getLinearSpeedMetersPerSec() {
+    return getLinearSpeedsVector().getNorm();
+  }
+
+  public double getAngularSpeedRadsPerSec() {
+    return kinematics.toChassisSpeeds(getModuleStates()).omegaRadiansPerSecond;
   }
 }

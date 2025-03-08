@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.AutoAline.Target;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorToSetpoint;
@@ -60,6 +61,7 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -174,22 +176,22 @@ public class RobotContainer {
     lED.setDefaultCommand(lED.defaultLeds(() -> stateController.getMode()));
 
     // Set up auto routines
-
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     // Set up SysId routines
-    // autoChooser.addOption(
-    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    // autoChooser.addOption(
-    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    // autoChooser.addOption(
-    //     "Drive SysId (Quasistatic Forward)",
-    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // autoChooser.addOption(
-    //     "Drive SysId (Quasistatic Reverse)",
-    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // autoChooser.addOption(
-    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // autoChooser.addOption(
-    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // usable commands
 
@@ -238,7 +240,6 @@ public class RobotContainer {
         "algaeRemoval",
         new ElevatorToSetpoint(elevator, ElevatorConstants.l3PosAlgae)
             .alongWith(superStructure.goToL3Algae().alongWith(stateController.setL3())));
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
   }
 
   /**
@@ -260,6 +261,7 @@ public class RobotContainer {
     Trigger L2 = new Trigger(() -> stateController.isL2());
     Trigger LMahome = new Trigger(() -> stateController.isMahome());
     Trigger L3 = new Trigger(() -> stateController.isL3());
+    BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
 
     // rumble controler for 1s when endgame
     rumbleTime.onTrue(
@@ -273,7 +275,8 @@ public class RobotContainer {
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+            () -> -driverController.getRightX(),
+            slowMode));
 
     // angle towards reef panel if game piece
     driverController
@@ -331,7 +334,8 @@ public class RobotContainer {
                 drive,
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
-                () -> -driverController.getRightX()));
+                () -> -driverController.getRightX(),
+                slowMode));
 
     // Switch to X pattern when X button is pressed (lock drive train)
     driverController.x().whileTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -346,16 +350,6 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-
-    // Slow Mode
-    driverController
-        .rightTrigger()
-        .whileTrue(
-            DriveCommands.joystickDrive(
-                drive,
-                () -> (-driverController.getLeftY() * .4),
-                () -> (-driverController.getLeftX() * .4),
-                () -> (-driverController.getRightX() * .4)));
 
     // Pathfinds based on State Controller
 
@@ -592,7 +586,6 @@ public class RobotContainer {
 
     // Climbs
     operatorButtonBox.button(9).and(climbMode).onTrue(climber.setClimberUp());
-    // operatorButtonBox.button(11).onTrue(climber.setClimberUp());
 
     // Intake
     operatorButtonBox
@@ -605,12 +598,19 @@ public class RobotContainer {
                         .until(() -> manipulator.hasGamePiece())
                         .andThen(lED.solidCommand(Color.kGreen))));
 
-    // operatorButtonBox
-    //     .button(10)
-    //     .onTrue(superStructure.armClimb().alongWith(climber.setClimberDown()));
+    operatorButtonBox
+        .button(10)
+        .negate()
+        .and(hasGamePiece)
+        .onTrue(
+            manipulator
+                .keepCoralIn()
+                .andThen(superStructure.goHome())
+                .alongWith(lED.defaultLeds(() -> stateController.getMode())));
 
     operatorButtonBox
         .button(10)
+        .and(hasNoGamePiece)
         .onFalse(
             superStructure
                 .intakeOff()
