@@ -5,18 +5,25 @@
 package frc.robot;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 // Inspired by Team 2137's AutoAline code
 
@@ -67,15 +74,99 @@ public class AutoAline {
   public static Command autoAlineTo(
       Target targetType, RobotContainer robot, Supplier<Translation2d> motionSupplier) {
 
+    ProfiledPIDController angleController = DriveCommands.getAngleController();
+    angleController.enableContinuousInput(-Math.PI, Math.PI);
+
     // Construct command
     return Commands.sequence(
         Commands.runOnce(
             () -> {
               target = getFlippedPose(robot.drive, targetType, motionSupplier);
+              Logger.recordOutput("target", target);
               lastTargeted = target;
             }),
-        robot.drive.pathfindToFieldPose(
-            () -> robot.drive.getClosestReefBranch(targetType == Target.LEFT_POLE)));
+        Commands.defer(
+            () ->
+                robot.drive.pathfindToFieldPose(
+                    getFlippedPose(robot.drive, targetType, motionSupplier)),
+            Set.of(robot.drive)));
+    // TODO: put all code on one line RIGHT after worlds
+  }
+
+  private static Command driveToTargetCommand(Drive drive, ProfiledPIDController angleController) {
+    // Run the command
+    return Commands.runEnd(
+            () -> {
+              // Update profile constraints based on calculated scalars
+              TrapezoidProfile velocityProfile =
+                  new TrapezoidProfile(
+                      new TrapezoidProfile.Constraints(
+                          DriveConstants.PF_MAX_SPEED_OR_SOMETHING * 1 * 2,
+                          DriveConstants.PF_MAX_ACCEL * 1 * 2));
+
+              // Calculate vector to target
+              Translation2d toTarget =
+                  new Translation2d(
+                      drive.getPose().getX() - target.getX(),
+                      drive.getPose().getY() - target.getY());
+
+              // Calculate the robot's current speed towards the target
+              double velocityTowardsGoal =
+                  drive.getLinearSpeedMetersPerSec()
+                      * dot(normalize(drive.getLinearSpeedsVector()), normalize(toTarget));
+
+              // Grab the current drive state
+              TrapezoidProfile.State state =
+                  velocityProfile.calculate(
+                      0.11 - 0.09,
+                      new TrapezoidProfile.State(toTarget.getNorm(), velocityTowardsGoal),
+                      new TrapezoidProfile.State());
+
+              // Create a velocity vector based on the drive state's velocity
+              Translation2d normalized = new Translation2d(state.velocity, toTarget.getAngle());
+
+              // Debug info
+              // SmartDashboard.putNumber("AA-Position", state.position);
+              // SmartDashboard.putNumber("AA-Velocity", state.velocity);
+
+              // Calculate angular speed
+              double omega =
+                  angleController.calculate(
+                      drive.getRotation().getRadians(), target.getRotation().getRadians());
+
+              // Check if it's red alliance
+              boolean isFlipped =
+                  DriverStation.getAlliance().isPresent()
+                      && DriverStation.getAlliance().get() == Alliance.Red;
+
+              // Limit acceleration
+              Translation2d finalVelocity =
+                  DriveCommands.limitAccelerationFor(
+                      drive.getLinearSpeedsVector(), normalized, DriveConstants.PF_MAX_ACCEL * 1);
+
+              // Convert to field relative speeds
+              ChassisSpeeds speeds =
+                  new ChassisSpeeds(
+                      finalVelocity.getX() * (isFlipped ? -1 : 1),
+                      finalVelocity.getY() * (isFlipped ? -1 : 1),
+                      omega);
+
+              // Drive the robot to targets
+              drive.runVelocity(
+                  ChassisSpeeds.fromFieldRelativeSpeeds(
+                      speeds,
+                      isFlipped
+                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                          : drive.getRotation()));
+            },
+            () -> target = null,
+            drive)
+        .beforeStarting(
+            () -> {
+              // Reset pid controllers
+              angleController.reset(
+                  drive.getRotation().getRadians(), drive.getAngularSpeedRadsPerSec());
+            });
   }
 
   public static Pose2d getFlippedPose(

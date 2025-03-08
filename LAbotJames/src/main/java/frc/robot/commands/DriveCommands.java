@@ -23,22 +23,27 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.AutoAline;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
-  private static final double ANGLE_KP = 3.0;
+  private static final double ANGLE_KP = 2.5; // semicolon
+
   private static final double ANGLE_KD = 0.4;
   private static final double ANGLE_MAX_VELOCITY = 8.0;
   private static final double ANGLE_MAX_ACCELERATION = 20.0;
@@ -70,7 +75,8 @@ public class DriveCommands {
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier) {
+      DoubleSupplier omegaSupplier,
+      BooleanSupplier slowMode) {
     return Commands.run(
         () -> {
           // Get linear velocity
@@ -83,12 +89,15 @@ public class DriveCommands {
           // Square rotation value for more precise control
           omega = Math.copySign(omega * omega, omega);
 
+          // slowmode multiplier
+          double multiplier = slowMode.getAsBoolean() ? 0.2 : 1.0;
+
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds =
               new ChassisSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec());
+                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * multiplier,
+                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * multiplier,
+                  omega * drive.getMaxAngularSpeedRadPerSec() * multiplier);
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;
@@ -163,7 +172,8 @@ public class DriveCommands {
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier) {
+      DoubleSupplier omegaSupplier,
+      BooleanSupplier slowMode) {
     return Commands.run(
         () -> {
           // Get linear velocity
@@ -176,12 +186,15 @@ public class DriveCommands {
           // Square rotation value for more precise control
           omega = Math.copySign(omega * omega, omega);
 
+          // Slowmode multiplier
+          double multiplier = slowMode.getAsBoolean() ? 0.2 : 1.0;
+
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds =
               new ChassisSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec());
+                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * multiplier,
+                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * multiplier,
+                  omega * drive.getMaxAngularSpeedRadPerSec() * multiplier);
 
           drive.runVelocity(speeds);
         },
@@ -324,5 +337,37 @@ public class DriveCommands {
     double[] positions = new double[4];
     Rotation2d lastAngle = new Rotation2d();
     double gyroDelta = 0.0;
+  }
+
+  private static StructPublisher<Translation2d> currentVelocityPublisher =
+      NetworkTableInstance.getDefault()
+          .getStructTopic("AccelLimiting/CurrentVelocity", Translation2d.struct)
+          .publish();
+  private static StructPublisher<Translation2d> finalVelocityPublisher =
+      NetworkTableInstance.getDefault()
+          .getStructTopic("AccelLimiting/FinalVelocity", Translation2d.struct)
+          .publish();
+  private static StructPublisher<Translation2d> wantedVelocityPublisher =
+      NetworkTableInstance.getDefault()
+          .getStructTopic("AccelLimiting/WantedVelocity", Translation2d.struct)
+          .publish();
+
+  public static Translation2d limitAccelerationFor(
+      Translation2d currentVelocity, Translation2d wantedVelocity, double maxAcceleration) {
+    currentVelocityPublisher.accept(currentVelocity);
+    wantedVelocityPublisher.accept(wantedVelocity);
+
+    Translation2d desiredAccel = wantedVelocity.minus(currentVelocity);
+    if (desiredAccel.getNorm() > maxAcceleration * 0.04)
+      return currentVelocity.plus(AutoAline.normalize(desiredAccel).times(maxAcceleration * 0.04));
+    else return wantedVelocity;
+  }
+
+  public static ProfiledPIDController getAngleController() {
+    return new ProfiledPIDController(
+        ANGLE_KP,
+        0.0,
+        ANGLE_KD,
+        new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
   }
 }

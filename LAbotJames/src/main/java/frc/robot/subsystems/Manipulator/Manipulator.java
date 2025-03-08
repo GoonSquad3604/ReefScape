@@ -120,6 +120,10 @@ public class Manipulator extends SubsystemBase {
     io.setOpeningVoltage(volts);
   }
 
+  public Command keepCoralIn() {
+    return runOnce(() -> io.setWheelPower(0.05));
+  }
+
   public Command openQuasiForward() {
     return openSysID.quasistatic(SysIdRoutine.Direction.kForward);
   }
