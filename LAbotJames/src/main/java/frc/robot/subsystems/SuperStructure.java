@@ -107,7 +107,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.home();
-          manipulator.stopWheels();
+          // manipulator.stopWheels();
           // elevator.home();
         });
   }

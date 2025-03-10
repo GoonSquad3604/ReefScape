@@ -79,7 +79,7 @@ public class RobotContainer {
   private final SuperStructure superStructure;
   private final Arm arm;
   private final Manipulator manipulator;
-  private final Climber climber;
+  //private final Climber climber;
   private final Elevator elevator;
   private final LEDs lED;
 
@@ -121,7 +121,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        climber = new Climber(new ClimberIOPhoenix());
+        //climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
 
@@ -144,7 +144,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        climber = new Climber(new ClimberIOPhoenix());
+        //climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
 
@@ -166,7 +166,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        climber = new Climber(new ClimberIOPhoenix());
+        //climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
     }
@@ -578,14 +578,14 @@ public class RobotContainer {
 
     // operatorButtonBox.button(7).onTrue(superStructure.armClimb());
 
-    // Deploy Climber
-    operatorButtonBox
-        .button(8)
-        .and(climbMode)
-        .onTrue(superStructure.armClimb().alongWith(climber.setClimberDown()));
+    // // Deploy Climber
+    // operatorButtonBox
+    //     .button(8)
+    //     .and(climbMode)
+    //     .onTrue(superStructure.armClimb().alongWith(climber.setClimberDown()));
 
-    // Climbs
-    operatorButtonBox.button(9).and(climbMode).onTrue(climber.setClimberUp());
+    // // Climbs
+    // operatorButtonBox.button(9).and(climbMode).onTrue(climber.setClimberUp());
 
     // Intake
     operatorButtonBox
@@ -598,24 +598,30 @@ public class RobotContainer {
                         .until(() -> manipulator.hasGamePiece())
                         .andThen(lED.solidCommand(Color.kGreen))));
 
+    // operatorButtonBox
+    //     .button(10)
+    //     .negate()
+    //     .and(hasGamePiece)
+    //     .onTrue(
+    //         manipulator
+    //             .keepCoralIn()
+    //             .andThen(superStructure.goHome())
+    //             .alongWith(lED.defaultLeds(() -> stateController.getMode())));
     operatorButtonBox
         .button(10)
-        .negate()
-        .and(hasGamePiece)
-        .onTrue(
-            manipulator
-                .keepCoralIn()
+        .onFalse(
+            Commands.either(manipulator.keepCoralIn(), superStructure.intakeOff(), hasGamePiece)
                 .andThen(superStructure.goHome())
                 .alongWith(lED.defaultLeds(() -> stateController.getMode())));
 
-    operatorButtonBox
-        .button(10)
-        .and(hasNoGamePiece)
-        .onFalse(
-            superStructure
-                .intakeOff()
-                .andThen(superStructure.goHome())
-                .alongWith(lED.defaultLeds(() -> stateController.getMode())));
+    // operatorButtonBox
+    //     .button(10)
+    //     .and(hasNoGamePiece)
+    //     .onFalse(
+    //         superStructure
+    //             .intakeOff()
+    //             .andThen(superStructure.goHome())
+    //             .alongWith(lED.defaultLeds(() -> stateController.getMode())));
 
     // Vomit
     operatorButtonBox

@@ -278,6 +278,12 @@ public class Drive extends SubsystemBase {
   }
 
   /** Runs the drive in a straight line with the specified drive output. */
+  // public void runCharacterization(double output) {
+  //   for (int i = 0; i < 4; i++) {
+  //     modules[i].runCharacterization(output);
+  //   }
+  // }
+
   public void runCharacterization(double output) {
     for (int i = 0; i < 4; i++) {
       modules[i].runCharacterization(output);

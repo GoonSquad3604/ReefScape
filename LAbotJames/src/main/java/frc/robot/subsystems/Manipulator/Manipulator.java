@@ -121,7 +121,8 @@ public class Manipulator extends SubsystemBase {
   }
 
   public Command keepCoralIn() {
-    return runOnce(() -> io.setWheelPower(0.05));
+    // return runOnce(() -> io.setWheelPower(0.05));
+    return runOnce(() -> io.setVoltage(3));
   }
 
   public Command openQuasiForward() {
