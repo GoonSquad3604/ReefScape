@@ -3,7 +3,14 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.FieldConstants;
+import frc.robot.subsystems.Arm.Arm;
+import frc.robot.subsystems.Arm.ArmConstants;
+import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Manipulator.Manipulator;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.AutoFire;
 import frc.robot.util.LevelState;
 import frc.robot.util.RobotMode;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -15,6 +22,13 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private LevelState m_Level;
   @AutoLogOutput private RobotTarget m_Target;
   @AutoLogOutput private Pose2d m_TragetPose;
+  //@AutoLogOutput private AutoFire m_AutoFire;
+
+  private Manipulator manipulator;
+  private Elevator elevator;
+  private Arm arm;
+  public Drive drive;
+
 
   public StateController() {
     // setCoral();
@@ -33,6 +47,8 @@ public class StateController extends SubsystemBase {
   public void setClimb() {
     m_Mode = RobotMode.CLIMB;
   }
+
+
 
   public Command setL1() {
     return runOnce(() -> m_Level = LevelState.L1);
@@ -117,6 +133,57 @@ public class StateController extends SubsystemBase {
         () -> {
           setClimb();
         });
+  }
+
+  public boolean stupid(Pose2d position1, Pose2d position2){
+      if(Math.abs(position1.getX() - position2.getX()) < 0.1 
+      && Math.abs(position1.getY() - position2.getY()) < 0.1
+      && Math.abs(position1.getRotation().getRadians() - position2.getRotation().getRadians()) < 0.25){
+        return true;
+      }
+    
+    return false;
+  }
+  
+
+  public boolean autoReadyFire(){
+    Pose2d currentPosition = drive.getPose();
+    boolean isInPosition = false;
+    for(int i = 0; i < FieldConstants.Reef.leftRobotBranchPoses.size(); i++){
+        if(stupid(currentPosition, FieldConstants.Reef.leftRobotBranchPoses.get(i))){
+          isInPosition = true;
+          break;
+        }
+      }
+      for(int i = 0; i < FieldConstants.Reef.rightRobotBranchPoses.size(); i++){
+        if(stupid(currentPosition, FieldConstants.Reef.rightRobotBranchPoses.get(i))){
+          isInPosition = true;
+          break;
+        }
+      }
+
+    boolean armIsReady = false;
+    boolean elevatorIsReady = false;
+    if(isL1()){
+      armIsReady = Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL1) < 0.1;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l1Pos) < 0.1;
+    }
+    else if(isL2()){
+      armIsReady = Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.1;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l2Pos) < 0.1;
+    }
+    else if(isL3()){
+      armIsReady = Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL3) < 0.1;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l3Pos) < 0.1;
+    }
+    else if(isL4()){
+      armIsReady = Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL4) < 0.1;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l4Pos) < 0.1;
+    }
+
+  
+    return isCoralMode() && manipulator.hasGamePiece() && !elevator.mahoming && isInPosition && armIsReady && elevatorIsReady;
+
   }
 
   public enum RobotTarget {

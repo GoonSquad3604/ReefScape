@@ -40,4 +40,11 @@ public interface ArmIO {
   default void setWristPower(double power) {}
 
   default void setPID(double kP, double kI, double kD) {}
+
+  default double getElbowPosition() {
+    return 0;
+  }
+  default double getWristPosition() {
+    return 0;
+  }
 }
