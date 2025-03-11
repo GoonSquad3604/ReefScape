@@ -10,7 +10,6 @@ import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.util.AutoFire;
 import frc.robot.util.LevelState;
 import frc.robot.util.RobotMode;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -22,7 +21,6 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private LevelState m_Level;
   @AutoLogOutput private RobotTarget m_Target;
   @AutoLogOutput private Pose2d m_TragetPose;
-  //@AutoLogOutput private AutoFire m_AutoFire;
 
   private Manipulator manipulator;
   private Elevator elevator;

@@ -79,7 +79,7 @@ public class RobotContainer {
   private final SuperStructure superStructure;
   private final Arm arm;
   private final Manipulator manipulator;
-  //private final Climber climber;
+  private final Climber climber;
   private final Elevator elevator;
   private final LEDs lED;
 
@@ -94,7 +94,7 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
 
   // Commands
-  private Command goHome;
+//   private Command goHome;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -121,7 +121,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        //climber = new Climber(new ClimberIOPhoenix());
+        climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
 
@@ -144,7 +144,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        //climber = new Climber(new ClimberIOPhoenix());
+        climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
 
@@ -166,7 +166,7 @@ public class RobotContainer {
         manipulator = new Manipulator(new ManipulatorIOPhoenixRev());
         arm = new Arm(new ArmIOPhoenixRev());
         elevator = new Elevator(new ElevatorIONeo());
-        //climber = new Climber(new ClimberIOPhoenix());
+        climber = new Climber(new ClimberIOPhoenix());
         lED = new LEDs();
         break;
     }
@@ -264,11 +264,13 @@ public class RobotContainer {
     BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
     Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
 
-    // rumble controler for 1s when endgame
+    // Rumble controler for 1s when endgame
     rumbleTime.onTrue(
         new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, .8))
             .andThen(new WaitCommand(1))
             .andThen(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0)));
+
+    // Auto fire
     fireReadyAuto.onTrue(
         new InstantCommand(() -> superStructure.fire()));
 
@@ -280,6 +282,7 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX(),
             slowMode));
+
 
     /* DRIVER BUTTONS */
 
@@ -466,7 +469,6 @@ public class RobotContainer {
 
 
     /* OPERATOR BUTTONS */
-    
 
     // Set mode to coral
     operatorButtonBox.button(1).onTrue(stateController.setCoralMode(manipulator));
@@ -625,11 +627,22 @@ public class RobotContainer {
                         .andThen(elevator.runOnce(() -> elevator.stop()))
                         .alongWith(stateController.setMahome())));
 
-    // testController.a().onTrue(climber.moveClimberUp());
-    // testController.a().onFalse(climber.stop());
 
-    // testController.y().onTrue(climber.moveClimberDown());
-    // testController.y().onFalse(climber.stop());
+    /* TEST CONTROLLER */
+    
+    testController.y().onTrue(climber.moveClimberUp());
+    testController.y().onFalse(climber.stop());
+
+    testController.a().onTrue(climber.moveClimberDown());
+    testController.a().onFalse(climber.stop());
+
+    //TODO: make lucas better
+    //TODO: also make andrew better
+    //TODO: also also make gavin better
+    //TODO: also also also make mark better
+    //TODO: also also also also make simon better
+    //TODO: also also also also also make ricky better (jk)
+
 
     // testController.b().onTrue(arm.elbowUp());
     // testController.b().onFalse(arm.stopElbow());
@@ -678,7 +691,6 @@ public class RobotContainer {
     // testController.a().onFalse(superStructure.wristStop());
 
     // testController.x().onTrue(climber.setClimberHome());
-
   }
 
   /**
