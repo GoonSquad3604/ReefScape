@@ -138,7 +138,7 @@ public class StateController extends SubsystemBase {
   public boolean stupid(Pose2d position1, Pose2d position2){
       if(Math.abs(position1.getX() - position2.getX()) < 0.1 
       && Math.abs(position1.getY() - position2.getY()) < 0.1
-      && Math.abs(position1.getRotation().getRadians() - position2.getRotation().getRadians()) < 0.25){
+      && Math.abs(position1.getRotation().getRadians() - position2.getRotation().getRadians()) < 5 * (Math.PI / 180)){
         return true;
       }
     
