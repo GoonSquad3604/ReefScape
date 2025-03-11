@@ -27,7 +27,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command goToL1Coral() {
-    return run(
+    return runOnce(
         () -> {
           arm.elbowCoralL1();
           arm.wristCoralL1();
@@ -36,7 +36,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command goToL2Coral() {
-    return run(
+    return runOnce(
         () -> {
           arm.elbowCoralL2();
           arm.wristCoralL2();
@@ -45,7 +45,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command goToL3Coral() {
-    return run(
+    return runOnce(
         () -> {
           arm.elbowCoralL3();
           arm.wristCoralL3();
@@ -240,46 +240,33 @@ public class SuperStructure extends SubsystemBase {
   // public Command manipulatorRun() {
 
   public Command elbowStop() {
-    return run(
+    return runOnce(
         () -> {
           arm.stopElbow();
         });
   }
 
   public Command wristStop() {
-    return run(
+    return runOnce(
         () -> {
           arm.stopWrist();
         });
   }
 
   public Command elevatorStop() {
-    return run(
+    return runOnce(
         () -> {
           elevator.stop();
         });
   }
 
-  public Command wristToPosition1() {
+
+  public Command armClimb() {
     return run(
         () -> {
-          arm.wristCoralL1();
+          arm.climb();
         });
   }
-
-  public Command wristToPosition4() {
-    return run(
-        () -> {
-          arm.wristCoralL4();
-        });
-  }
-
-  // public Command armClimb() {
-  //   return run(
-  //       () -> {
-  //         arm.climb();
-  //       });
-  // }
 
   public Command layup() {
     return run(
