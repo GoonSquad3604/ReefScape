@@ -237,13 +237,13 @@ public class Arm extends SubsystemBase {
   }
 
   public Command stopElbow() {
-    return run(() -> io.setElbowPower(0));
+    return runOnce(() -> io.setElbowPower(0));
     // io.setWristMotorVoltage(0);
   }
 
   public Command stopWrist() {
     // io.setElbowPower(0);
-    return run(() -> io.setWristPower(0));
+    return runOnce(() -> io.setWristPower(0));
   }
 
   public void elbowVoltage(double volts) {

@@ -38,17 +38,17 @@ public class Climber extends SubsystemBase {
 
   /** Deploys the climber. * */
   public Command setClimberDown() {
-    return run(() -> io.setPosition(ClimberConstants.positionDown));
+    return runOnce(() -> io.setPosition(ClimberConstants.positionDown));
   }
 
   /** Raises the climber. * */
   public Command setClimberUp() {
-    return run(() -> io.setPosition(ClimberConstants.positionUp));
+    return runOnce(() -> io.setPosition(ClimberConstants.positionUp));
   }
 
   /** Sets the climber to home position */
   public Command setClimberHome() {
-    return run(() -> io.setPosition(ClimberConstants.positionHome));
+    return runOnce(() -> io.setPosition(ClimberConstants.positionHome));
   }
 
   public Command moveClimberUp() {

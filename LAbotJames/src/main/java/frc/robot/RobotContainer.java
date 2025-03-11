@@ -636,12 +636,11 @@ public class RobotContainer {
     testController.a().onTrue(climber.moveClimberDown());
     testController.a().onFalse(climber.stop());
 
-    //TODO: make lucas better
-    //TODO: also make andrew better
-    //TODO: also also make gavin better
-    //TODO: also also also make mark better
-    //TODO: also also also also make simon better
-    //TODO: also also also also also make ricky better (jk)
+    //TODO: make lucas estel campau better
+    //TODO: also make andrew john ferguson better
+    //TODO: also also make gavin breezee better
+    //TODO: also also also make mark zhang the seveteen thousandth better
+    //TODO: also also also also also make richard ernest budop III better (jk)
 
 
     // testController.b().onTrue(arm.elbowUp());

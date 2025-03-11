@@ -13,6 +13,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.LevelState;
 import frc.robot.util.RobotMode;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 public class StateController extends SubsystemBase {
   public static StateController _instance;
@@ -26,6 +27,9 @@ public class StateController extends SubsystemBase {
   private Elevator elevator;
   private Arm arm;
   public Drive drive;
+
+  @AutoLogOutput
+  private boolean autoReadyFireIsTrue = false;
 
 
   public StateController() {
@@ -181,9 +185,19 @@ public class StateController extends SubsystemBase {
       elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l4Pos) < 0.01;
     }
 
-  
-    return isCoralMode() && manipulator.hasGamePiece() && !elevator.mahoming && isInPosition && armIsReady && elevatorIsReady;
+    autoReadyFireIsTrue = isCoralMode() && manipulator.hasGamePiece() && !elevator.mahoming && isInPosition && armIsReady && elevatorIsReady;
 
+    Logger.recordOutput("Robot Is In Position", isInPosition);
+    Logger.recordOutput("Arm Is In Position", armIsReady);
+    Logger.recordOutput("Elevator Is In Position", elevatorIsReady);
+
+    return autoReadyFireIsTrue;
+
+  }
+
+  public void periodic(){
+    Logger.recordOutput(" Left   Branch Positons ", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
+    Logger.recordOutput("RightBranchPositons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
   }
 
   public enum RobotTarget {
