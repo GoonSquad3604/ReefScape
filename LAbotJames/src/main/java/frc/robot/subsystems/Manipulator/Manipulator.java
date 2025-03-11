@@ -85,8 +85,7 @@ public class Manipulator extends SubsystemBase {
   }
 
   public void stopWheels() {
-    // io.setRPM(ManipulatorConstants.zeroRPM);
-    io.setWheelPower(0);
+    io.setWheelPower(ManipulatorConstants.zeroPower);
   }
 
   public void openUp() {
@@ -123,6 +122,14 @@ public class Manipulator extends SubsystemBase {
   public Command keepCoralIn() {
     // return runOnce(() -> io.setWheelPower(0.05));
     return runOnce(() -> io.setVoltage(3));
+  }
+
+  public Command stopIntake() {
+    return runOnce(() -> io.setWheelPower(ManipulatorConstants.zeroPower));
+  }
+
+  public Command vomit() {
+    return runOnce(() -> io.setWheelPower(ManipulatorConstants.backwardsWheelPower));
   }
 
   public Command openQuasiForward() {

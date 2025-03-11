@@ -38,14 +38,14 @@ public final class ArmConstants {
   public static final double algaeWristL25 = 0.71;
   public static final double algaeWristL35 = 0.71;
 
-  public static final double processorWrist = 1;
-  public static final double processorElbow = 2;
+  public static final double processorWrist = .8420; // not final
+  public static final double processorElbow = .290; // not final
 
   public static final double sourceWrist = 0.3 + 0.07;
   public static final double sourceElbow = 0.249;
 
-  public static final double bargeWrist = 1;
-  public static final double bargeElbow = 2;
+  public static final double bargeWrist = .842; // not final
+  public static final double bargeElbow = .290; // not final
 
   public static final double homeWrist = 0.555;
 

@@ -186,6 +186,15 @@ public class ArmIOPhoenixRev implements ArmIO {
   }
 
   @Override
+  public double getWristPosition() {
+    return wristEncoder.getPosition();
+  }
+  @Override
+  public double getElbowPosition() {
+    return elbowEncoder.getPosition().getValueAsDouble();
+  }
+
+  @Override
   public void setPID(double kP, double kI, double kD) {
     elbowConfig.Slot0.kP = kP;
     elbowConfig.Slot0.kI = kI;

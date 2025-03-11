@@ -61,7 +61,7 @@ public class SuperStructure extends SubsystemBase {
         });
   }
 
-  public Command goToL2Algae() {
+  public Command removeL2Algae() {
     return run(
         () -> {
           arm.elbowAlgaeL25();
@@ -70,7 +70,7 @@ public class SuperStructure extends SubsystemBase {
         });
   }
 
-  public Command goToL3Algae() {
+  public Command removeL3Algae() {
     return run(
         () -> {
           arm.elbowAlgaeL35();
@@ -96,7 +96,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command goToBarge() {
-    return run(
+    return runOnce(
         () -> {
           arm.barge();
           elevator.barge();
@@ -107,8 +107,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.home();
-          // manipulator.stopWheels();
-          // elevator.home();
+          manipulator.stopWheels();
         });
   }
 
@@ -155,26 +154,26 @@ public class SuperStructure extends SubsystemBase {
         });
   }
 
-  public Command vomit() {
-    return run(
-        () -> {
-          manipulator.runWheels(ManipulatorConstants.backwardsWheelPower);
-        });
-  }
+  // public Command vomit() {
+  //   return run(
+  //       () -> {
+  //         manipulator.runWheels(ManipulatorConstants.backwardsWheelPower);
+  //       });
+  // }
 
-  public Command moveElbowUp() {
-    return run(
-        () -> {
-          arm.elbowUp();
-        });
-  }
+  // public Command moveElbowUp() {
+  //   return run(
+  //       () -> {
+  //         arm.elbowUp();
+  //       });
+  // }
 
-  public Command moveElbowDown() {
-    return run(
-        () -> {
-          arm.elbowDown();
-        });
-  }
+  // public Command moveElbowDown() {
+  //   return run(
+  //       () -> {
+  //         arm.elbowDown();
+  //       });
+  // }
 
   public Command moveWristUp() {
     return run(
@@ -275,12 +274,12 @@ public class SuperStructure extends SubsystemBase {
         });
   }
 
-  public Command armClimb() {
-    return run(
-        () -> {
-          arm.climb();
-        });
-  }
+  // public Command armClimb() {
+  //   return run(
+  //       () -> {
+  //         arm.climb();
+  //       });
+  // }
 
   public Command layup() {
     return run(
