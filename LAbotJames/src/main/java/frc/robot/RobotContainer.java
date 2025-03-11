@@ -632,7 +632,7 @@ public class RobotContainer {
     
     testController.y().onTrue(climber.moveClimberUp());
     testController.y().onFalse(climber.stop());
-
+    
     testController.a().onTrue(climber.moveClimberDown());
     testController.a().onFalse(climber.stop());
 
