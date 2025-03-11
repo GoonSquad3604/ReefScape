@@ -167,20 +167,20 @@ public class StateController extends SubsystemBase {
     boolean armIsReady = false;
     boolean elevatorIsReady = false;
     if(isL1()){
-      armIsReady = Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL1) < 0.1 && Math.abs(arm.getWristPos() - ArmConstants.coralWristL1) < 0.1;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l1Pos) < 0.1;
+      armIsReady = Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL1) < 0.01 && Math.abs(arm.getWristPos() - ArmConstants.coralWristL1) < 0.01;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l1Pos) < 0.01;
     }
     else if(isL2()){
-      armIsReady = Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.1 && Math.abs(arm.getWristPos() - ArmConstants.coralWristL2) < 0.1;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l2Pos) < 0.1;
+      armIsReady = Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.01 && Math.abs(arm.getWristPos() - ArmConstants.coralWristL2) < 0.01;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l2Pos) < 0.01;
     }
     else if(isL3()){
-      armIsReady = Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL3) < 0.1 && Math.abs(arm.getWristPos() - ArmConstants.coralWristL3) < 0.1;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l3Pos) < 0.1;
+      armIsReady = Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL3) < 0.01 && Math.abs(arm.getWristPos() - ArmConstants.coralWristL3) < 0.01;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l3Pos) < 0.01;
     }
     else if(isL4()){
-      armIsReady = Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL4) < 0.1 && Math.abs(arm.getWristPos() - ArmConstants.coralWristL4) < 0.1;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l4Pos) < 0.1;
+      armIsReady = Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL4) < 0.01 && Math.abs(arm.getWristPos() - ArmConstants.coralWristL4) < 0.01;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l4Pos) < 0.01;
     }
 
   
