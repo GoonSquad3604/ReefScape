@@ -260,7 +260,6 @@ public class SuperStructure extends SubsystemBase {
         });
   }
 
-
   public Command armClimb() {
     return run(
         () -> {
