@@ -44,6 +44,7 @@ public interface ArmIO {
   default double getElbowPosition() {
     return 0;
   }
+
   default double getWristPosition() {
     return 0;
   }

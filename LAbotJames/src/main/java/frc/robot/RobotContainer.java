@@ -94,7 +94,7 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
 
   // Commands
-//   private Command goHome;
+  //   private Command goHome;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -170,7 +170,7 @@ public class RobotContainer {
         lED = new LEDs();
         break;
     }
-    stateController = new StateController();
+    stateController = StateController.getInstance();
     superStructure = new SuperStructure(manipulator, arm, elevator, stateController);
 
     lED.setDefaultCommand(lED.defaultLeds(() -> stateController.getMode()));
@@ -262,7 +262,7 @@ public class RobotContainer {
     Trigger L1 = new Trigger(() -> stateController.isL1());
     Trigger LMahome = new Trigger(() -> stateController.isMahome());
     BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
-    Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
+    // Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
 
     // Rumble controler for 1s when endgame
     rumbleTime.onTrue(
@@ -271,8 +271,7 @@ public class RobotContainer {
             .andThen(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0)));
 
     // Auto fire
-    fireReadyAuto.onTrue(
-        new InstantCommand(() -> superStructure.fire()));
+    // fireReadyAuto.onTrue(new InstantCommand(() -> superStructure.fire()));
 
     // Default drive command, normal field-relative drive
     drive.setDefaultCommand(
@@ -282,7 +281,6 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX(),
             slowMode));
-
 
     /* DRIVER BUTTONS */
 
@@ -359,7 +357,6 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-
     /* CORAL PATHFINDS */
 
     // Left bumper, coral mode, has piece -> closest left pole
@@ -398,7 +395,7 @@ public class RobotContainer {
                                     FieldConstants.CoralStation.leftCenterIntakePos)),
                     Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
-    
+
     // Right bumper, coral mode, no piece -> right source
     driverController
         .rightBumper()
@@ -467,7 +464,6 @@ public class RobotContainer {
     //                     .pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))
     //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
-
     /* OPERATOR BUTTONS */
 
     // Set mode to coral
@@ -488,8 +484,9 @@ public class RobotContainer {
         .and(coralMode)
         .onTrue(
             arm.coralL4()
-                .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
-                .andThen(stateController.setL4())));
+                .andThen(
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
+                        .andThen(stateController.setL4())));
 
     // Goes to L3 coral positions
     operatorButtonBox
@@ -497,8 +494,9 @@ public class RobotContainer {
         .and(coralMode)
         .onTrue(
             arm.coralL3()
-                .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
-                .alongWith(stateController.setL3())));
+                .andThen(
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
+                        .alongWith(stateController.setL3())));
 
     // Goes to L2 coral positions
     operatorButtonBox
@@ -506,8 +504,9 @@ public class RobotContainer {
         .and(coralMode)
         .onTrue(
             arm.coralL2()
-                .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)
-                .alongWith(stateController.setL2())));
+                .andThen(
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)
+                        .alongWith(stateController.setL2())));
 
     // Goes to L1 coral positions
     operatorButtonBox
@@ -515,8 +514,9 @@ public class RobotContainer {
         .and(coralMode)
         .onTrue(
             arm.coralL1()
-                .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l1Pos)
-                .alongWith(stateController.setL1())));
+                .andThen(
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.l1Pos)
+                        .alongWith(stateController.setL1())));
 
     // Algae barge
     // operatorButtonBox
@@ -533,17 +533,18 @@ public class RobotContainer {
         .and(algaeMode)
         .onTrue(
             new ElevatorToSetpoint(elevator, ElevatorConstants.l3PosAlgae)
-                .alongWith(superStructure.removeL3Algae()
-                .alongWith(stateController.setL3())));
+                .alongWith(superStructure.removeL3Algae().alongWith(stateController.setL3())));
 
     // Removes algae l2
     operatorButtonBox
         .button(5)
         .and(algaeMode)
         .onTrue(
-            superStructure.removeL2Algae()
-            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.l2PosAlgae)
-            .alongWith(stateController.setL2())));
+            superStructure
+                .removeL2Algae()
+                .alongWith(
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.l2PosAlgae)
+                        .alongWith(stateController.setL2())));
 
     // Algae processor
     // operatorButtonBox
@@ -561,14 +562,11 @@ public class RobotContainer {
             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
                 .andThen(superStructure.goHome())
                 .until(() -> !elevator.mahoming)
-                .andThen(elevator.runOnce(() -> elevator.stop())
-                .andThen(stateController.setMahome())));
+                .andThen(
+                    elevator.runOnce(() -> elevator.stop()).andThen(stateController.setMahome())));
 
     // Deploy climber
-    // operatorButtonBox
-    //     .button(8)
-    //     .and(climbMode)
-    //     .onTrue(arm.climb().alongWith(climber.setClimberDown()));
+    operatorButtonBox.button(8).onTrue(arm.climb());
 
     // Climb up
     // operatorButtonBox.button(9).and(climbMode).onTrue(climber.setClimberUp());
@@ -596,12 +594,13 @@ public class RobotContainer {
     operatorButtonBox
         .button(11)
         .whileTrue(
-            manipulator.vomit()
+            manipulator
+                .vomit()
                 .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)));
-    
-    operatorButtonBox.button(11)
-        .onFalse(elevator.runOnce(() -> elevator.stop())
-            .alongWith(manipulator.stopIntake()));
+
+    operatorButtonBox
+        .button(11)
+        .onFalse(elevator.runOnce(() -> elevator.stop()).alongWith(manipulator.stopIntake()));
 
     // Fire
     operatorButtonBox.button(12).and(L1).onTrue(superStructure.fire());
@@ -612,36 +611,32 @@ public class RobotContainer {
         .button(12)
         .and(L4)
         .onTrue(
-            superStructure
-                .fire()
-                .until(() -> !manipulator.hasGamePiece())
-                .andThen(arm.layup()));
+            superStructure.fire().until(() -> !manipulator.hasGamePiece()).andThen(arm.layup()));
 
     operatorButtonBox
         .button(12)
         .onFalse(
-            superStructure.goHome()
+            superStructure
+                .goHome()
                 .andThen(
                     new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
                         .until(() -> !elevator.mahoming)
                         .andThen(elevator.runOnce(() -> elevator.stop()))
                         .alongWith(stateController.setMahome())));
 
-
     /* TEST CONTROLLER */
-    
+
     testController.y().onTrue(climber.moveClimberUp());
     testController.y().onFalse(climber.stop());
-    
+
     testController.a().onTrue(climber.moveClimberDown());
     testController.a().onFalse(climber.stop());
 
-    //TODO: make lucas estel campau better
-    //TODO: also make andrew john ferguson better
-    //TODO: also also make gavin breezee better
-    //TODO: also also also make mark zhang the seveteen thousandth better
-    //TODO: also also also also also make richard ernest budop III better (jk)
-
+    // TODO: make lucas estel campau better
+    // TODO: also make andrew john ferguson better
+    // TODO: also also make gavin breezee better
+    // TODO: also also also make mark zhang the seveteen thousandth better
+    // TODO: also also also also also make richard ernest budop III better (jk)
 
     // testController.b().onTrue(arm.elbowUp());
     // testController.b().onFalse(arm.stopElbow());
@@ -679,7 +674,6 @@ public class RobotContainer {
     // testController.rightTrigger().onTrue(superStructure.moveElevatorDown());
     // testController.rightTrigger().onFalse(superStructure.elevatorStop());
 
-
     // testController.rightBumper().onTrue(superStructure.runWheelsBackwards());
     // testController.rightBumper().onFalse(manipulator.stopIntake());
 
@@ -702,18 +696,6 @@ public class RobotContainer {
   }
 }
 
-
 // "the code is now very cleam" - andrew 3/10/2025
-
-
-
-
-
-
-
-
-
-
-
 
 // andrew is super awesome and cool
