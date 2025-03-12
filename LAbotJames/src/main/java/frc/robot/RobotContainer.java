@@ -262,7 +262,7 @@ public class RobotContainer {
     Trigger L1 = new Trigger(() -> stateController.isL1());
     Trigger LMahome = new Trigger(() -> stateController.isMahome());
     BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
-    Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
+    //Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
     Trigger intakeMode = new Trigger(() -> stateController.isIntakeMode());
     // Rumble controler for 1s when endgame
     rumbleTime.onTrue(
