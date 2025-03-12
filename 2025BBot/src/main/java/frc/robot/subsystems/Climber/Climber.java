@@ -4,21 +4,32 @@
 
 package frc.robot.subsystems.Climber;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.FieldConstants;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class Climber extends SubsystemBase {
 
   private ClimberIO io;
+
   protected final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
+
   private final Alert disconnected;
 
   private final LoggedTunableNumber kP;
   private final LoggedTunableNumber kI;
   private final LoggedTunableNumber kD;
+
+  private final LoggedDashboardChooser<Command> stationChooser;
+  private final SendableChooser<String> m_chooser;
+
 
   /** Creates a new Climber. */
   public Climber(ClimberIO io) {
@@ -34,6 +45,13 @@ public class Climber extends SubsystemBase {
     kD.initDefault(0);
 
     disconnected = new Alert("Climber motor disconnected!", Alert.AlertType.kWarning);
+
+    m_chooser = new SendableChooser<String>();
+    m_chooser.addOption("Station 1", FieldConstants.Barge.closeCage);
+    m_chooser.addOption("Station 2", FieldConstants.Barge.middleCage);
+    m_chooser.addOption("Station 3", FieldConstants.Barge.farCage);
+
+    stationChooser = new LoggedDashboardChooser<>("Alliance Station Number", m_chooser);
   }
 
   /** Deploys the climber. * */
@@ -63,6 +81,10 @@ public class Climber extends SubsystemBase {
     return run(() -> io.setPower(0));
   }
 
+  public Pose2d getCagePose(){
+    return m_chooser.getSelected();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -70,8 +92,6 @@ public class Climber extends SubsystemBase {
     Logger.processInputs("Climber", inputs);
     disconnected.set(!inputs.climberMotorConnected);
 
-    // if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
-    //   io.setPID(kP.get(), kI.get(), kD.get());
-    // }
+    SmartDashboard.putData(m_chooser);
   }
 }
