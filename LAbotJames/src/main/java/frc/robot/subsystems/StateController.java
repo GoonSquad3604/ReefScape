@@ -148,6 +148,7 @@ public class StateController extends SubsystemBase {
     return run(
       () -> {
         setInake();
+        
       });
   }
 
