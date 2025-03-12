@@ -189,6 +189,7 @@ public class ArmIOPhoenixRev implements ArmIO {
   public double getWristPosition() {
     return wristEncoder.getPosition();
   }
+
   @Override
   public double getElbowPosition() {
     return elbowEncoder.getPosition().getValueAsDouble();

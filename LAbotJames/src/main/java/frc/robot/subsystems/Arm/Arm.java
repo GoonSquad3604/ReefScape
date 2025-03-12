@@ -123,6 +123,7 @@ public class Arm extends SubsystemBase {
   public double getElbowPos() {
     return io.getElbowPosition();
   }
+
   public double getWristPos() {
     return io.getWristPosition();
   }
@@ -151,69 +152,75 @@ public class Arm extends SubsystemBase {
   //   io.setWristPosition(ArmConstants.alleyOop);
   // }
 
-  public Command coralL4(){
-    return runOnce(() -> {
-      io.setWristPosition(ArmConstants.coralWristL4); 
-      io.setElbowPosition(ArmConstants.coralElbowL4);
-    });
-  }
-
-  public Command coralL3(){
-    return runOnce(() -> {
-      io.setWristPosition(ArmConstants.coralWristL3); 
-      io.setElbowPosition(ArmConstants.coralElbowL3);
-    });
-  }
-
-  public Command coralL2(){
-    return runOnce(() -> {
-      io.setWristPosition(ArmConstants.coralWristL2); 
-      io.setElbowPosition(ArmConstants.coralElbowL2);
-    });
-  }
-
-  public Command coralL1(){
-    return runOnce(() -> {
-      io.setWristPosition(ArmConstants.coralWristL1); 
-      io.setElbowPosition(ArmConstants.coralElbowL1);
-    });
-  }
-
-  public Command barge(){
-    return runOnce(() -> {
-      io.setWristPosition(ArmConstants.bargeWrist); 
-      io.setElbowPosition(ArmConstants.bargeElbow);
-    });
-  }
-
-  public Command processor(){
-    return runOnce(() -> {
-      io.setWristPosition(ArmConstants.processorWrist); 
-      io.setElbowPosition(ArmConstants.processorElbow);
-    });
-  }  
-
-  public Command climb(){
+  public Command coralL4() {
     return runOnce(
         () -> {
-          io.setWristPosition(ArmConstants.wristClimb); 
+          io.setWristPosition(ArmConstants.coralWristL4);
+          io.setElbowPosition(ArmConstants.coralElbowL4);
+        });
+  }
+
+  public Command coralL3() {
+    return runOnce(
+        () -> {
+          io.setWristPosition(ArmConstants.coralWristL3);
+          io.setElbowPosition(ArmConstants.coralElbowL3);
+        });
+  }
+
+  public Command coralL2() {
+    return runOnce(
+        () -> {
+          io.setWristPosition(ArmConstants.coralWristL2);
+          io.setElbowPosition(ArmConstants.coralElbowL2);
+        });
+  }
+
+  public Command coralL1() {
+    return runOnce(
+        () -> {
+          io.setWristPosition(ArmConstants.coralWristL1);
+          io.setElbowPosition(ArmConstants.coralElbowL1);
+        });
+  }
+
+  public Command barge() {
+    return runOnce(
+        () -> {
+          io.setWristPosition(ArmConstants.bargeWrist);
+          io.setElbowPosition(ArmConstants.bargeElbow);
+        });
+  }
+
+  public Command processor() {
+    return runOnce(
+        () -> {
+          io.setWristPosition(ArmConstants.processorWrist);
+          io.setElbowPosition(ArmConstants.processorElbow);
+        });
+  }
+
+  public Command climb() {
+    return runOnce(
+        () -> {
+          io.setWristPosition(ArmConstants.wristClimb);
           io.setElbowPosition(ArmConstants.elbowClimb);
         });
   }
 
   public Command layup() {
     return runOnce(
-      () -> {
-        io.setWristPosition(ArmConstants.alleyOop);
-      });
+        () -> {
+          io.setWristPosition(ArmConstants.alleyOop);
+        });
   }
 
   public Command home() {
     return runOnce(
-      () -> {
-        io.setWristPosition(ArmConstants.homeWrist);
-        io.setElbowPosition(ArmConstants.homeElbow);
-      });
+        () -> {
+          io.setWristPosition(ArmConstants.homeWrist);
+          io.setElbowPosition(ArmConstants.homeElbow);
+        });
   }
 
   public Command elbowUp() {
