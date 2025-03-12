@@ -170,7 +170,7 @@ public class RobotContainer {
         lED = new LEDs();
         break;
     }
-    stateController = new StateController();
+    stateController = StateController.getInstance();
     superStructure = new SuperStructure(manipulator, arm, elevator, stateController);
 
     lED.setDefaultCommand(lED.defaultLeds(() -> stateController.getMode()));
@@ -262,7 +262,7 @@ public class RobotContainer {
     Trigger L1 = new Trigger(() -> stateController.isL1());
     Trigger LMahome = new Trigger(() -> stateController.isMahome());
     BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
-    Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
+    //Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
     Trigger intakeMode = new Trigger(() -> stateController.isIntakeMode());
     // Rumble controler for 1s when endgame
     rumbleTime.onTrue(
@@ -271,7 +271,7 @@ public class RobotContainer {
             .andThen(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0)));
 
     // Auto fire
-    fireReadyAuto.onTrue(new InstantCommand(() -> superStructure.fire()));
+    // fireReadyAuto.onTrue(new InstantCommand(() -> superStructure.fire()));
 
     // Default drive command, normal field-relative drive
     drive.setDefaultCommand(
@@ -566,10 +566,7 @@ public class RobotContainer {
                     elevator.runOnce(() -> elevator.stop()).andThen(stateController.setMahome())));
 
     // Deploy climber
-    // operatorButtonBox
-    //     .button(8)
-    //     .and(climbMode)
-    //     .onTrue(arm.climb().alongWith(climber.setClimberDown()));
+    operatorButtonBox.button(8).onTrue(arm.climb());
 
     // Climb up
     // operatorButtonBox.button(9).and(climbMode).onTrue(climber.setClimberUp());
