@@ -22,6 +22,8 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private LevelState m_Level;
   @AutoLogOutput private RobotTarget m_Target;
   @AutoLogOutput private Pose2d m_TragetPose;
+  @AutoLogOutput private Intaking m_Intake;
+
 
   private Manipulator manipulator;
   private Elevator elevator;
@@ -34,6 +36,7 @@ public class StateController extends SubsystemBase {
     // setCoral();
     m_Level = LevelState.MAHOME;
     m_Mode = RobotMode.IDLE;
+    m_Intake = Intaking.NOINTAKE;
   }
 
   public static StateController getInstance() {
@@ -53,6 +56,10 @@ public class StateController extends SubsystemBase {
 
   public void setClimb() {
     m_Mode = RobotMode.CLIMB;
+  }
+
+  public void setInake() {
+    m_Intake = Intaking.INTAKE;
   }
 
   public Command setL1() {
@@ -107,6 +114,10 @@ public class StateController extends SubsystemBase {
     return m_Mode == RobotMode.CLIMB;
   }
 
+  public boolean isIntakeMode() {
+    return m_Intake == Intaking.INTAKE;
+  }
+
   public boolean hasGamePiece(Manipulator manipulator) {
     return manipulator.hasGamePiece();
   }
@@ -139,6 +150,14 @@ public class StateController extends SubsystemBase {
           setClimb();
         });
   }
+
+  public Command setIntakeMode() {
+    return run(
+      () -> {
+        setInake();
+      });
+  }
+
 
   public boolean stupid(Pose2d position1, Pose2d position2) {
     if (Math.abs(position1.getX() - position2.getX()) < 0.1
@@ -220,5 +239,10 @@ public class StateController extends SubsystemBase {
     REEF,
     PROCESSOR,
     SOURCE
+  }
+
+  public enum Intaking {
+    INTAKE,
+    NOINTAKE
   }
 }
