@@ -134,6 +134,11 @@ public class Elevator extends SubsystemBase {
     return io.getPos();
   }
 
+  public double getDist() {
+
+    return io.getLCanDist();
+  }
+
   public void setVolts(double volts) {
     io.setVoltage(volts);
   }
