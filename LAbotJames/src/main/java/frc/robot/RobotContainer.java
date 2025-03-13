@@ -397,6 +397,7 @@ public class RobotContainer {
                                 AllianceFlipUtil.apply(
                                     FieldConstants.CoralStation.leftCenterIntakePos)),
                     Set.of(drive))
+                .alongWith(stateController.setIntakeMode())
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     // Right bumper, coral mode, no piece -> right source
@@ -406,14 +407,27 @@ public class RobotContainer {
         .and(hasNoGamePiece)
         .whileTrue(
             Commands.defer(
-                () ->
-                    drive
-                        .pathfindToFieldPose(
-                            () ->
-                                AllianceFlipUtil.apply(
-                                    FieldConstants.CoralStation.rightCenterIntakePos))
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
-                Set.of(drive)));
+                    () ->
+                        drive
+                            .pathfindToFieldPose(
+                                () ->
+                                    AllianceFlipUtil.apply(
+                                        FieldConstants.CoralStation.rightCenterIntakePos))
+                            .alongWith(stateController.setIntakeMode())
+                            .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
+                    Set.of(drive)));
+
+    intakeMode.onTrue(
+        superStructure.goToSource()
+        .alongWith(lED.strobeCommand(Color.kRed, 0.333)));
+
+    intakeMode.onFalse(
+        arm.home()
+        .alongWith(lED.solidCommand(Color.kGreen))
+        .alongWith(manipulator.stopIntake()));
+
+    hasGamePiece.onTrue(
+        stateController.setNoIntakeMode());
 
     /* ALGAE PATHFINDS (left and right have no difference) */
 

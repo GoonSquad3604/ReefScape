@@ -75,8 +75,12 @@ public class StateController extends SubsystemBase {
     m_Mode = RobotMode.CLIMB;
   }
 
-  public void setInake() {
+  public void setIntake() {
     m_Intake = Intaking.INTAKE;
+  }
+
+  public void setNoIntake() {
+    m_Intake = Intaking.NOINTAKE;
   }
 
   public Command setL1() {
@@ -232,7 +236,14 @@ public class StateController extends SubsystemBase {
   public Command setIntakeMode() {
     return run(
         () -> {
-          setInake();
+          setIntake();
+        });
+  }
+
+  public Command setNoIntakeMode() {
+    return run(
+        () -> {
+          setNoIntake();
         });
   }
 
