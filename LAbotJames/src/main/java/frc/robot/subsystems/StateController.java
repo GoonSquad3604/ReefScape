@@ -24,7 +24,6 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private Pose2d m_TragetPose;
   @AutoLogOutput private Intaking m_Intake;
 
-
   private Manipulator manipulator;
   private Elevator elevator;
   private Arm arm;
@@ -58,8 +57,12 @@ public class StateController extends SubsystemBase {
     m_Mode = RobotMode.CLIMB;
   }
 
-  public void setInake() {
+  public void setIntake() {
     m_Intake = Intaking.INTAKE;
+  }
+
+  public void setNoIntake() {
+    m_Intake = Intaking.NOINTAKE;
   }
 
   public Command setL1() {
@@ -153,12 +156,17 @@ public class StateController extends SubsystemBase {
 
   public Command setIntakeMode() {
     return run(
-      () -> {
-        setInake();
-        
-      });
+        () -> {
+          setIntake();
+        });
   }
 
+  public Command setNoIntakeMode() {
+    return run(
+        () -> {
+          setNoIntake();
+        });
+  }
 
   public boolean stupid(Pose2d position1, Pose2d position2) {
     if (Math.abs(position1.getX() - position2.getX()) < 0.1
