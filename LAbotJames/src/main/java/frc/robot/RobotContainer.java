@@ -481,6 +481,19 @@ public class RobotContainer {
     //                     .pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))
     //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
+    /* CLIMBER PATHFIND */
+
+    driverController
+        .leftBumper()
+        .or(driverController.rightBumper())
+        .and(climbMode)
+        .whileTrue(
+            drive.defer(
+                () ->
+                    drive
+                        .pathfindToFieldPose(climber.climbPosition())
+                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
+
     /* OPERATOR BUTTONS */
 
     // Set mode to coral
