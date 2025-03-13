@@ -24,7 +24,6 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private Pose2d m_TragetPose;
   @AutoLogOutput private Intaking m_Intake;
 
-
   private Manipulator manipulator;
   private Elevator elevator;
   private Arm arm;
@@ -153,11 +152,10 @@ public class StateController extends SubsystemBase {
 
   public Command setIntakeMode() {
     return run(
-      () -> {
-        setInake();
-      });
+        () -> {
+          setInake();
+        });
   }
-
 
   public boolean stupid(Pose2d position1, Pose2d position2) {
     if (Math.abs(position1.getX() - position2.getX()) < 0.1

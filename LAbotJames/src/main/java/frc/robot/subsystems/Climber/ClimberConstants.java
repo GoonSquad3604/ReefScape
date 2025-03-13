@@ -1,5 +1,8 @@
 package frc.robot.subsystems.Climber;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public final class ClimberConstants {
 
   // Motor IDs
@@ -16,4 +19,9 @@ public final class ClimberConstants {
   public static final double i = 0.01;
   public static final double d = 0;
   public static final double ff = 0.2;
+
+  // Climbing positions
+  public static final Pose2d leftCagePos = new Pose2d(8, 5, Rotation2d.fromDegrees(0));
+  public static final Pose2d middleCagePos = new Pose2d(8, 6.5, Rotation2d.fromDegrees(0));
+  public static final Pose2d rightCagePos = new Pose2d(8, 7.25, Rotation2d.fromDegrees(0));
 }

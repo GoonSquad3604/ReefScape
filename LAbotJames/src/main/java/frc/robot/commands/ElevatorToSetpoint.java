@@ -7,11 +7,10 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.StateController;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorIONeo;
-import frc.robot.util.LevelState;
+import frc.robot.subsystems.StateController;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -46,7 +45,7 @@ public class ElevatorToSetpoint extends Command {
     this.elevator = elevator;
     this.userGoal = userGoal;
     this.mahoming = mahoming;
-    goesToState = false; //muy falso
+    goesToState = false; // muy falso
     feedforward =
         new ElevatorFeedforward(
             ElevatorConstants.ks, ElevatorConstants.kg, ElevatorConstants.kv, ElevatorConstants.ka);
@@ -59,7 +58,7 @@ public class ElevatorToSetpoint extends Command {
     this.elevator = elevator;
     this.userGoal = userGoal;
     this.mahoming = false;
-    goesToState = false; //muy falso
+    goesToState = false; // muy falso
     feedforward =
         new ElevatorFeedforward(
             ElevatorConstants.ks, ElevatorConstants.kg, ElevatorConstants.kv, ElevatorConstants.ka);
@@ -67,14 +66,15 @@ public class ElevatorToSetpoint extends Command {
     addRequirements(elevator);
   }
 
-  public ElevatorToSetpoint(Elevator elevator, StateController state) { // Goes to target state if no goal is given
+  public ElevatorToSetpoint(
+      Elevator elevator, StateController state) { // Goes to target state if no goal is given
 
     this.elevator = elevator;
     this.userGoal = userGoal;
     this.mahoming = false;
     goesToState = true;
     this.state = state;
-    
+
     feedforward =
         new ElevatorFeedforward(
             ElevatorConstants.ks, ElevatorConstants.kg, ElevatorConstants.kv, ElevatorConstants.ka);
@@ -86,23 +86,23 @@ public class ElevatorToSetpoint extends Command {
   @Override
   public void initialize() {
     profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(5, 0.5));
-    if(goesToState){
-      switch(state.getLevel()) {
+    if (goesToState) {
+      switch (state.getLevel()) {
         case L1:
-        goal = new TrapezoidProfile.State((ElevatorConstants.l1Pos), 0);
+          goal = new TrapezoidProfile.State((ElevatorConstants.l1Pos), 0);
           break;
         case L2:
-        goal = new TrapezoidProfile.State((ElevatorConstants.l2Pos), 0);
+          goal = new TrapezoidProfile.State((ElevatorConstants.l2Pos), 0);
           break;
         case L3:
-        goal = new TrapezoidProfile.State((ElevatorConstants.l3Pos), 0);
+          goal = new TrapezoidProfile.State((ElevatorConstants.l3Pos), 0);
           break;
         case L4:
-        goal = new TrapezoidProfile.State((ElevatorConstants.l4Pos), 0);
+          goal = new TrapezoidProfile.State((ElevatorConstants.l4Pos), 0);
           break;
       }
 
-    }else {
+    } else {
       goal = new TrapezoidProfile.State(userGoal, 0);
     }
     setpoint = new TrapezoidProfile.State(elevator.getPos(), 0);
