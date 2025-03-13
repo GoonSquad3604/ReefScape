@@ -262,7 +262,7 @@ public class RobotContainer {
     Trigger L1 = new Trigger(() -> stateController.isL1());
     Trigger LMahome = new Trigger(() -> stateController.isMahome());
     BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
-    //Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
+    // Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
     Trigger intakeMode = new Trigger(() -> stateController.isIntakeMode());
     Trigger manualOverride = new Trigger(() -> stateController.isOverrideOn());
 
@@ -487,10 +487,11 @@ public class RobotContainer {
         .and(coralMode)
         .and(manualOverride)
         .onTrue(
-            arm.coralL4()
-                .andThen(
-                    new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
-                        .andThen(stateController.setL4())));
+            // uncomment this code for non queued coral movement
+            // arm.coralL4()
+            //     .andThen(
+            //         new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
+            /*.alongWith */ (stateController.setL4())) /*)*/;
 
     // Goes to L3 coral positions
     operatorButtonBox
@@ -498,26 +499,29 @@ public class RobotContainer {
         .and(coralMode)
         .and(manualOverride)
         .onTrue(
-            arm.coralL3()
-                .andThen(
-                    new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
-                        .alongWith(stateController.setL3())));
+            // uncomment this code for non queued coral movement
+            // arm.coralL3()
+            //     .andThen(
+            //         new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
+            /*  .alongWith */ (stateController.setL3())) /*)*/;
 
     // Goes to L2 coral positions
     operatorButtonBox
         .button(5)
         .and(coralMode)
         .onTrue(
-            arm.coralL2()
-                .andThen(
-                    new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)
-                        .alongWith(stateController.setL2())));
+            // uncomment this code for non queued coral movement
+            // arm.coralL2()
+            //     .andThen(
+            //         new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)
+            /*  .alongWith */ (stateController.setL2())) /*)*/;
 
     // Goes to L1 coral positions
     operatorButtonBox
         .button(6)
         .and(coralMode)
         .onTrue(
+            // uncomment this code for non queued coral movement
             arm.coralL1()
                 .andThen(
                     new ElevatorToSetpoint(elevator, ElevatorConstants.l1Pos)
@@ -642,6 +646,7 @@ public class RobotContainer {
     // TODO: also also make gavin breezee better
     // TODO: also also also make mark zhang the seveteen thousandth better
     // TODO: also also also also also make richard ernest budop III better (jk)
+    // TODO: also also also also also also make simon edward philips better
 
     // testController.b().onTrue(arm.elbowUp());
     // testController.b().onFalse(arm.stopElbow());

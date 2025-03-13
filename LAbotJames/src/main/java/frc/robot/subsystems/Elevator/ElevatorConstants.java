@@ -10,6 +10,9 @@ public final class ElevatorConstants {
   public static final int leftMotorID = 15;
   public static final int rightMotorID = 14;
 
+  // laser can ids
+  public static final int laserCanID = 41;
+
   // limit switch ids
   public static final int limitSwitch1ID = 0;
   public static final int limitSwitch2ID = 1;

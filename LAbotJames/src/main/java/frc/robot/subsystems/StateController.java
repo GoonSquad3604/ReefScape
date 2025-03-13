@@ -231,11 +231,10 @@ public class StateController extends SubsystemBase {
 
   public Command setIntakeMode() {
     return run(
-      () -> {
-        setInake();
-      });
+        () -> {
+          setInake();
+        });
   }
-
 
   public boolean stupid(Pose2d position1, Pose2d position2) {
     if (Math.abs(position1.getX() - position2.getX()) < 0.1

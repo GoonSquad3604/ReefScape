@@ -26,6 +26,9 @@ public interface ElevatorIO {
     public double MotorLeftPos;
     public double MotorRightPos;
     public double HeightInInches;
+
+    public double lCanDist;
+    public boolean lCanConnected = false;
   }
 
   default boolean checkLimitSwitch() {
@@ -61,5 +64,9 @@ public interface ElevatorIO {
   default void setPID(double kP, double kI, double kD) {}
 
   default void setPositionClosedLoopWithFF(double position, double arbFF) {}
+
+  default double getLCanDist() {
+    return 0;
+  }
 }
 // mandatory end comment
