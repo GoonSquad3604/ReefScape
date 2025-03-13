@@ -264,6 +264,9 @@ public class RobotContainer {
     BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
     //Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
     Trigger intakeMode = new Trigger(() -> stateController.isIntakeMode());
+    Trigger manualOverride = new Trigger(() -> stateController.isOverrideOn());
+
+    
     // Rumble controler for 1s when endgame
     rumbleTime.onTrue(
         new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, .8))
@@ -482,6 +485,7 @@ public class RobotContainer {
     operatorButtonBox
         .button(3)
         .and(coralMode)
+        .and(manualOverride)
         .onTrue(
             arm.coralL4()
                 .andThen(
@@ -492,6 +496,7 @@ public class RobotContainer {
     operatorButtonBox
         .button(4)
         .and(coralMode)
+        .and(manualOverride)
         .onTrue(
             arm.coralL3()
                 .andThen(

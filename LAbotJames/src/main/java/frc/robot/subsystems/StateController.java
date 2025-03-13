@@ -23,7 +23,9 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private RobotTarget m_Target;
   @AutoLogOutput private Pose2d m_TragetPose;
   @AutoLogOutput private Intaking m_Intake;
-
+  @AutoLogOutput private ReefSide m_Side;
+  @AutoLogOutput private LeftOrRight m_LeftOrRight;
+  @AutoLogOutput private ManualOverride m_ManualOverride;
 
   private Manipulator manipulator;
   private Elevator elevator;
@@ -37,6 +39,9 @@ public class StateController extends SubsystemBase {
     m_Level = LevelState.MAHOME;
     m_Mode = RobotMode.IDLE;
     m_Intake = Intaking.NOINTAKE;
+    m_Side = ReefSide.ONE;
+    m_LeftOrRight = LeftOrRight.LEFT;
+    m_ManualOverride = ManualOverride.NO;
   }
 
   public static StateController getInstance() {
@@ -44,6 +49,18 @@ public class StateController extends SubsystemBase {
       _instance = new StateController();
     }
     return _instance;
+  }
+
+  public boolean isOverrideOn(){
+    return m_ManualOverride == ManualOverride.YES;
+  }
+
+  public Command turnOnOverride(){
+    return runOnce(() -> m_ManualOverride = ManualOverride.YES);
+  }
+
+  public Command turnOffOverride(){
+    return runOnce(() -> m_ManualOverride = ManualOverride.NO);
   }
 
   public void setCoral() {
@@ -80,6 +97,60 @@ public class StateController extends SubsystemBase {
 
   public Command setMahome() {
     return runOnce(() -> m_Level = LevelState.MAHOME);
+  }
+
+  public Command setSide1() {
+    return runOnce(() -> m_Side = ReefSide.ONE);
+  }
+
+  public Command setSide2() {
+    return runOnce(() -> m_Side = ReefSide.TWO);
+  }
+
+  public Command setSide3() {
+    return runOnce(() -> m_Side = ReefSide.THREE);
+  }
+
+  public Command setSide4() {
+    return runOnce(() -> m_Side = ReefSide.FOUR);
+  }
+
+  public boolean isSide1() {
+   return m_Side == ReefSide.ONE;
+  }
+
+  public boolean isSide2() {
+    return m_Side == ReefSide.TWO;
+   }
+
+   public boolean isSide3() {
+    return m_Side == ReefSide.THREE;
+   }
+ 
+   public boolean isSide4() {
+     return m_Side == ReefSide.FOUR;
+    }
+
+    public boolean isSide5() {
+      return m_Side == ReefSide.FIVE;
+     }
+   
+     public boolean isSide6() {
+       return m_Side == ReefSide.SIX;
+      }
+      public boolean isLeft() {
+        return m_LeftOrRight == LeftOrRight.LEFT;
+       }
+       public boolean isRight() {
+        return m_LeftOrRight == LeftOrRight.RIGHt;
+       }
+
+  public Command setSide5() {
+    return runOnce(() -> m_Side = ReefSide.FIVE);
+  }
+
+  public Command setSide6() {
+    return runOnce(() -> m_Side = ReefSide.SIX);
   }
 
   public boolean isL1() {
@@ -130,6 +201,13 @@ public class StateController extends SubsystemBase {
     return m_Level;
   }
 
+  public ReefSide getSide() {
+    return m_Side;
+  }
+
+  public LeftOrRight getLeftOrRight() {
+    return m_LeftOrRight;
+  }
   public Command setCoralMode(Manipulator manipulator) {
     return run(
         () -> {
@@ -244,5 +322,24 @@ public class StateController extends SubsystemBase {
   public enum Intaking {
     INTAKE,
     NOINTAKE
+  }
+
+  public enum ReefSide {
+    ONE,
+    TWO,
+    THREE,
+    FOUR,
+    FIVE,
+    SIX
+  }
+
+  public enum LeftOrRight {
+    LEFT,
+    RIGHt
+  }
+
+  public enum ManualOverride {
+    YES,
+    NO
   }
 }

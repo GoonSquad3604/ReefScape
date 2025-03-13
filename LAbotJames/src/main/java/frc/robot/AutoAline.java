@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.StateController.LeftOrRight;
+import frc.robot.subsystems.StateController.ReefSide;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.util.AllianceFlipUtil;
@@ -25,10 +27,14 @@ import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.path.PathPlannerPath;
+
 // Inspired by Team 2137's AutoAline code
 
 /** Add your docs here. */
 public class AutoAline {
+
+
 
   private static final double JoystickScalar = 2.500000;
 
@@ -252,5 +258,43 @@ public class AutoAline {
   /** Uses choreo utility methods to flip the given pose if on red alliance */
   public static Pose2d flipIfRed(Pose2d pose) {
     return AllianceFlipUtil.apply(pose);
+  }
+
+  public PathPlannerPath pathGetter(ReefSide side, LeftOrRight branch) {
+    switch(branch){
+      case LEFT:
+        switch(side){
+          case ONE:
+          return new PathPlannerPath(null, null, null, null);
+          case TWO:
+          return new PathPlannerPath(null, null, null, null);
+          case THREE:
+          return new PathPlannerPath(null, null, null, null);
+          case FOUR:
+          return new PathPlannerPath(null, null, null, null);
+          case FIVE:
+          return new PathPlannerPath(null, null, null, null);
+          case SIX:
+          return new PathPlannerPath(null, null, null, null);
+        }
+      break;
+      case RIGHt:
+        switch(side){
+          case ONE:
+          return new PathPlannerPath(null, null, null, null);
+          case TWO:
+          return new PathPlannerPath(null, null, null, null);
+          case THREE:
+          return new PathPlannerPath(null, null, null, null);
+          case FOUR:
+          return new PathPlannerPath(null, null, null, null);
+          case FIVE:
+          return new PathPlannerPath(null, null, null, null);
+          case SIX:
+          return new PathPlannerPath(null, null, null, null);
+      }
+
+    }
+    return new PathPlannerPath(null, null, null, null);
   }
 }
