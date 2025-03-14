@@ -9,8 +9,13 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LoggedTunableNumber;
+
+import java.nio.file.Path;
+
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import com.pathplanner.lib.path.PathPlannerPath;
 
 public class Climber extends SubsystemBase {
 
@@ -23,7 +28,7 @@ public class Climber extends SubsystemBase {
   private final LoggedTunableNumber kI;
   private final LoggedTunableNumber kD;
 
-  private final LoggedDashboardChooser<Pose2d> cageChooser;
+  private final LoggedDashboardChooser<String> cageChooser;
 
   /** Creates a new Climber. */
   public Climber(ClimberIO io) {
@@ -41,10 +46,15 @@ public class Climber extends SubsystemBase {
     disconnected = new Alert("Climber motor disconnected!", Alert.AlertType.kWarning);
 
     cageChooser = new LoggedDashboardChooser<>("Cage Choices");
-    cageChooser.addOption("Left Cage", ClimberConstants.leftCagePos);
-    cageChooser.addOption("Middle Cage", ClimberConstants.middleCagePos);
-    cageChooser.addOption("Right Cage", ClimberConstants.rightCagePos);
+    // cageChooser.addOption("Left Cage", ClimberConstants.leftCagePos);
+    // cageChooser.addOption("Middle Cage", ClimberConstants.middleCagePos);
+    // cageChooser.addOption("Right Cage", ClimberConstants.rightCagePos);
+
+    cageChooser.addOption("Left Cage", "LeftClimber");
+    cageChooser.addOption("Middle Cage", "MiddleClimber");
+    cageChooser.addOption("Right Cage", "RightClimber");
   }
+  
 
   /* Deploys the climber. */
   public Command setClimberDown() {
@@ -81,9 +91,10 @@ public class Climber extends SubsystemBase {
   }
 
   /* Returns the climb position based on smart dashboard option */
-  public Pose2d climbPosition() {
-    return cageChooser.get();
-  }
+  // public PathPlannerPath climbPath() {
+  //   // return PathPlannerPath.fromPathFile(cageChooser.get());
+  // }
+
 
   @Override
   public void periodic() {
