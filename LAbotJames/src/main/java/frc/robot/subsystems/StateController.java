@@ -25,7 +25,6 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private Intaking m_Intake;
   @AutoLogOutput private ReefSide m_Side;
   @AutoLogOutput private LeftOrRight m_LeftOrRight;
-  @AutoLogOutput private ManualOverride m_ManualOverride;
 
   private Manipulator manipulator;
   private Elevator elevator;
@@ -35,13 +34,11 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private boolean autoReadyFireIsTrue = false;
 
   public StateController() {
-    // setCoral();
     m_Level = LevelState.MAHOME;
     m_Mode = RobotMode.IDLE;
     m_Intake = Intaking.NOINTAKE;
     m_Side = ReefSide.ONE;
     m_LeftOrRight = LeftOrRight.LEFT;
-    m_ManualOverride = ManualOverride.NO;
   }
 
   public static StateController getInstance() {
@@ -49,18 +46,6 @@ public class StateController extends SubsystemBase {
       _instance = new StateController();
     }
     return _instance;
-  }
-
-  public boolean isOverrideOn() {
-    return m_ManualOverride == ManualOverride.YES;
-  }
-
-  public Command turnOnOverride() {
-    return runOnce(() -> m_ManualOverride = ManualOverride.YES);
-  }
-
-  public Command turnOffOverride() {
-    return runOnce(() -> m_ManualOverride = ManualOverride.NO);
   }
 
   public void setCoral() {
@@ -349,10 +334,5 @@ public class StateController extends SubsystemBase {
   public enum LeftOrRight {
     LEFT,
     RIGHt
-  }
-
-  public enum ManualOverride {
-    YES,
-    NO
   }
 }

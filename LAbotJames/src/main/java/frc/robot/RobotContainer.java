@@ -686,11 +686,15 @@ public class RobotContainer {
 
     /* TEST CONTROLLER */
 
-    driverController.povDown().onTrue(climber.moveClimberUp());
+    driverController.povUp().onTrue(climber.moveClimberUp());
+    driverController.povUp().onFalse(climber.stop());
+
+    driverController.povDown().onTrue(climber.moveClimberDown());
     driverController.povDown().onFalse(climber.stop());
 
-    driverController.povUp().onTrue(climber.moveClimberDown());
-    driverController.povUp().onFalse(climber.stop());
+    driverController.povRight().onTrue(climber.setPower(0.2));
+    driverController.povRight().onFalse(climber.stop());
+
 
     // TODO: make lucas estel campau better
     // TODO: also make andrew john ferguson better

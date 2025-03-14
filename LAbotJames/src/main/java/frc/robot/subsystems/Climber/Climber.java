@@ -61,14 +61,18 @@ public class Climber extends SubsystemBase {
     return runOnce(() -> io.setPosition(ClimberConstants.positionHome));
   }
 
-  /* Moves climber up with power */
+  /* Moves climber up with power (raise) */
   public Command moveClimberUp() {
     return run(() -> io.setPower(.40));
   }
 
-  /* Moves climber down with power */
+  /* Moves climber down with power (deploy) */
   public Command moveClimberDown() {
     return run(() -> io.setPower(-.40));
+  }
+
+  public Command setPower(double power) {
+    return run (() -> io.setPower(power));
   }
 
   /* Stops climber */
