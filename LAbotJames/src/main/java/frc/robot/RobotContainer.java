@@ -264,9 +264,8 @@ public class RobotContainer {
     BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
     // Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
     Trigger intakeMode = new Trigger(() -> stateController.isIntakeMode());
-    Trigger manualOverride = new Trigger(() -> stateController.isOverrideOn());
+    BooleanSupplier manualOverride = new Trigger(() -> operatorButtonBox.button(11).getAsBoolean());
 
-    
     // Rumble controler for 1s when endgame
     rumbleTime.onTrue(
         new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, .8))
@@ -407,27 +406,22 @@ public class RobotContainer {
         .and(hasNoGamePiece)
         .whileTrue(
             Commands.defer(
-                    () ->
-                        drive
-                            .pathfindToFieldPose(
-                                () ->
-                                    AllianceFlipUtil.apply(
-                                        FieldConstants.CoralStation.rightCenterIntakePos))
-                            .alongWith(stateController.setIntakeMode())
-                            .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
-                    Set.of(drive)));
+                () ->
+                    drive
+                        .pathfindToFieldPose(
+                            () ->
+                                AllianceFlipUtil.apply(
+                                    FieldConstants.CoralStation.rightCenterIntakePos))
+                        .alongWith(stateController.setIntakeMode())
+                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
+                Set.of(drive)));
 
-    intakeMode.onTrue(
-        superStructure.goToSource()
-        .alongWith(lED.strobeCommand(Color.kRed, 0.333)));
+    intakeMode.onTrue(superStructure.goToSource().alongWith(lED.strobeCommand(Color.kRed, 0.333)));
 
     intakeMode.onFalse(
-        arm.home()
-        .alongWith(lED.solidCommand(Color.kGreen))
-        .alongWith(manipulator.stopIntake()));
+        arm.home().alongWith(lED.solidCommand(Color.kGreen)).alongWith(manipulator.stopIntake()));
 
-    hasGamePiece.onTrue(
-        stateController.setNoIntakeMode());
+    hasGamePiece.onTrue(stateController.setNoIntakeMode());
 
     /* ALGAE PATHFINDS (left and right have no difference) */
 
@@ -508,47 +502,77 @@ public class RobotContainer {
         .and(operatorButtonBox.button(2))
         .onTrue(stateController.setClimbMode(manipulator));
 
-    // Goes to L4 coral positions
+    // L4 Coral (queue)
+    operatorButtonBox
+        .button(3)
+        .and(coralMode)
+        .and(manualOverride)
+        .negate()
+        .onTrue(stateController.setL4());
+
+    // L4 Coral (manual)
     operatorButtonBox
         .button(3)
         .and(coralMode)
         .and(manualOverride)
         .onTrue(
-            // uncomment this code for non queued coral movement
-            // arm.coralL4()
-            //     .andThen(
-            //         new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
-            /*.alongWith */ (stateController.setL4())) /*)*/;
+            arm.coralL4()
+                .alongWith(
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
+                        .alongWith(stateController.setL4())));
 
-    // Goes to L3 coral positions
+    // L3 Coral (queue)
+    operatorButtonBox
+        .button(4)
+        .and(coralMode)
+        .and(manualOverride)
+        .negate()
+        .onTrue(stateController.setL3());
+
+    // L3 Coral (manual)
     operatorButtonBox
         .button(4)
         .and(coralMode)
         .and(manualOverride)
         .onTrue(
-            // uncomment this code for non queued coral movement
-            // arm.coralL3()
-            //     .andThen(
-            //         new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
-            /*  .alongWith */ (stateController.setL3())) /*)*/;
+            arm.coralL3()
+                .alongWith(
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
+                        .alongWith(stateController.setL3())));
 
-    // Goes to L2 coral positions
+    // L2 Coral (queue)
     operatorButtonBox
         .button(5)
         .and(coralMode)
-        .onTrue(
-            // uncomment this code for non queued coral movement
-            // arm.coralL2()
-            //     .andThen(
-            //         new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)
-            /*  .alongWith */ (stateController.setL2())) /*)*/;
+        .and(manualOverride)
+        .negate()
+        .onTrue(stateController.setL2());
 
-    // Goes to L1 coral positions
+    // L2 Coral (manual)
+    operatorButtonBox
+        .button(5)
+        .and(coralMode)
+        .and(manualOverride)
+        .onTrue(
+            arm.coralL2()
+                .andThen(
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)
+                        .alongWith(stateController.setL2())));
+
+    // L1 Coral (queue)
     operatorButtonBox
         .button(6)
         .and(coralMode)
+        .and(manualOverride)
+        .negate()
+        .onTrue(stateController.setL1());
+
+    // L1 Coral (manual)
+    operatorButtonBox
+        .button(6)
+        .and(coralMode)
+        .and(manualOverride)
         .onTrue(
-            // uncomment this code for non queued coral movement
             arm.coralL1()
                 .andThen(
                     new ElevatorToSetpoint(elevator, ElevatorConstants.l1Pos)
@@ -662,11 +686,11 @@ public class RobotContainer {
 
     /* TEST CONTROLLER */
 
-    testController.y().onTrue(climber.moveClimberUp());
-    testController.y().onFalse(climber.stop());
+    driverController.povDown().onTrue(climber.moveClimberUp());
+    driverController.povDown().onFalse(climber.stop());
 
-    testController.a().onTrue(climber.moveClimberDown());
-    testController.a().onFalse(climber.stop());
+    driverController.povUp().onTrue(climber.moveClimberDown());
+    driverController.povUp().onFalse(climber.stop());
 
     // TODO: make lucas estel campau better
     // TODO: also make andrew john ferguson better

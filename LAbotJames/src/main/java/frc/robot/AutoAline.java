@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,14 +28,10 @@ import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
-import com.pathplanner.lib.path.PathPlannerPath;
-
 // Inspired by Team 2137's AutoAline code
 
 /** Add your docs here. */
 public class AutoAline {
-
-
 
   private static final double JoystickScalar = 2.500000;
 
@@ -261,39 +258,38 @@ public class AutoAline {
   }
 
   public PathPlannerPath pathGetter(ReefSide side, LeftOrRight branch) {
-    switch(branch){
+    switch (branch) {
       case LEFT:
-        switch(side){
+        switch (side) {
           case ONE:
-          return new PathPlannerPath(null, null, null, null);
+            return new PathPlannerPath(null, null, null, null);
           case TWO:
-          return new PathPlannerPath(null, null, null, null);
+            return new PathPlannerPath(null, null, null, null);
           case THREE:
-          return new PathPlannerPath(null, null, null, null);
+            return new PathPlannerPath(null, null, null, null);
           case FOUR:
-          return new PathPlannerPath(null, null, null, null);
+            return new PathPlannerPath(null, null, null, null);
           case FIVE:
-          return new PathPlannerPath(null, null, null, null);
+            return new PathPlannerPath(null, null, null, null);
           case SIX:
-          return new PathPlannerPath(null, null, null, null);
+            return new PathPlannerPath(null, null, null, null);
         }
-      break;
+        break;
       case RIGHt:
-        switch(side){
+        switch (side) {
           case ONE:
-          return new PathPlannerPath(null, null, null, null);
+            return new PathPlannerPath(null, null, null, null);
           case TWO:
-          return new PathPlannerPath(null, null, null, null);
+            return new PathPlannerPath(null, null, null, null);
           case THREE:
-          return new PathPlannerPath(null, null, null, null);
+            return new PathPlannerPath(null, null, null, null);
           case FOUR:
-          return new PathPlannerPath(null, null, null, null);
+            return new PathPlannerPath(null, null, null, null);
           case FIVE:
-          return new PathPlannerPath(null, null, null, null);
+            return new PathPlannerPath(null, null, null, null);
           case SIX:
-          return new PathPlannerPath(null, null, null, null);
-      }
-
+            return new PathPlannerPath(null, null, null, null);
+        }
     }
     return new PathPlannerPath(null, null, null, null);
   }

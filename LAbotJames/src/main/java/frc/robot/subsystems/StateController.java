@@ -51,15 +51,15 @@ public class StateController extends SubsystemBase {
     return _instance;
   }
 
-  public boolean isOverrideOn(){
+  public boolean isOverrideOn() {
     return m_ManualOverride == ManualOverride.YES;
   }
 
-  public Command turnOnOverride(){
+  public Command turnOnOverride() {
     return runOnce(() -> m_ManualOverride = ManualOverride.YES);
   }
 
-  public Command turnOffOverride(){
+  public Command turnOffOverride() {
     return runOnce(() -> m_ManualOverride = ManualOverride.NO);
   }
 
@@ -120,34 +120,36 @@ public class StateController extends SubsystemBase {
   }
 
   public boolean isSide1() {
-   return m_Side == ReefSide.ONE;
+    return m_Side == ReefSide.ONE;
   }
 
   public boolean isSide2() {
     return m_Side == ReefSide.TWO;
-   }
+  }
 
-   public boolean isSide3() {
+  public boolean isSide3() {
     return m_Side == ReefSide.THREE;
-   }
- 
-   public boolean isSide4() {
-     return m_Side == ReefSide.FOUR;
-    }
+  }
 
-    public boolean isSide5() {
-      return m_Side == ReefSide.FIVE;
-     }
-   
-     public boolean isSide6() {
-       return m_Side == ReefSide.SIX;
-      }
-      public boolean isLeft() {
-        return m_LeftOrRight == LeftOrRight.LEFT;
-       }
-       public boolean isRight() {
-        return m_LeftOrRight == LeftOrRight.RIGHt;
-       }
+  public boolean isSide4() {
+    return m_Side == ReefSide.FOUR;
+  }
+
+  public boolean isSide5() {
+    return m_Side == ReefSide.FIVE;
+  }
+
+  public boolean isSide6() {
+    return m_Side == ReefSide.SIX;
+  }
+
+  public boolean isLeft() {
+    return m_LeftOrRight == LeftOrRight.LEFT;
+  }
+
+  public boolean isRight() {
+    return m_LeftOrRight == LeftOrRight.RIGHt;
+  }
 
   public Command setSide5() {
     return runOnce(() -> m_Side = ReefSide.FIVE);
@@ -212,6 +214,7 @@ public class StateController extends SubsystemBase {
   public LeftOrRight getLeftOrRight() {
     return m_LeftOrRight;
   }
+
   public Command setCoralMode(Manipulator manipulator) {
     return run(
         () -> {

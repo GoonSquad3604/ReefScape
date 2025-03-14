@@ -46,7 +46,6 @@ public class Climber extends SubsystemBase {
     cageChooser.addOption("Right Cage", ClimberConstants.rightCagePos);
   }
 
-
   /* Deploys the climber. */
   public Command setClimberDown() {
     return runOnce(() -> io.setPosition(ClimberConstants.positionDown));
@@ -82,7 +81,6 @@ public class Climber extends SubsystemBase {
     return cageChooser.get();
   }
 
-  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
