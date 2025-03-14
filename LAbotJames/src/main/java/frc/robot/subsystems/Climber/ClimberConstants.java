@@ -26,7 +26,4 @@ public final class ClimberConstants {
   public static final Pose2d leftCagePos = new Pose2d(8.107, 7.258, Rotation2d.fromDegrees(90));
   public static final Pose2d middleCagePos = new Pose2d(8.107, 6.160, Rotation2d.fromDegrees(90));
   public static final Pose2d rightCagePos = new Pose2d(8.107, 5.075, Rotation2d.fromDegrees(90));
-
-  // Climbing paths
-  // public PathPlannerPath leftCLimberPath = drive.pathe("LeftClimber");
 }

@@ -477,14 +477,14 @@ public class RobotContainer {
 
     /* CLIMBER PATHFIND */
 
-    // driverController
-    //     .leftBumper()
-    //     .or(driverController.rightBumper())
-    //     .and(climbMode)
-    //     .whileTrue(
-    //         drive
-    //             .pathfindToPath(climber.climbPath())
-    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+    driverController
+        .leftBumper()
+        .or(driverController.rightBumper())
+        .and(climbMode)
+        .whileTrue(
+            drive
+                .pathfindToPath(climber.climbPath())
+                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     /* OPERATOR BUTTONS */
 
