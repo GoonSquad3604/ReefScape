@@ -1,8 +1,5 @@
 package frc.robot.subsystems.Elevator;
 
-import au.grapplerobotics.ConfigurationFailedException;
-import au.grapplerobotics.LaserCan;
-import au.grapplerobotics.interfaces.LaserCanInterface.RangingMode;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -19,7 +16,7 @@ public class ElevatorIONeo implements ElevatorIO {
   // declares motors
   private SparkFlex leftMotor;
   private SparkFlex rightMotor;
-  private LaserCan laserCan;
+  // private LaserCan laserCan;
   // private DigitalInput limitSwitchLeft;
   // private DigitalInput limitSwitchRight;
 
@@ -32,13 +29,13 @@ public class ElevatorIONeo implements ElevatorIO {
     rightMotor = new SparkFlex(ElevatorConstants.rightMotorID, MotorType.kBrushless);
 
     // initialize the laser cannon
-    laserCan = new LaserCan(ElevatorConstants.laserCanID);
-    try {
-      laserCan.setRangingMode(RangingMode.SHORT);
-      laserCan.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16 - 0, 16));
-    } catch (ConfigurationFailedException e) {
-      e.printStackTrace();
-    }
+    // laserCan = new LaserCan(ElevatorConstants.laserCanID);
+    // try {
+    //   laserCan.setRangingMode(RangingMode.SHORT);
+    //   laserCan.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16 - 0, 16));
+    // } catch (ConfigurationFailedException e) {
+    //   e.printStackTrace();
+    // }
 
     // left motor config
     config = new SparkFlexConfig();
@@ -108,11 +105,11 @@ public class ElevatorIONeo implements ElevatorIO {
                 * ElevatorConstants.gearRatio
                 * ElevatorConstants.pulleyCircumference;
 
-    try {
-      inputs.lCanDist = laserCan.getMeasurement().distance_mm;
-    } catch (Exception e) {
-      inputs.lCanDist = 99999;
-    }
+    // try {
+    //   inputs.lCanDist = laserCan.getMeasurement().distance_mm;
+    // } catch (Exception e) {
+    //   inputs.lCanDist = 99999;
+    // }
   }
 
   @Override
@@ -199,10 +196,10 @@ public class ElevatorIONeo implements ElevatorIO {
     return leftMotor.getEncoder().getPosition();
   }
 
-  @Override
-  public double getLCanDist() {
-    return laserCan.getMeasurement().distance_mm;
-  }
+  // @Override
+  // public double getLCanDist() {
+  //   return laserCan.getMeasurement().distance_mm;
+  // }
 }
 
 // why are you looking for this?

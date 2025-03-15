@@ -421,26 +421,26 @@ public class RobotContainer {
                 .alongWith(stateController.setIntakeMode())
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
-    /* NEW CORAL PATHFINDS */
-    driverController
-        .rightBumper()
-        .and(coralMode)
-        .and(hasGamePiece)
-        .and(driverPathOverride)
-        .negate()
-        .whileTrue(
-            AutoAline.autoAlineToPath(this, stateController.getBranch())
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+    /* NEW CORAL PATHFINDS  defer this please*/
+    // driverController
+    //     .rightBumper()
+    //     .and(coralMode)
+    //     .and(hasGamePiece)
+    //     .and(driverPathOverride)
+    //     .negate()
+    //     .whileTrue(
+    //         AutoAline.autoAlineToPath(this, stateController.getBranch())
+    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
-    driverController
-        .leftBumper()
-        .and(coralMode)
-        .and(hasGamePiece)
-        .and(driverPathOverride)
-        .negate()
-        .whileTrue(
-            AutoAline.autoAlineToPath(this, stateController.getBranch())
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+    // driverController
+    //     .leftBumper()
+    //     .and(coralMode)
+    //     .and(hasGamePiece)
+    //     .and(driverPathOverride)
+    //     .negate()
+    //     .whileTrue(
+    //         AutoAline.autoAlineToPath(this, stateController.getBranch())
+    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     /* INTAKE MODE */
     intakeMode.onTrue(superStructure.goToSource().alongWith(lED.strobeCommand(Color.kRed, 0.333)));
@@ -504,14 +504,14 @@ public class RobotContainer {
 
     /* CLIMBER PATHFIND */
 
-    driverController
-        .leftBumper()
-        .or(driverController.rightBumper())
-        .and(climbMode)
-        .whileTrue(
-            drive
-                .pathfindToPath(climber.climbPath())
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+    // driverController
+    //     .leftBumper()
+    //     .or(driverController.rightBumper())
+    //     .and(climbMode)
+    //     .whileTrue(
+    //         drive
+    //             .pathfindToPath(climber.climbPath())
+    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     /* OPERATOR BUTTONS */
 
@@ -675,17 +675,17 @@ public class RobotContainer {
                 .andThen(arm.home())
                 .alongWith(lED.defaultLeds(() -> stateController.getMode())));
 
-    // Vomit
-    operatorButtonBox
-        .button(11)
-        .whileTrue(
-            manipulator
-                .vomit()
-                .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)));
+    // // Vomit
+    // operatorButtonBox
+    //     .button(11)
+    //     .whileTrue(
+    //         manipulator
+    //             .vomit()
+    //             .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)));
 
-    operatorButtonBox
-        .button(11)
-        .onFalse(elevator.runOnce(() -> elevator.stop()).alongWith(manipulator.stopIntake()));
+    // operatorButtonBox
+    //     .button(11)
+    //     .onFalse(elevator.runOnce(() -> elevator.stop()).alongWith(manipulator.stopIntake()));
 
     // Fire
     operatorButtonBox.button(12).and(L1).onTrue(superStructure.fire());
@@ -745,11 +745,11 @@ public class RobotContainer {
     // TODO: also also also also also make richard ernest budop III better (jk)
     // TODO: also also also also also also make simon edward philips better
 
-    // testController.b().onTrue(arm.elbowUp());
-    // testController.b().onFalse(arm.stopElbow());
+    testController.b().onTrue(arm.elbowUp());
+    testController.b().onFalse(arm.stopElbow());
 
-    // testController.rightBumper().onTrue(arm.elbowDown());
-    // testController.rightBumper().onFalse(arm.stopElbow());
+    testController.rightBumper().onTrue(arm.elbowDown());
+    testController.rightBumper().onFalse(arm.stopElbow());
 
     // driverController.povDown().whileTrue(climber.setClimberHome());
     // driverController.povDown().onFalse(climber.stop());
