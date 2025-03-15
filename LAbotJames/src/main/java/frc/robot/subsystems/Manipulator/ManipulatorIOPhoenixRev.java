@@ -18,6 +18,11 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkFlexConfig;
+
+import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface.RangingMode;
+import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -33,6 +38,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
   private DigitalInput manipulatorSensor;
   private AbsoluteEncoder openingAbsoluteEncoder;
   private SparkFlexConfig openingConfig;
+  private LaserCan manipulatorDistanceSensor;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVoltage;
   private final StatusSignal<Current> supplyCurrent;
@@ -59,11 +65,20 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     rightWheel = new TalonFXS(ManipulatorConstants.rightWheelMotorID);
     // opening = new SparkFlex(ManipulatorConstants.openingMotorID, MotorType.kBrushless);
     manipulatorSensor = new DigitalInput(ManipulatorConstants.manipulatorSensorID);
+    manipulatorDistanceSensor = new LaserCan(51);
     velocityTorqueControlRequest = new VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
     torqueControlRequest = new TorqueCurrentFOC(0).withUpdateFreqHz(0);
     // openingAbsoluteEncoder = opening.getAbsoluteEncoder();
 
     rightWheel.setControl(new Follower(leftWheel.getDeviceID(), true));
+
+    try {
+      manipulatorDistanceSensor.setRangingMode(RangingMode.SHORT);
+      manipulatorDistanceSensor.setRegionOfInterest(new LaserCan.RegionOfInterest(8,8,4,4));
+    } catch (ConfigurationFailedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
     TalonFXSConfiguration config = new TalonFXSConfiguration();
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -147,6 +162,9 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     // inputs.manipulatorOpeningMotorPos = openingAbsoluteEncoder.getPosition();
     // inputs.manipulatorOpeningMotorVelocity = openingAbsoluteEncoder.getVelocity();
     inputs.manipulatorSensor = !manipulatorSensor.get();
+
+    inputs.manipulatorDistance = manipulatorDistanceSensor.getMeasurement().distance_mm;
+    
   }
 
   @Override

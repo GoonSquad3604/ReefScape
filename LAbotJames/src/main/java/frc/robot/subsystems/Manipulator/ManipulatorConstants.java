@@ -38,4 +38,6 @@ public final class ManipulatorConstants {
   public static final double wheelL2RPM = 60;
   public static final double wheelL3RPM = 60;
   public static final double wheelL4RPM = 59;
+
+  public static final double reefThreshold = 300;
 }
