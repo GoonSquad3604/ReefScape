@@ -29,6 +29,9 @@ public interface ManipulatorIO {
 
     public double manipulatorRightRPM;
     public double manipulatorLeftRPM;
+
+    public double manipulatorDistance;
+    public boolean laserCANIsConnected = false;
   }
 
   default void setOpeningPos(double position) {}
