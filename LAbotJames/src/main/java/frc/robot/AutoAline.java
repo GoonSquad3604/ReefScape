@@ -17,8 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DriveCommands;
-import frc.robot.subsystems.StateController.LeftOrRight;
-import frc.robot.subsystems.StateController.ReefSide;
+import frc.robot.subsystems.StateController.Branch;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.util.AllianceFlipUtil;
@@ -55,6 +54,9 @@ public class AutoAline {
   private static Pose2d target; // The currently targeted position (can be null)
   private static Pose2d lastTargeted =
       new Pose2d(); // The most recently targeted position (not null)
+
+  private static PathPlannerPath targetPath;
+  // private static PathPlannerPath lastTargetedPath = new PathPlannerPath();
 
   public static Pose2d getActiveTarget() {
     return target;
@@ -94,6 +96,17 @@ public class AutoAline {
                     getFlippedPose(robot.drive, targetType, motionSupplier)),
             Set.of(robot.drive)));
     // TODO: put all code on one line RIGHT after worlds
+  }
+
+  public static Command autoAlineToPath(RobotContainer robot, Branch branch) {
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> {
+              targetPath = pathGetter(branch);
+              // Logger.recordOutput("targetPath", targetPath);
+              // lastTargetedPath = targetPath;
+            }),
+        robot.drive.pathfindToPath(targetPath));
   }
 
   private static Command driveToTargetCommand(Drive drive, ProfiledPIDController angleController) {
@@ -257,40 +270,56 @@ public class AutoAline {
     return AllianceFlipUtil.apply(pose);
   }
 
-  public PathPlannerPath pathGetter(ReefSide side, LeftOrRight branch) {
+  public static PathPlannerPath pathGetter(Branch branch) {
+
+    String pathName = "beans";
+
     switch (branch) {
-      case LEFT:
-        switch (side) {
-          case ONE:
-            return new PathPlannerPath(null, null, null, null);
-          case TWO:
-            return new PathPlannerPath(null, null, null, null);
-          case THREE:
-            return new PathPlannerPath(null, null, null, null);
-          case FOUR:
-            return new PathPlannerPath(null, null, null, null);
-          case FIVE:
-            return new PathPlannerPath(null, null, null, null);
-          case SIX:
-            return new PathPlannerPath(null, null, null, null);
-        }
+      case BACK_LEFTBRANCH:
+        pathName = "Back LeftBranch";
         break;
-      case RIGHt:
-        switch (side) {
-          case ONE:
-            return new PathPlannerPath(null, null, null, null);
-          case TWO:
-            return new PathPlannerPath(null, null, null, null);
-          case THREE:
-            return new PathPlannerPath(null, null, null, null);
-          case FOUR:
-            return new PathPlannerPath(null, null, null, null);
-          case FIVE:
-            return new PathPlannerPath(null, null, null, null);
-          case SIX:
-            return new PathPlannerPath(null, null, null, null);
-        }
+      case BACK_RIGHTBRANCH:
+        pathName = "Back RightBranch";
+        break;
+      case BACKLEFT_LEFTBRANCH:
+        pathName = "BackLeft LeftBranch";
+        break;
+      case BACKLEFT_RIGHTBRANCH:
+        pathName = "BackLeft RightBranch";
+        break;
+      case BACKRIGHT_LEFTBRANCH:
+        pathName = "BackRight LeftBranch";
+        break;
+      case BACKRIGHT_RIGHTBRANCH:
+        pathName = "BackRight RightBranch";
+        break;
+      case FRONT_LEFTBRANCH:
+        pathName = "Front LeftBranch";
+        break;
+      case FRONT_RIGHTBRANCH:
+        pathName = "Front RightBranch";
+        break;
+      case FRONTLEFT_LEFTBRANCH:
+        pathName = "FrontLeft LeftBranch";
+        break;
+      case FRONTLEFT_RIGHTBRANCH:
+        pathName = "FrontLeft RightBranch";
+        break;
+      case FRONTRIGHT_LEFTBRANCH:
+        pathName = "FrontRight LeftBranch";
+        break;
+      case FRONTRIGHT_RIGHTBRANCH:
+        pathName = "FrontRight RightBranch";
+        break;
+      default:
+        pathName = null;
     }
-    return new PathPlannerPath(null, null, null, null);
+
+    try {
+      return PathPlannerPath.fromPathFile(pathName);
+    } catch (Exception e) {
+      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+      return null;
+    }
   }
 }
