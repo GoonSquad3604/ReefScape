@@ -85,7 +85,7 @@ public class ElevatorToSetpoint extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(5, 0.5));
+    profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(5, 1.0));
     if (goesToState) {
       switch (state.getLevel()) {
         case L1:

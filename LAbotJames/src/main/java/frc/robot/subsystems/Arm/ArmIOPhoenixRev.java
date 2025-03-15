@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
@@ -65,13 +66,13 @@ public class ArmIOPhoenixRev implements ArmIO {
     elbowEncoder.getConfigurator().apply(CANfig);
 
     SparkFlexConfig wristConfig = new SparkFlexConfig();
-    wristConfig.inverted(false).idleMode(IdleMode.kBrake);
+    wristConfig.inverted(true).idleMode(IdleMode.kBrake);
     // wristConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     wristConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
         .pid(ArmConstants.wristP, ArmConstants.wristI, ArmConstants.wristD);
-    wristConfig.closedLoopRampRate(0.5);
+    // wristConfig.closedLoopRampRate(0.5);
     // wristConfig.softLimit.forwardSoftLimit(0);
     // wristConfig.softLimit.reverseSoftLimit(0);
 
@@ -93,7 +94,7 @@ public class ArmIOPhoenixRev implements ArmIO {
             .withKP(ArmConstants.elbowP)
             .withKI(ArmConstants.elbowI)
             .withKD(ArmConstants.elbowD);
-
+    elbowConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.395;
     PhoenixUtil.tryUntilOk(5, () -> elbow.getConfigurator().apply(elbowConfig));
 
     position = elbow.getPosition();
@@ -172,7 +173,11 @@ public class ArmIOPhoenixRev implements ArmIO {
 
   @Override
   public void setWristPosition(double position) {
-    wrist.getClosedLoopController().setReference(position, SparkFlex.ControlType.kPosition);
+    // wrist.getClosedLoopController().setReference(position, SparkFlex.ControlType.kPosition);
+    wrist
+        .getClosedLoopController()
+        .setReference(
+            position, SparkFlex.ControlType.kPosition, ClosedLoopSlot.kSlot0, ArmConstants.wristFF);
   }
 
   @Override

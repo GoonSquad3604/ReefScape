@@ -113,11 +113,11 @@ public class Elevator extends SubsystemBase {
   }
 
   public void moveUp() {
-    io.setPower(0.232);
+    io.setPower(0.2);
   }
 
   public void moveDown() {
-    io.setPower(-0.132);
+    io.setPower(-0.4001);
   }
 
   public void stop() {
@@ -181,7 +181,7 @@ public class Elevator extends SubsystemBase {
     if (!atHome && io.checkLimitSwitch()) {
 
       io.setToZero();
-      io.setPower(0);
+      io.setPower(0.0);
       atHome = true;
 
     } else if (!io.checkLimitSwitch() && atHome) {
