@@ -25,6 +25,7 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private Intaking m_Intake;
   @AutoLogOutput private ReefSide m_Side;
   @AutoLogOutput private LeftOrRight m_LeftOrRight;
+  @AutoLogOutput private Branch m_Branch;
 
   private Manipulator manipulator;
   private Elevator elevator;
@@ -39,6 +40,7 @@ public class StateController extends SubsystemBase {
     m_Intake = Intaking.NOINTAKE;
     m_Side = ReefSide.ONE;
     m_LeftOrRight = LeftOrRight.LEFT;
+    m_Branch = Branch.FRONT_RIGHTBRANCH;
   }
 
   public static StateController getInstance() {
@@ -200,6 +202,10 @@ public class StateController extends SubsystemBase {
     return m_LeftOrRight;
   }
 
+  public Branch getBranch() {
+    return m_Branch;
+  }
+
   public Command setCoralMode(Manipulator manipulator) {
     return run(
         () -> {
@@ -244,6 +250,10 @@ public class StateController extends SubsystemBase {
     }
 
     return false;
+  }
+
+  public Command setBranch(Branch theBranch) {
+    return runOnce(() -> m_Branch = theBranch);
   }
 
   public boolean autoReadyFire() {
@@ -334,5 +344,20 @@ public class StateController extends SubsystemBase {
   public enum LeftOrRight {
     LEFT,
     RIGHt
+  }
+
+  public enum Branch {
+    BACK_LEFTBRANCH,
+    BACK_RIGHTBRANCH,
+    BACKLEFT_LEFTBRANCH,
+    BACKLEFT_RIGHTBRANCH,
+    BACKRIGHT_LEFTBRANCH,
+    BACKRIGHT_RIGHTBRANCH,
+    FRONT_LEFTBRANCH,
+    FRONT_RIGHTBRANCH,
+    FRONTLEFT_LEFTBRANCH,
+    FRONTLEFT_RIGHTBRANCH,
+    FRONTRIGHT_LEFTBRANCH,
+    FRONTRIGHT_RIGHTBRANCH
   }
 }

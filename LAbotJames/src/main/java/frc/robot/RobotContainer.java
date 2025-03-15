@@ -47,6 +47,7 @@ import frc.robot.subsystems.LED.LEDs;
 import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.subsystems.Manipulator.ManipulatorIOPhoenixRev;
 import frc.robot.subsystems.StateController;
+import frc.robot.subsystems.StateController.Branch;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -86,7 +87,8 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandJoystick operatorButtonBox = new CommandJoystick(1);
-  private final CommandXboxController testController = new CommandXboxController(2);
+  private final CommandJoystick operatorReefBox = new CommandJoystick(2);
+  private final CommandXboxController testController = new CommandXboxController(3);
   private final Supplier<Translation2d> joystickSupplier =
       () -> new Translation2d(driverController.getLeftY(), driverController.getLeftX());
 
@@ -265,6 +267,8 @@ public class RobotContainer {
     // Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
     Trigger intakeMode = new Trigger(() -> stateController.isIntakeMode());
     BooleanSupplier manualOverride = new Trigger(() -> operatorButtonBox.button(11).getAsBoolean());
+    BooleanSupplier driverPathOverride =
+        new Trigger(() -> driverController.getLeftTriggerAxis() > 0.01);
 
     // Rumble controler for 1s when endgame
     rumbleTime.onTrue(
@@ -366,6 +370,7 @@ public class RobotContainer {
         .leftBumper()
         .and(coralMode)
         .and(hasGamePiece)
+        .and(driverPathOverride)
         .whileTrue(
             Commands.defer(
                     () -> AutoAline.autoAlineTo(Target.LEFT_POLE, this, joystickSupplier),
@@ -377,6 +382,7 @@ public class RobotContainer {
         .rightBumper()
         .and(coralMode)
         .and(hasGamePiece)
+        .and(driverPathOverride)
         .whileTrue(
             Commands.defer(
                     () -> AutoAline.autoAlineTo(Target.RIGHT_POLE, this, joystickSupplier),
@@ -406,16 +412,37 @@ public class RobotContainer {
         .and(hasNoGamePiece)
         .whileTrue(
             Commands.defer(
-                () ->
-                    drive
-                        .pathfindToFieldPose(
+                    () ->
+                        drive.pathfindToFieldPose(
                             () ->
                                 AllianceFlipUtil.apply(
-                                    FieldConstants.CoralStation.rightCenterIntakePos))
-                        .alongWith(stateController.setIntakeMode())
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
-                Set.of(drive)));
+                                    FieldConstants.CoralStation.rightCenterIntakePos)),
+                    Set.of(drive))
+                .alongWith(stateController.setIntakeMode())
+                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
+    /* NEW CORAL PATHFINDS */
+    driverController
+        .rightBumper()
+        .and(coralMode)
+        .and(hasGamePiece)
+        .and(driverPathOverride)
+        .negate()
+        .whileTrue(
+            AutoAline.autoAlineToPath(this, stateController.getBranch())
+                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+
+    driverController
+        .leftBumper()
+        .and(coralMode)
+        .and(hasGamePiece)
+        .and(driverPathOverride)
+        .negate()
+        .whileTrue(
+            AutoAline.autoAlineToPath(this, stateController.getBranch())
+                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+
+    /* INTAKE MODE */
     intakeMode.onTrue(superStructure.goToSource().alongWith(lED.strobeCommand(Color.kRed, 0.333)));
 
     intakeMode.onFalse(
@@ -682,6 +709,24 @@ public class RobotContainer {
                         .andThen(elevator.runOnce(() -> elevator.stop()))
                         .alongWith(stateController.setMahome())));
 
+    /* REEF BOX */
+    operatorReefBox.button(7).onTrue(stateController.setBranch(Branch.BACK_LEFTBRANCH));
+    operatorReefBox.button(8).onTrue(stateController.setBranch(Branch.BACK_RIGHTBRANCH));
+
+    operatorReefBox.button(5).onTrue(stateController.setBranch(Branch.BACKLEFT_LEFTBRANCH));
+
+    operatorReefBox.button(6).onTrue(stateController.setBranch(Branch.BACKLEFT_RIGHTBRANCH));
+    operatorReefBox.button(9).onTrue(stateController.setBranch(Branch.BACKRIGHT_LEFTBRANCH));
+    operatorReefBox.button(10).onTrue(stateController.setBranch(Branch.BACKRIGHT_RIGHTBRANCH));
+    operatorReefBox.button(1).onTrue(stateController.setBranch(Branch.FRONT_LEFTBRANCH));
+    operatorReefBox.button(2).onTrue(stateController.setBranch(Branch.FRONT_RIGHTBRANCH));
+    operatorReefBox.button(3).onTrue(stateController.setBranch(Branch.FRONTLEFT_LEFTBRANCH));
+    operatorReefBox.button(4).onTrue(stateController.setBranch(Branch.FRONTLEFT_RIGHTBRANCH));
+    operatorReefBox.button(12).onTrue(stateController.setBranch(Branch.FRONTRIGHT_RIGHTBRANCH));
+    operatorReefBox.button(11).onTrue(stateController.setBranch(Branch.FRONTRIGHT_LEFTBRANCH));
+
+    // the reef is a lie
+
     /* TEST CONTROLLER */
 
     driverController.povUp().onTrue(climber.moveClimberUp());
@@ -692,7 +737,6 @@ public class RobotContainer {
 
     driverController.povRight().onTrue(climber.setPower(0.2));
     driverController.povRight().onFalse(climber.stop());
-
 
     // TODO: make lucas estel campau better
     // TODO: also make andrew john ferguson better
