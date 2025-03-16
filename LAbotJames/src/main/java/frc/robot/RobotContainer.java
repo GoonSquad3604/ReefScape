@@ -509,8 +509,7 @@ public class RobotContainer {
         .or(driverController.rightBumper())
         .and(climbMode)
         .whileTrue(
-            drive
-                .pathfindToPath(climber.climbPath())
+            AutoAline.autoAlineToPath(this, stateController.getBranch())
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     /* OPERATOR BUTTONS */
@@ -745,11 +744,11 @@ public class RobotContainer {
     // TODO: also also also also also make richard ernest budop III better (jk)
     // TODO: also also also also also also make simon edward philips better
 
-    // testController.b().onTrue(arm.elbowUp());
-    // testController.b().onFalse(arm.stopElbow());
+    testController.b().onTrue(arm.elbowUp());
+    testController.b().onFalse(arm.stopElbow());
 
-    // testController.rightBumper().onTrue(arm.elbowDown());
-    // testController.rightBumper().onFalse(arm.stopElbow());
+    testController.rightBumper().onTrue(arm.elbowDown());
+    testController.rightBumper().onFalse(arm.stopElbow());
 
     // driverController.povDown().whileTrue(climber.setClimberHome());
     // driverController.povDown().onFalse(climber.stop());

@@ -1,5 +1,8 @@
 package frc.robot.subsystems.Manipulator;
 
+import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface.RangingMode;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -18,11 +21,6 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
-import au.grapplerobotics.ConfigurationFailedException;
-import au.grapplerobotics.LaserCan;
-import au.grapplerobotics.interfaces.LaserCanInterface.RangingMode;
-import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -74,7 +72,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
 
     try {
       manipulatorDistanceSensor.setRangingMode(RangingMode.SHORT);
-      manipulatorDistanceSensor.setRegionOfInterest(new LaserCan.RegionOfInterest(8,8,4,4));
+      manipulatorDistanceSensor.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 4, 4));
     } catch (ConfigurationFailedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -164,7 +162,6 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     inputs.manipulatorSensor = !manipulatorSensor.get();
 
     inputs.manipulatorDistance = manipulatorDistanceSensor.getMeasurement().distance_mm;
-    
   }
 
   @Override

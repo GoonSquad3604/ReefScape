@@ -251,6 +251,11 @@ public class Drive extends SubsystemBase {
         closestRightPanel = i;
       }
     }
+
+    Logger.recordOutput(
+        "rightRobotBranchPoses", FieldConstants.Reef.rightRobotBranchPoses.toArray(new Pose2d[0]));
+    Logger.recordOutput(
+        "leftRobotBranchPoses", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
   }
 
   /**
