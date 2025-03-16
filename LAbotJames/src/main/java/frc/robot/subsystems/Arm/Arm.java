@@ -200,6 +200,14 @@ public class Arm extends SubsystemBase {
         });
   }
 
+  public Command intakeFromGround() {
+    return runOnce(
+        () -> {
+          io.setWristPosition(ArmConstants.groundWrist);
+          io.setElbowPosition(ArmConstants.groundElbow);
+        });
+  }
+
   public Command climb() {
     return runOnce(
         () -> {
