@@ -844,9 +844,6 @@ public class RobotContainer {
     driverController.povDown().onTrue(climber.moveClimberDown());
     driverController.povDown().onFalse(climber.stop());
 
-    driverController.povRight().onTrue(climber.setPower(0.2));
-    driverController.povRight().onFalse(climber.stop());
-
     // TODO: make lucas estel campau better
     // TODO: also make andrew john ferguson better
     // TODO: also also make gavin breezee better

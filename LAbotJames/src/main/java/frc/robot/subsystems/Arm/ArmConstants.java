@@ -58,8 +58,8 @@ public final class ArmConstants {
 
   public static final double elbowCurrentLimit = 40;
 
-  public static final double elbowClimb = 0.114;
-  public static final double wristClimb = 0.379;
+  public static final double elbowClimb = 0.075;
+  public static final double wristClimb = 0.583;
 
   public static final double alleyOop = 0.675;
 }

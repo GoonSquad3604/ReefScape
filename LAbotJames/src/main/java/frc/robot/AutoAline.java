@@ -106,7 +106,7 @@ public class AutoAline {
               // Logger.recordOutput("targetPath", targetPath);
               // lastTargetedPath = targetPath;
             }),
-        robot.drive.pathfindToPath(targetPath));
+        Commands.defer(() -> robot.drive.pathfindToPath(targetPath), Set.of(robot.drive)));
   }
 
   private static Command driveToTargetCommand(Drive drive, ProfiledPIDController angleController) {
@@ -314,7 +314,7 @@ public class AutoAline {
       default:
         pathName = null;
     }
-    Logger.recordOutput("pathName", pathName);
+
     try {
       return PathPlannerPath.fromPathFile(pathName);
     } catch (Exception e) {
