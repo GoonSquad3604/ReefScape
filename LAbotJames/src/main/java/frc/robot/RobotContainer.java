@@ -712,7 +712,6 @@ public class RobotContainer {
         .onTrue(
             arm.home()
                 .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
-                .andThen(superStructure.goHome())
                 .until(() -> !elevator.mahoming)
                 .andThen(
                     elevator.runOnce(() -> elevator.stop()).andThen(stateController.setMahome())));
@@ -756,7 +755,7 @@ public class RobotContainer {
                         .until(() -> !elevator.mahoming)
                         .andThen(elevator.runOnce(() -> elevator.stop()))));
 
-    operatorButtonBox.button(10).and(algaeMode).onFalse(arm.processor());
+    operatorButtonBox.button(10).and(algaeMode).onFalse(Commands.runOnce(() -> arm.processor()));
 
     // // Vomit
     // operatorButtonBox
@@ -780,6 +779,7 @@ public class RobotContainer {
         .onFalse(
             manipulator
                 .stopIntake()
+                .alongWith(arm.home())
                 .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
                 .until(() -> !elevator.mahoming)
                 .andThen(elevator.runOnce(() -> elevator.stop())));
