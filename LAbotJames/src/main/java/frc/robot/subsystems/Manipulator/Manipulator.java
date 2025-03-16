@@ -156,6 +156,26 @@ public class Manipulator extends SubsystemBase {
     return inputs.manipulatorDistance <= ManipulatorConstants.reefThreshold;
   }
 
+  public Command intakeCoral() {
+    return runOnce(() -> io.setWheelPower(ManipulatorConstants.coralIntake));
+  }
+
+  public Command intakeAlgae() {
+    return runOnce(() -> io.setWheelPower(ManipulatorConstants.algaeIntake));
+  }
+
+  public Command shootAlgae() {
+    return runOnce(() -> io.setWheelPower(ManipulatorConstants.algaeShoot));
+  }
+
+  public Command shootCoral() {
+    return runOnce(() -> io.setWheelPower(ManipulatorConstants.coralShoot));
+  }
+
+  public Command stopIntaking() {
+    return runOnce(() -> io.setWheelPower(0));
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

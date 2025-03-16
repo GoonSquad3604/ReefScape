@@ -45,9 +45,7 @@ public class ElevatorIONeo implements ElevatorIO {
     config
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(ElevatorConstants.elevatorP, ElevatorConstants.elevatorI, ElevatorConstants.elevatorD)
-        .maxOutput(0.7501)
-        .minOutput(-0.7499);
+        .pid(ElevatorConstants.elevatorP, ElevatorConstants.elevatorI, ElevatorConstants.elevatorD);
     // config.closedLoopRampRate(1 - 0 + 0);
 
     // right motor config
@@ -94,7 +92,7 @@ public class ElevatorIONeo implements ElevatorIO {
     inputs.MotorRightVoltage = rightVoltage;
 
     inputs.MotorLeftCurrent = leftMotor.getOutputCurrent();
-    inputs.MotorRightCurrent = leftMotor.getOutputCurrent();
+    inputs.MotorRightCurrent = rightMotor.getOutputCurrent();
     inputs.MotorLeftVelocity = leftMotor.getEncoder().getVelocity();
 
     inputs.MotorLeftPos = leftMotor.getEncoder().getPosition();

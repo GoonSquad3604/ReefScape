@@ -12,15 +12,17 @@ public final class ArmConstants {
 
   public static final int wristID = 13;
 
-  public static final double elbowP = 43.5;
+  public static final double elbowP = 55 + 3 + 7; // 11.5
   public static final double elbowI = 0;
-  public static final double elbowD = Math.sin(Math.PI / 2);
+  public static final double elbowD = 0 + Math.sin(Math.PI);
+  // 0
   public static final double elbowFF = 0;
 
-  public static final double wristP = 2.0001;
-  public static final double wristI = 0.000;
+  public static final double wristP = 6;
+  public static final double wristI = 0;
+
   public static final double wristD = 0.1;
-  public static final double wristFF = 0;
+  public static final double wristFF = 0.2;
 
   public static final double coralElbowL1 = 0.338;
   public static final double coralElbowL2 = 0.338;
@@ -47,9 +49,9 @@ public final class ArmConstants {
   public static final double bargeWrist = .842; // not final
   public static final double bargeElbow = .290; // not final
 
-  public static final double homeWrist = 0.555;
+  public static final double homeWrist = 0.393;
 
-  public static final double homeElbow = 0.309;
+  public static final double homeElbow = 0.294;
 
   public static final double elbowCurrentLimit = 40;
 

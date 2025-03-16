@@ -190,14 +190,14 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command moveElevatorUp() {
-    return run(
+    return runOnce(
         () -> {
           elevator.moveUp();
         });
   }
 
   public Command moveElevatorDown() {
-    return run(
+    return runOnce(
         () -> {
           elevator.moveDown();
         });
