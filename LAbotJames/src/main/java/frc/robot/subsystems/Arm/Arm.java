@@ -235,12 +235,20 @@ public class Arm extends SubsystemBase {
 
   public Command wristUp() {
     // io.setElbowPower(0.21);
-    return run(() -> io.setWristPower(-0.1999999999999999998999999999999999999));
+    return run(() -> io.setWristPower(0.1999999999999999998999999999999999999));
   }
 
   public Command wristDown() {
     // io.setElbowPower(-0.21);
-    return run(() -> io.setWristPower(0.1999999999999999999999999));
+    return run(() -> io.setWristPower(-0.1999999999999999999999999));
+  }
+
+  public Command wristToPosition(double position) {
+    return runOnce(() -> io.setWristPosition(position));
+  }
+
+  public Command elbowToPosition(double position) {
+    return runOnce(() -> io.setElbowPosition(position));
   }
 
   public Command stopElbow() {

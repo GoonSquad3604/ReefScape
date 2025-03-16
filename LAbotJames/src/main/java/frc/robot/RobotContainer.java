@@ -37,6 +37,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Arm.Arm;
+import frc.robot.subsystems.Arm.ArmConstants;
 import frc.robot.subsystems.Arm.ArmIOPhoenixRev;
 import frc.robot.subsystems.Climber.Climber;
 import frc.robot.subsystems.Climber.ClimberIOPhoenix;
@@ -266,9 +267,8 @@ public class RobotContainer {
     BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
     // Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
     Trigger intakeMode = new Trigger(() -> stateController.isIntakeMode());
-    BooleanSupplier manualOverride = new Trigger(() -> operatorButtonBox.button(11).getAsBoolean());
-    BooleanSupplier driverPathOverride =
-        new Trigger(() -> driverController.getLeftTriggerAxis() > 0.01);
+    Trigger manualOverride = operatorButtonBox.button(11);
+    Trigger driverPathOverride = new Trigger(() -> driverController.getLeftTriggerAxis() > 0.01);
 
     // Rumble controler for 1s when endgame
     rumbleTime.onTrue(
@@ -365,7 +365,7 @@ public class RobotContainer {
 
     /* CORAL PATHFINDS */
 
-    // Left bumper, coral mode, has piece -> closest left pole
+    // OVERRIDE, Left bumper, coral mode, has piece -> closest left pole
     driverController
         .leftBumper()
         .and(coralMode)
@@ -377,7 +377,7 @@ public class RobotContainer {
                     Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
-    // Right bumper, coral mode, has piece -> closest right pole
+    // OVERRIDE, Right bumper, coral mode, has piece -> closest right pole
     driverController
         .rightBumper()
         .and(coralMode)
@@ -421,34 +421,40 @@ public class RobotContainer {
                 .alongWith(stateController.setIntakeMode())
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
-    /* NEW CORAL PATHFINDS */
+    /* NEW CORAL PATHFINDS  defer this please*/
     driverController
         .rightBumper()
         .and(coralMode)
         .and(hasGamePiece)
-        .and(driverPathOverride)
-        .negate()
+        .and(driverPathOverride.negate())
         .whileTrue(
-            AutoAline.autoAlineToPath(this, stateController.getBranch())
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+            Commands.defer(
+                () ->
+                    AutoAline.autoAlineToPath(this, stateController.getBranch())
+                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
+                Set.of(drive)));
 
     driverController
         .leftBumper()
         .and(coralMode)
         .and(hasGamePiece)
-        .and(driverPathOverride)
-        .negate()
+        .and(driverPathOverride.negate())
         .whileTrue(
-            AutoAline.autoAlineToPath(this, stateController.getBranch())
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+            Commands.defer(
+                () ->
+                    AutoAline.autoAlineToPath(this, stateController.getBranch())
+                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
+                Set.of(drive)));
 
     /* INTAKE MODE */
-    intakeMode.onTrue(superStructure.goToSource().alongWith(lED.strobeCommand(Color.kRed, 0.333)));
+    // intakeMode.onTrue(superStructure.goToSource().alongWith(lED.strobeCommand(Color.kRed,
+    // 0.333)));
 
-    intakeMode.onFalse(
-        arm.home().alongWith(lED.solidCommand(Color.kGreen)).alongWith(manipulator.stopIntake()));
+    // intakeMode.onFalse(
+    //
+    // arm.home().alongWith(lED.solidCommand(Color.kGreen)).alongWith(manipulator.stopIntake()));
 
-    hasGamePiece.onTrue(stateController.setNoIntakeMode());
+    // hasGamePiece.onTrue(stateController.setNoIntakeMode());
 
     /* ALGAE PATHFINDS (left and right have no difference) */
 
@@ -509,8 +515,12 @@ public class RobotContainer {
         .or(driverController.rightBumper())
         .and(climbMode)
         .whileTrue(
-            AutoAline.autoAlineToPath(this, stateController.getBranch())
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+            Commands.defer(
+                () ->
+                    drive
+                        .pathfindToPath(climber.climbPath())
+                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
+                Set.of(drive, climber)));
 
     /* OPERATOR BUTTONS */
 
@@ -530,8 +540,7 @@ public class RobotContainer {
     operatorButtonBox
         .button(3)
         .and(coralMode)
-        .and(manualOverride)
-        .negate()
+        .and(manualOverride.negate())
         .onTrue(stateController.setL4());
 
     // L4 Coral (manual)
@@ -549,8 +558,7 @@ public class RobotContainer {
     operatorButtonBox
         .button(4)
         .and(coralMode)
-        .and(manualOverride)
-        .negate()
+        .and(manualOverride.negate())
         .onTrue(stateController.setL3());
 
     // L3 Coral (manual)
@@ -568,8 +576,7 @@ public class RobotContainer {
     operatorButtonBox
         .button(5)
         .and(coralMode)
-        .and(manualOverride)
-        .negate()
+        .and(manualOverride.negate())
         .onTrue(stateController.setL2());
 
     // L2 Coral (manual)
@@ -587,8 +594,7 @@ public class RobotContainer {
     operatorButtonBox
         .button(6)
         .and(coralMode)
-        .and(manualOverride)
-        .negate()
+        .and(manualOverride.negate())
         .onTrue(stateController.setL1());
 
     // L1 Coral (manual)
@@ -612,23 +618,23 @@ public class RobotContainer {
     //             .andThen(stateController.setL4())));
 
     // Removes algae l3
-    operatorButtonBox
-        .button(4)
-        .and(algaeMode)
-        .onTrue(
-            new ElevatorToSetpoint(elevator, ElevatorConstants.l3PosAlgae)
-                .alongWith(superStructure.removeL3Algae().alongWith(stateController.setL3())));
+    // operatorButtonBox
+    //     .button(4)
+    //     .and(algaeMode)
+    //     .onTrue(
+    //         new ElevatorToSetpoint(elevator, ElevatorConstants.l3PosAlgae)
+    //             .alongWith(superStructure.removeL3Algae().alongWith(stateController.setL3())));
 
     // Removes algae l2
-    operatorButtonBox
-        .button(5)
-        .and(algaeMode)
-        .onTrue(
-            superStructure
-                .removeL2Algae()
-                .alongWith(
-                    new ElevatorToSetpoint(elevator, ElevatorConstants.l2PosAlgae)
-                        .alongWith(stateController.setL2())));
+    // operatorButtonBox
+    //     .button(5)
+    //     .and(algaeMode)
+    //     .onTrue(
+    //         superStructure
+    //             .removeL2Algae()
+    //             .alongWith(
+    //                 new ElevatorToSetpoint(elevator, ElevatorConstants.l2PosAlgae)
+    //                     .alongWith(stateController.setL2())));
 
     // Algae processor
     // operatorButtonBox
@@ -674,17 +680,17 @@ public class RobotContainer {
                 .andThen(arm.home())
                 .alongWith(lED.defaultLeds(() -> stateController.getMode())));
 
-    // Vomit
-    operatorButtonBox
-        .button(11)
-        .whileTrue(
-            manipulator
-                .vomit()
-                .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)));
+    // // Vomit
+    // operatorButtonBox
+    //     .button(11)
+    //     .whileTrue(
+    //         manipulator
+    //             .vomit()
+    //             .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)));
 
-    operatorButtonBox
-        .button(11)
-        .onFalse(elevator.runOnce(() -> elevator.stop()).alongWith(manipulator.stopIntake()));
+    // operatorButtonBox
+    //     .button(11)
+    //     .onFalse(elevator.runOnce(() -> elevator.stop()).alongWith(manipulator.stopIntake()));
 
     // Fire
     operatorButtonBox.button(12).and(L1).onTrue(superStructure.fire());
@@ -744,11 +750,11 @@ public class RobotContainer {
     // TODO: also also also also also make richard ernest budop III better (jk)
     // TODO: also also also also also also make simon edward philips better
 
-    testController.b().onTrue(arm.elbowUp());
-    testController.b().onFalse(arm.stopElbow());
+    testController.povLeft().onTrue(arm.elbowUp());
+    testController.povLeft().onFalse(arm.stopElbow());
 
-    testController.rightBumper().onTrue(arm.elbowDown());
-    testController.rightBumper().onFalse(arm.stopElbow());
+    testController.povRight().onTrue(arm.elbowDown());
+    testController.povRight().onFalse(arm.stopElbow());
 
     // driverController.povDown().whileTrue(climber.setClimberHome());
     // driverController.povDown().onFalse(climber.stop());
@@ -762,32 +768,66 @@ public class RobotContainer {
     // testController.leftBumper().onTrue(superStructure.moveElevatorDown());
     // testController.leftBumper().onFalse(superStructure.elevatorStop());
 
-    // testController.leftTrigger().onTrue(superStructure.manipulatorOpen());
-    // testController.leftTrigger().onFalse(superStructure.manipulatorStop());
+    testController
+        .x()
+        .onTrue(
+            arm.wristToPosition(ArmConstants.homeWrist)
+                .andThen(arm.elbowToPosition(ArmConstants.homeElbow)));
 
-    // testController.rightTrigger().onTrue(superStructure.manipulatorClose());
-    // testController.rightTrigger().onFalse(superStructure.manipulatorStop());
+    testController
+        .povDown()
+        .onTrue(
+            arm.wristToPosition(0.32)
+                .andThen(arm.elbowToPosition(ArmConstants.homeElbow))
+                .alongWith(new ElevatorToSetpoint(elevator, 30)));
 
-    // testController.x().onTrue(superStructure.setWheelCurrent());
+    testController
+        .povUp()
+        .onTrue(
+            arm.elbowToPosition(0.229)
+                .andThen(arm.wristToPosition(0.208))
+                .alongWith(new ElevatorToSetpoint(elevator, 8)));
+
+    testController.rightTrigger().onTrue(manipulator.intakeAlgae());
+    testController.rightTrigger().onFalse(manipulator.stopIntaking());
+
+    testController.rightBumper().onTrue(manipulator.shootAlgae());
+    testController.rightBumper().onFalse(manipulator.stopIntaking());
+
+    testController.leftTrigger().onTrue(manipulator.intakeCoral());
+    testController.leftTrigger().onFalse(manipulator.stopIntaking());
+
+    testController.leftBumper().onTrue(manipulator.shootCoral());
+    testController.leftBumper().onFalse(manipulator.stopIntaking());
+
+    testController
+        .back()
+        .onTrue(
+            new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                .until(() -> !elevator.mahoming)
+                .andThen(
+                    elevator.runOnce(() -> elevator.stop()).andThen(stateController.setMahome())));
+
+    testController.start().onTrue(new ElevatorToSetpoint(elevator, 10));
     // testController.x().onFalse(manipulator.stopIntake());
 
     // testController.leftBumper().onTrue(superStructure.runWheels());
     // testController.leftBumper().onFalse(manipulator.stopIntake());
 
-    // testController.leftTrigger().onTrue(superStructure.moveElevatorUp());
-    // testController.leftTrigger().onFalse(superStructure.elevatorStop());
+    // testController.y().onTrue(superStructure.moveElevatorUp());
+    // testController.y().onFalse(superStructure.elevatorStop());
 
-    // testController.rightTrigger().onTrue(superStructure.moveElevatorDown());
-    // testController.rightTrigger().onFalse(superStructure.elevatorStop());
+    // testController.a().onTrue(superStructure.moveElevatorDown());
+    // testController.a().onFalse(superStructure.elevatorStop());
 
     // testController.rightBumper().onTrue(superStructure.runWheelsBackwards());
     // testController.rightBumper().onFalse(manipulator.stopIntake());
 
-    // testController.povRight().whileTrue(superStructure.moveWristUp());
-    // testController.povRight().onFalse(superStructure.wristStop());
+    testController.y().whileTrue(arm.wristUp());
+    testController.y().onFalse(arm.stopWrist());
 
-    // testController.a().whileTrue(superStructure.moveWristDown());
-    // testController.a().onFalse(superStructure.wristStop());
+    testController.a().whileTrue(arm.wristDown());
+    testController.a().onFalse(arm.stopWrist());
 
     // testController.x().onTrue(climber.setClimberHome());
   }
