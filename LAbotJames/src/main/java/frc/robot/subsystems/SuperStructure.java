@@ -83,7 +83,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.source();
-          manipulator.runWheels(ManipulatorConstants.wheelPower);
+          manipulator.runWheels(ManipulatorConstants.coralIntake);
         });
   }
 
