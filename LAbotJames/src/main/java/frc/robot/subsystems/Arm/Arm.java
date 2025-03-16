@@ -192,20 +192,14 @@ public class Arm extends SubsystemBase {
         });
   }
 
-  public Command processor() {
-    return runOnce(
-        () -> {
-          io.setWristPosition(ArmConstants.processorWrist);
-          io.setElbowPosition(ArmConstants.processorElbow);
-        });
+  public void processor() {
+    io.setWristPosition(ArmConstants.processorWrist);
+    io.setElbowPosition(ArmConstants.processorElbow);
   }
 
-  public Command intakeFromGround() {
-    return runOnce(
-        () -> {
-          io.setWristPosition(ArmConstants.groundWrist);
-          io.setElbowPosition(ArmConstants.groundElbow);
-        });
+  public void intakeFromGround() {
+    io.setWristPosition(ArmConstants.groundWrist);
+    io.setElbowPosition(ArmConstants.groundElbow);
   }
 
   public Command climb() {

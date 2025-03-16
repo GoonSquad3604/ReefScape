@@ -35,16 +35,16 @@ public final class ElevatorConstants {
   // each coral branch height
   public static final double l1Pos = 3;
   public static final double l2Pos = 5.35;
-  public static final double l3Pos = 11.0123;
-  public static final double l4Pos = 28;
+  public static final double l3Pos = 11;
+  public static final double l4Pos = 28; // 30
 
-  // each coral branch height (ALGAE REMOVAL)
-  public static final double l2PosAlgae = 10;
-  public static final double l3PosAlgae = 19;
+  // each coral branch height (ALGAE REMOVAL) DO NOT USE LUCAS MESSED UP
+  public static final double l2PosAlgae = 16;
+  public static final double l3PosAlgae = 25;
 
   // algae on reef heights
-  public static final double algaeL2Pos = 8; // placeholder
-  public static final double algaeL3Pos = 15; // placeholder
+  public static final double algaeL2Pos = 10; // placeholder
+  public static final double algaeL3Pos = 17; // placeholder
 
   // misc position
   public static final double sourcePos = 0; // placeholder
