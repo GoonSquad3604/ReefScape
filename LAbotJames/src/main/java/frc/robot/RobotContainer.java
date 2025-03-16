@@ -456,57 +456,57 @@ public class RobotContainer {
 
     // hasGamePiece.onTrue(stateController.setNoIntakeMode());
 
-    /* ALGAE PATHFINDS */
+    /* ALGAE PATHFINDS (left and right have no difference) */
 
-    // Left bumper, algae mode, has piece -> barge scoring distance (still move left and right)
-    driverController
-        .leftBumper()
-        .and(algaeMode)
-        .and(hasGamePiece)
-        .whileTrue(
-            drive.defer(
-                () ->
-                    drive
-                        .pathfindToFieldPose(
-                            AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
+    // Left bumper, algae mode, has piece -> processor
+    // driverController
+    //     .leftBumper()
+    //     .and(algaeMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         drive.defer(
+    //             () ->
+    //                 drive
+    //                     .pathfindToFieldPose(
+    //                         AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))
+    //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
     // Right bumper, algae mode, has piece -> processor
-    driverController
-        .leftBumper()
-        .and(algaeMode)
-        .and(hasGamePiece)
-        .whileTrue(
-            drive.defer(
-                () ->
-                    drive
-                        .pathfindToFieldPose(
-                            AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
+    // driverController
+    //     .leftBumper()
+    //     .and(algaeMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         drive.defer(
+    //             () ->
+    //                 drive
+    //                     .pathfindToFieldPose(
+    //                         AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))
+    //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
     // Left bumper, algae mode, no piece -> closest reef center face (same as right bumper)
-    driverController
-        .leftBumper()
-        .and(algaeMode)
-        .and(hasNoGamePiece)
-        .whileTrue(
-            drive.defer(
-                () ->
-                    drive
-                        .pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
+    // driverController
+    //     .leftBumper()
+    //     .and(algaeMode)
+    //     .and(hasNoGamePiece)
+    //     .whileTrue(
+    //         drive.defer(
+    //             () ->
+    //                 drive
+    //                     .pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))
+    //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
     // Right bumper, algae mode, no piece -> closest reef center face (same as left bumper)
-    driverController
-        .leftBumper()
-        .and(algaeMode)
-        .and(hasNoGamePiece)
-        .whileTrue(
-            drive.defer(
-                () ->
-                    drive
-                        .pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
+    // driverController
+    //     .leftBumper()
+    //     .and(algaeMode)
+    //     .and(hasNoGamePiece)
+    //     .whileTrue(
+    //         drive.defer(
+    //             () ->
+    //                 drive
+    //                     .pathfindToFieldPose(AllianceFlipUtil.apply(drive.getClosestReefPanel()))
+    //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
 
     /* CLIMBER PATHFIND */
 
@@ -711,7 +711,6 @@ public class RobotContainer {
         .and(coralMode)
         .onTrue(
             arm.home()
-                .alongWith(manipulator.stopIntake())
                 .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
                 .until(() -> !elevator.mahoming)
                 .andThen(
@@ -723,40 +722,61 @@ public class RobotContainer {
     // Climb up
     // operatorButtonBox.button(9).and(climbMode).onTrue(climber.setClimberUp());
 
-    // Intake
-    operatorButtonBox
-        .button(10)
-        .and(coralMode)
-        .whileTrue(
-            superStructure
-                .goToSource()
-                .alongWith(
-                    lED.strobeCommand(Color.kRed, 0.333)
-                        .until(() -> manipulator.hasGamePiece())
-                        .andThen(lED.solidCommand(Color.kGreen))));
-
-    // Stop intake - begin manipulator power to hold coral
-    operatorButtonBox
-        .button(10)
-        .and(coralMode)
-        .onFalse(
-            manipulator
-                .stopIntake()
-                .alongWith(arm.home())
-                .alongWith(lED.defaultLeds(() -> stateController.getMode())));
-
+    // // Intake
     // operatorButtonBox
     //     .button(10)
-    //     .and(algaeMode)
-    //     .onTrue(
+    //     .and(coralMode)
+    //     .whileTrue(
     //         superStructure
-    //             .intakeFromGround()
+    //             .goToSource()
     //             .alongWith(
-    //                 new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-    //                     .until(() -> !elevator.mahoming)
-    //                     .andThen(elevator.runOnce(() -> elevator.stop()))));
+    //                 lED.strobeCommand(Color.kRed, 0.333)
+    //                     .until(() -> manipulator.hasGamePiece())
+    //                     .andThen(lED.solidCommand(Color.kGreen))));
 
-    // operatorButtonBox.button(10).and(algaeMode).onFalse(Commands.runOnce(() -> arm.processor()));
+    // // Stop intake - begin manipulator power to hold coral
+    // operatorButtonBox
+    //     .button(10)
+    //     .and(coralMode)
+    //     .onFalse(
+    //         manipulator
+    //             .stopIntake()
+    //             .alongWith(arm.home())
+    //             .alongWith(lED.defaultLeds(() -> stateController.getMode())));
+
+    // makes the mode = intake
+    operatorButtonBox.button(10).and(coralMode).onTrue(stateController.setIntakeMode());
+
+    // when intake + coral, begin to intake
+    intakeMode
+        .and(coralMode)
+        .onTrue(
+            manipulator
+                .intakeCoral()
+                .alongWith(
+                    lED.strobeCommand(Color.kRed, 0.3333604)
+                        .until(() -> manipulator.hasGamePiece())
+                        .andThen(
+                            lED.solidCommand(Color.kGreen)
+                                .alongWith(
+                                    Commands.runOnce(
+                                        () ->
+                                            stateController
+                                                .setNoIntake()))))); // thats a lot of parentheses
+    // (pronounced pear-en-theeses)
+
+    operatorButtonBox
+        .button(10) // nice +700
+        .and(algaeMode)
+        .onTrue(
+            superStructure
+                .intakeFromGround()
+                .alongWith(
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                        .until(() -> !elevator.mahoming)
+                        .andThen(elevator.runOnce(() -> elevator.stop()))));
+
+    operatorButtonBox.button(10).and(algaeMode).onFalse(Commands.runOnce(() -> arm.processor()));
 
     // // Vomit
     // operatorButtonBox
