@@ -276,45 +276,45 @@ public class AutoAline {
 
     switch (branch) {
       case BACK_LEFTBRANCH:
-        pathName = "Back LeftBranch";
+        pathName = "Back_LeftBranch";
         break;
       case BACK_RIGHTBRANCH:
-        pathName = "Back RightBranch";
+        pathName = "Back_RightBranch";
         break;
       case BACKLEFT_LEFTBRANCH:
-        pathName = "BackLeft LeftBranch";
+        pathName = "BackLeft_LeftBranch";
         break;
       case BACKLEFT_RIGHTBRANCH:
-        pathName = "BackLeft RightBranch";
+        pathName = "BackLeft_RightBranch";
         break;
       case BACKRIGHT_LEFTBRANCH:
-        pathName = "BackRight LeftBranch";
+        pathName = "BackRight_LeftBranch";
         break;
       case BACKRIGHT_RIGHTBRANCH:
-        pathName = "BackRight RightBranch";
+        pathName = "BackRight_RightBranch";
         break;
       case FRONT_LEFTBRANCH:
-        pathName = "Front LeftBranch";
+        pathName = "Front_LeftBranch";
         break;
       case FRONT_RIGHTBRANCH:
-        pathName = "Front RightBranch";
+        pathName = "Front_RightBranch";
         break;
       case FRONTLEFT_LEFTBRANCH:
-        pathName = "FrontLeft LeftBranch";
+        pathName = "FrontLeft_LeftBranch";
         break;
       case FRONTLEFT_RIGHTBRANCH:
-        pathName = "FrontLeft RightBranch";
+        pathName = "FrontLeft_RightBranch";
         break;
       case FRONTRIGHT_LEFTBRANCH:
-        pathName = "FrontRight LeftBranch";
+        pathName = "FrontRight_LeftBranch";
         break;
       case FRONTRIGHT_RIGHTBRANCH:
-        pathName = "FrontRight RightBranch";
+        pathName = "FrontRight_RightBranch";
         break;
       default:
         pathName = null;
     }
-
+    Logger.recordOutput("pathName", pathName);
     try {
       return PathPlannerPath.fromPathFile(pathName);
     } catch (Exception e) {
