@@ -61,21 +61,21 @@ public class SuperStructure extends SubsystemBase {
         });
   }
 
-  public Command removeL2Algae() {
+  public Command goToL2Algae() {
     return run(
         () -> {
           arm.elbowAlgaeL25();
           arm.wristAlgaeL25();
-          manipulator.runWheels(ManipulatorConstants.wheelAL2Power);
+          manipulator.runWheels(ManipulatorConstants.algaeIntake);
         });
   }
 
-  public Command removeL3Algae() {
+  public Command goToL3Algae() {
     return run(
         () -> {
           arm.elbowAlgaeL35();
           arm.wristAlgaeL35();
-          manipulator.runWheels(ManipulatorConstants.wheelAL3Power);
+          manipulator.runWheels(ManipulatorConstants.algaeIntake);
         });
   }
 
@@ -88,10 +88,18 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command goToProcessor() {
-    return run(
+    return runOnce(
         () -> {
           arm.processor();
-          elevator.processor();
+          manipulator.runWheels(ManipulatorConstants.algaeIntake);
+        });
+  }
+
+  public Command intakeFromGround() {
+    return runOnce(
+        () -> {
+          arm.intakeFromGround();
+          manipulator.runWheels(ManipulatorConstants.algaeIntake);
         });
   }
 
