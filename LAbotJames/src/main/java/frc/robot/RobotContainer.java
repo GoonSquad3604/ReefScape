@@ -712,6 +712,7 @@ public class RobotContainer {
         .onTrue(
             arm.home()
                 .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
+                .alongWith(stateController.setNoIntakeMode())
                 .until(() -> !elevator.mahoming)
                 .andThen(
                     elevator.runOnce(() -> elevator.stop()).andThen(stateController.setMahome())));
@@ -745,28 +746,33 @@ public class RobotContainer {
     //             .alongWith(lED.defaultLeds(() -> stateController.getMode())));
 
     // makes the mode = intake
+    // home button makes intake false for cancel
     operatorButtonBox.button(10).and(coralMode).onTrue(stateController.setIntakeMode());
 
     // when intake + coral, begin to intake
     intakeMode
         .and(coralMode)
         .onTrue(
-            manipulator
-                .intakeCoral()
+            superStructure
+                .goToSource()
                 .alongWith(
+                    // leds flash until game piece
                     lED.strobeCommand(Color.kRed, 0.3333604)
                         .until(() -> manipulator.hasGamePiece())
                         .andThen(
+                            // goes to home and flashes leds green, also statecontroller becomes
+                            // nointake
                             lED.solidCommand(Color.kGreen)
+                                .alongWith(superStructure.goHome())
                                 .alongWith(
-                                    Commands.runOnce(
+                                    Commands.runOnce( // nice +700
                                         () ->
                                             stateController
                                                 .setNoIntake()))))); // thats a lot of parentheses
     // (pronounced pear-en-theeses)
 
     operatorButtonBox
-        .button(10) // nice +700
+        .button(10)
         .and(algaeMode)
         .onTrue(
             superStructure
