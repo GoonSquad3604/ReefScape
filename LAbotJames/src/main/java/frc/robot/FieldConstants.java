@@ -116,11 +116,11 @@ public class FieldConstants {
         double adjustY = Units.inchesToMeters(6.469);
         double robotCenterDistanceFromBranch =
             Units.inchesToMeters(
-                28); // placeholder - represents distance of robot center from branch 30.75
+                22.50); // placeholder - represents distance of robot center from branch 30.75
         // 20 + 3.0
         // / 4 + 12
         // - 2
-        double robotWhyAdjust = Units.inchesToMeters(3);
+        double robotWhyAdjust = Units.inchesToMeters(1.5);
         for (var level : ReefHeight.values()) {
 
           fillRight.put(

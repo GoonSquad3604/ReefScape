@@ -46,6 +46,7 @@ import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorIONeo;
 import frc.robot.subsystems.LED.LEDs;
 import frc.robot.subsystems.Manipulator.Manipulator;
+import frc.robot.subsystems.Manipulator.ManipulatorConstants;
 import frc.robot.subsystems.Manipulator.ManipulatorIOPhoenixRev;
 import frc.robot.subsystems.StateController;
 import frc.robot.subsystems.StateController.Branch;
@@ -62,6 +63,8 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.AllianceFlipUtil;
+import frc.robot.util.LevelState;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -243,6 +246,40 @@ public class RobotContainer {
         "algaeRemoval",
         new ElevatorToSetpoint(elevator, ElevatorConstants.l3PosAlgae)
             .alongWith(superStructure.goToL3Algae().alongWith(stateController.setL3())));
+    NamedCommands.registerCommand(
+        "goTo_Elevator_State",
+        Commands.select(
+            Map.ofEntries(
+                // L1 Entry
+                Map.entry(
+                    LevelState.L1, // L1 State
+                    // Command at state l1
+                    arm.coralL1()
+                        .andThen(
+                            new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                                .until(() -> !elevator.mahoming)
+                                .andThen(elevator.runOnce(() -> elevator.stop())))),
+                // L2 Entry
+                Map.entry(
+                    LevelState.L2, // L2 State
+                    // Command at state l2
+                    arm.coralL2()
+                        .andThen(
+                            new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                                .until(() -> !elevator.mahoming)
+                                .andThen(elevator.runOnce(() -> elevator.stop())))),
+                // L3 Entry
+                Map.entry(
+                    LevelState.L3, // L3 State
+                    // Command at sate L3
+                    arm.coralL3()
+                        .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos))),
+                Map.entry(
+                    LevelState.L4, // L4 State
+                    // Command at state l4
+                    arm.coralL4()
+                        .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)))),
+            stateController::getLevel));
   }
 
   /**
@@ -265,7 +302,8 @@ public class RobotContainer {
     Trigger L1 = new Trigger(() -> stateController.isL1());
     Trigger LMahome = new Trigger(() -> stateController.isMahome());
     BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
-    // Trigger fireReadyAuto = new Trigger(() -> stateController.autoReadyFire());
+    Trigger fireReadyAuto =
+        new Trigger(() -> stateController.autoReadyFire(arm, elevator, manipulator));
     Trigger intakeMode = new Trigger(() -> stateController.isIntakeMode());
     Trigger manualOverride = operatorButtonBox.button(11);
     Trigger driverPathOverride = new Trigger(() -> driverController.getLeftTriggerAxis() > 0.01);
@@ -277,7 +315,8 @@ public class RobotContainer {
             .andThen(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0)));
 
     // Auto fire
-    // fireReadyAuto.onTrue(new InstantCommand(() -> superStructure.fire()));
+    fireReadyAuto.onTrue(
+        new InstantCommand(() -> manipulator.runWheels(ManipulatorConstants.coralShoot)));
 
     // Default drive command, normal field-relative drive
     drive.setDefaultCommand(
@@ -364,6 +403,43 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     /* CORAL PATHFINDS */
+
+    // driverController
+    //     .povRight()
+    //     .onTrue(
+    //         Commands.select(
+    //             Map.ofEntries(
+    //                 // L1 Entry
+    //                 Map.entry(
+    //                     LevelState.L1, // L1 State
+    //                     // Command at state l1
+    //                     arm.coralL1()
+    //                         .andThen(
+    //                             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+    //                                 .until(() -> !elevator.mahoming)
+    //                                 .andThen(elevator.runOnce(() -> elevator.stop())))),
+    //                 // L2 Entry
+    //                 Map.entry(
+    //                     LevelState.L2, // L2 State
+    //                     // Command at state l2
+    //                     arm.coralL2()
+    //                         .andThen(
+    //                             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+    //                                 .until(() -> !elevator.mahoming)
+    //                                 .andThen(elevator.runOnce(() -> elevator.stop())))),
+    //                 // L3 Entry
+    //                 Map.entry(
+    //                     LevelState.L3, // L3 State
+    //                     // Command at sate L3
+    //                     arm.coralL3()
+    //                         .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos))),
+    //                 Map.entry(
+    //                     LevelState.L4, // L4 State
+    //                     // Command at state l4
+    //                     arm.coralL4()
+    //                         .andThen(new ElevatorToSetpoint(elevator,
+    // ElevatorConstants.l4Pos)))),
+    //             stateController::getLevel));
 
     // OVERRIDE, Left bumper, coral mode, has piece -> closest left pole
     driverController

@@ -6,6 +6,7 @@ public final class ManipulatorConstants {
   public static final int rightWheelMotorID = 11;
   public static final int openingMotorID = 12;
   public static final int manipulatorSensorID = 0;
+  public static final int manipulatorDistanceSensorID = 42;
 
   public static final double coralPos = 0.67;
   public static final double algaePos = 0.574;
@@ -45,5 +46,5 @@ public final class ManipulatorConstants {
   public static final double coralShoot = -0.3604;
   public static final double coralIntake = 0.5;
 
-  public static final double reefThreshold = 300;
+  public static final double reefThreshold = 540;
 }
