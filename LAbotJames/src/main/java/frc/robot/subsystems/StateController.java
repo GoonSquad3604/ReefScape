@@ -9,7 +9,7 @@ import frc.robot.subsystems.Arm.ArmConstants;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Manipulator.Manipulator;
-import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.Manipulator.ManipulatorConstants;
 import frc.robot.util.LevelState;
 import frc.robot.util.RobotMode;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -27,12 +27,15 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private LeftOrRight m_LeftOrRight;
   @AutoLogOutput private Branch m_Branch;
 
-  private Manipulator manipulator;
-  private Elevator elevator;
-  private Arm arm;
-  public Drive drive;
+  // private Manipulator manipulator;
+  // private Elevator elevator;
+  // private Arm arm;
+  // public Drive drive;
 
   @AutoLogOutput private boolean autoReadyFireIsTrue = false;
+  @AutoLogOutput private boolean armIsReady = false;
+  @AutoLogOutput private boolean elevatorIsReady = false;
+  @AutoLogOutput private boolean manipulatorIsReady = false;
 
   public StateController() {
     m_Level = LevelState.MAHOME;
@@ -256,59 +259,61 @@ public class StateController extends SubsystemBase {
     return runOnce(() -> m_Branch = theBranch);
   }
 
-  public boolean autoReadyFire() {
-    Pose2d currentPosition = drive.getPose();
-    boolean isInPosition = false;
-    for (int i = 0; i < FieldConstants.Reef.leftRobotBranchPoses.size(); i++) {
-      if (stupid(currentPosition, FieldConstants.Reef.leftRobotBranchPoses.get(i))) {
-        isInPosition = true;
-        break;
-      }
-    }
-    if (!isInPosition) {
-      for (int i = 0; i < FieldConstants.Reef.rightRobotBranchPoses.size(); i++) {
-        if (stupid(currentPosition, FieldConstants.Reef.rightRobotBranchPoses.get(i))) {
-          isInPosition = true;
-          break;
-        }
-      }
-    }
+  public boolean autoReadyFire(Arm arm, Elevator elevator, Manipulator manipulator) {
+    // Pose2d currentPosition = drive.getPose();
+    // boolean isInPosition = false;
+    // for (int i = 0; i < FieldConstants.Reef.leftRobotBranchPoses.size(); i++) {
+    //   if (stupid(currentPosition, FieldConstants.Reef.leftRobotBranchPoses.get(i))) {
+    //     isInPosition = true;
+    //     break;
+    //   }
+    // }
+    // if (!isInPosition) {
+    //   for (int i = 0; i < FieldConstants.Reef.rightRobotBranchPoses.size(); i++) {
+    //     if (stupid(currentPosition, FieldConstants.Reef.rightRobotBranchPoses.get(i))) {
+    //       isInPosition = true;
+    //       break;
+    //     }
+    //   }
+    // }
 
-    boolean armIsReady = false;
-    boolean elevatorIsReady = false;
+    armIsReady = false;
+    elevatorIsReady = false;
+    manipulatorIsReady = manipulator.isInPosition();
+
     if (isL1()) {
       armIsReady =
-          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL1) < 0.01
-              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL1) < 0.01;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l1Pos) < 0.01;
+          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL1) < 0.075
+              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL1) < 0.075;
+      elevatorIsReady = Math.abs(elevator.getPos() - ManipulatorConstants.zeroPower) < 0.50001;
     } else if (isL2()) {
       armIsReady =
-          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.01
-              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL2) < 0.01;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l2Pos) < 0.01;
+          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.075
+              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL2) < 0.075;
+      elevatorIsReady = Math.abs(elevator.getPos() - ManipulatorConstants.zeroPower) < 0.500015;
     } else if (isL3()) {
       armIsReady =
-          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL3) < 0.01
-              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL3) < 0.01;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l3Pos) < 0.01;
+          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL3) < 0.075
+              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL3) < 0.075;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l3Pos) < 0.50001;
     } else if (isL4()) {
       armIsReady =
-          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL4) < 0.01
-              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL4) < 0.01;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l4Pos) < 0.01;
+          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL4) < 0.075
+              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL4) < 0.075000001;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l4Pos) < 0.50001;
     }
 
     autoReadyFireIsTrue =
         isCoralMode()
             && manipulator.hasGamePiece()
             && !elevator.mahoming
-            && isInPosition
+            && manipulatorIsReady
             && armIsReady
             && elevatorIsReady;
 
-    Logger.recordOutput("Robot Is In Position", isInPosition);
-    Logger.recordOutput("Arm Is In Position", armIsReady);
-    Logger.recordOutput("Elevator Is In Position", elevatorIsReady);
+    // Logger.recordOutput("laserCanSees", manipulator);
+    // Logger.recordOutput("ArmIsInPosition", armIsReady);
+    // Logger.recordOutput("ElevatorIsInPosition", elevatorIsReady);
 
     return autoReadyFireIsTrue;
   }

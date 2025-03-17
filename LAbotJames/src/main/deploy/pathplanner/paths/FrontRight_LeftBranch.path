@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.6912757632606903,
-        "y": 2.9740245816906397
+        "x": 3.704247740604179,
+        "y": 3.096670286647052
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.535,
-        "y": 2.854
+        "x": 3.638,
+        "y": 2.956
       },
       "prevControl": {
-        "x": 3.3175,
-        "y": 2.4772789493537695
+        "x": 3.4272155252072354,
+        "y": 2.4950542895205223
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,14 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "goTo_Elevator_State",
+      "waypointRelativePos": 0.5,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
