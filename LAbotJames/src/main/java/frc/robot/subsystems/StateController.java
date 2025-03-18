@@ -231,14 +231,14 @@ public class StateController extends SubsystemBase {
   }
 
   public Command setIntakeMode() {
-    return run(
+    return runOnce(
         () -> {
           setIntake();
         });
   }
 
   public Command setNoIntakeMode() {
-    return run(
+    return runOnce(
         () -> {
           setNoIntake();
         });

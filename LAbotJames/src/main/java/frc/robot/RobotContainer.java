@@ -316,7 +316,9 @@ public class RobotContainer {
 
     // Auto fire
     fireReadyAuto.onTrue(
-        new InstantCommand(() -> manipulator.runWheels(ManipulatorConstants.coralShoot)));
+        new InstantCommand(() -> manipulator.runWheels(ManipulatorConstants.coralShoot))
+            .andThen(Commands.waitSeconds(1))
+            .andThen(manipulator.stopIntake()));
 
     // Default drive command, normal field-relative drive
     drive.setDefaultCommand(
@@ -612,18 +614,18 @@ public class RobotContainer {
         .and(operatorButtonBox.button(2))
         .onTrue(stateController.setClimbMode(manipulator));
 
-    // L4 Coral (queue)
-    operatorButtonBox
-        .button(3)
-        .and(coralMode)
-        .and(manualOverride.negate())
-        .onTrue(stateController.setL4());
+    // // L4 Coral (queue)
+    // operatorButtonBox
+    //     .button(3)
+    //     .and(coralMode)
+    //     .and(manualOverride.negate())
+    //     .onTrue(stateController.setL4());
 
     // L4 Coral (manual)
     operatorButtonBox
         .button(3)
         .and(coralMode)
-        .and(manualOverride)
+        // .and(manualOverride)
         .onTrue(
             arm.coralL4()
                 .alongWith(
@@ -637,17 +639,17 @@ public class RobotContainer {
             arm.barge().alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos)));
 
     // L3 Coral (queue)
-    operatorButtonBox
-        .button(4)
-        .and(coralMode)
-        .and(manualOverride.negate())
-        .onTrue(stateController.setL3());
+    // operatorButtonBox
+    //     .button(4)
+    //     .and(coralMode)
+    //     .and(manualOverride.negate())
+    //     .onTrue(stateController.setL3());
 
     // L3 Coral (manual)
     operatorButtonBox
         .button(4)
         .and(coralMode)
-        .and(manualOverride)
+        // .and(manualOverride)
         .onTrue(
             arm.coralL3()
                 .alongWith(
@@ -671,17 +673,17 @@ public class RobotContainer {
                 .andThen(elevator.runOnce(() -> elevator.stop())));
 
     // L2 Coral (queue)
-    operatorButtonBox
-        .button(5)
-        .and(coralMode)
-        .and(manualOverride.negate())
-        .onTrue(stateController.setL2());
+    // operatorButtonBox
+    //     .button(5)
+    //     .and(coralMode)
+    //     .and(manualOverride.negate())
+    //     .onTrue(stateController.setL2());
 
     // L2 Coral (manual)
     operatorButtonBox
         .button(5)
         .and(coralMode)
-        .and(manualOverride)
+        // .and(manualOverride)
         .onTrue(
             arm.coralL2()
                 .alongWith(stateController.setL2())
@@ -710,17 +712,17 @@ public class RobotContainer {
     //     .alongWith(stateController.setL2())));
 
     // L1 Coral (queue)
-    operatorButtonBox
-        .button(6)
-        .and(coralMode)
-        .and(manualOverride.negate())
-        .onTrue(stateController.setL1());
+    // operatorButtonBox
+    //     .button(6)
+    //     .and(coralMode)
+    //     .and(manualOverride.negate())
+    //     .onTrue(stateController.setL1());
 
     // L1 Coral (manual)
     operatorButtonBox
         .button(6)
         .and(coralMode)
-        .and(manualOverride)
+        // .and(manualOverride)
         .onTrue(
             arm.coralL1()
                 .alongWith(stateController.setL1())
@@ -834,18 +836,15 @@ public class RobotContainer {
                 .alongWith(
                     // leds flash until game piece
                     lED.strobeCommand(Color.kRed, 0.3333604)
-                        .until(() -> manipulator.hasGamePiece())
-                        .andThen(
-                            // goes to home and flashes leds green, also statecontroller becomes
-                            // nointake
-                            lED.solidCommand(Color.kGreen)
-                                .alongWith(superStructure.goHome())
-                                .alongWith(
-                                    Commands.runOnce( // nice +700
-                                        () ->
-                                            stateController
-                                                .setNoIntake()))))); // thats a lot of parentheses
-    // (pronounced pear-en-theeses)
+                        .until(() -> manipulator.hasGamePiece()))
+                .andThen(
+                    manipulator
+                        .intakeCoral()
+                        .withTimeout(.5)
+                        .andThen(stateController.setNoIntakeMode())));
+
+    intakeMode.onFalse(
+        superStructure.goHome().alongWith(lED.defaultLeds(() -> stateController.getMode())));
 
     operatorButtonBox
         .button(10)
