@@ -138,10 +138,10 @@ public class Arm extends SubsystemBase {
   //   io.setElbowPosition(ArmConstants.bargeElbow);
   // }
 
-  // public void home() {
-  //   io.setWristPosition(ArmConstants.homeWrist);
-  //   io.setElbowPosition(ArmConstants.homeElbow);
-  // }
+  public void voidHome() {
+    io.setWristPosition(ArmConstants.homeWrist);
+    io.setElbowPosition(ArmConstants.homeElbow);
+  }
 
   // public void climb() {
   //   io.setWristPosition(ArmConstants.wristClimb);

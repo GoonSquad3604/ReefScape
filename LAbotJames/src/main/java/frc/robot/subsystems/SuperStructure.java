@@ -114,7 +114,7 @@ public class SuperStructure extends SubsystemBase {
   public Command goHome() {
     return runOnce(
         () -> {
-          arm.home();
+          arm.voidHome();
           manipulator.stopWheels();
         });
   }
