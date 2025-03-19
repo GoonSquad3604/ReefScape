@@ -24,15 +24,15 @@ public final class ArmConstants {
   public static final double wristD = 0.1;
   public static final double wristFF = 0.2;
 
-  public static final double coralElbowL1 = 0.207;
+  public static final double coralElbowL1 = 0.210;
   public static final double coralElbowL2 = 0.235;
   public static final double coralElbowL3 = 0.235;
   public static final double coralElbowL4 = 0.255;
 
-  public static final double coralWristL1 = 0.437;
+  public static final double coralWristL1 = 0.298;
   public static final double coralWristL2 = 0.430;
   public static final double coralWristL3 = 0.430;
-  public static final double coralWristL4 = 0.350;
+  public static final double coralWristL4 = 0.328;
 
   public static final double algaeElbowL25 = 0.224;
   public static final double algaeElbowL35 = 0.224;
@@ -40,8 +40,8 @@ public final class ArmConstants {
   public static final double algaeWristL25 = 0.208;
   public static final double algaeWristL35 = 0.208;
 
-  public static final double processorWrist = 0.281;
-  public static final double processorElbow = 0.150;
+  public static final double processorWrist = 0.218; // 0.281000
+  public static final double processorElbow = 0.163; // 0.150
 
   public static final double sourceWrist = 0.655;
   public static final double sourceElbow = 0.310;
@@ -49,8 +49,8 @@ public final class ArmConstants {
   public static final double bargeWrist = 0.341;
   public static final double bargeElbow = 0.294;
 
-  public static final double groundWrist = 0.365;
-  public static final double groundElbow = 0.042;
+  public static final double groundWrist = 0.241;
+  public static final double groundElbow = 0.110;
 
   public static final double homeWrist = 0.393;
 

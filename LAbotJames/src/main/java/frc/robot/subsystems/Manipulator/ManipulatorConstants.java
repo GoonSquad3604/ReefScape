@@ -47,4 +47,5 @@ public final class ManipulatorConstants {
   public static final double coralIntake = 0.5;
 
   public static final double reefThreshold = 540;
+  public static final double l4Threshold = 400;
 }

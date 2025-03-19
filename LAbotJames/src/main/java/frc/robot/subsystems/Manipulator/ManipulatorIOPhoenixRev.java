@@ -85,7 +85,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    config.CurrentLimits.SupplyCurrentLimit = 20;
+    config.CurrentLimits.SupplyCurrentLimit = 30; // was 20 before changing algae intake
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.CurrentLimits.StatorCurrentLimit = 40;
     config.Voltage.PeakForwardVoltage = 12.0;
@@ -157,6 +157,10 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     inputs.manipulatorRightWheelMotorVoltage = rightWheel.getMotorVoltage().getValueAsDouble();
     inputs.manipulatorRightWheelMotorCurrent = rightWheel.getSupplyCurrent().getValueAsDouble();
     inputs.manipulatorRightRPM = rightWheel.getVelocity().getValueAsDouble();
+
+    inputs.manipulatorLeftWheelTemperature = leftWheel.getDeviceTemp().getValueAsDouble();
+    inputs.manipulatorRightWheelTemperature = rightWheel.getDeviceTemp().getValueAsDouble();
+
     // inputs.manipulatorOpeningMotorVoltage = opening.getBusVoltage();
     // inputs.manipulatorOpeningMotorCurrent = opening.getOutputCurrent();
     // inputs.manipulatorOpeningMotorPos = openingAbsoluteEncoder.getPosition();
