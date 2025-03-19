@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.util.LevelState;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -152,8 +153,12 @@ public class Manipulator extends SubsystemBase {
     io.setCurrent(5);
   }
 
-  public boolean isInPosition() {
-    return inputs.manipulatorDistance <= ManipulatorConstants.reefThreshold;
+  public boolean isInPosition(LevelState level) {
+    if (level == LevelState.L4) {
+      return inputs.manipulatorDistance <= ManipulatorConstants.l4Threshold;
+    } else {
+      return inputs.manipulatorDistance <= ManipulatorConstants.reefThreshold;
+    }
   }
 
   public Command intakeCoral() {

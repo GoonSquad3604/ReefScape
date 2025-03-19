@@ -184,12 +184,11 @@ public class Arm extends SubsystemBase {
         });
   }
 
-  public Command barge() {
-    return runOnce(
-        () -> {
-          io.setWristPosition(ArmConstants.bargeWrist);
-          io.setElbowPosition(ArmConstants.bargeElbow);
-        });
+  public void barge() {
+
+    io.setWristPosition(ArmConstants.bargeWrist);
+    io.setElbowPosition(ArmConstants.bargeElbow);
+    ;
   }
 
   public void processor() {

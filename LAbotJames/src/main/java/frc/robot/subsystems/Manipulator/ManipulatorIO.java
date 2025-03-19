@@ -32,6 +32,9 @@ public interface ManipulatorIO {
 
     public double manipulatorDistance;
     public boolean laserCANIsConnected = false;
+
+    public double manipulatorRightWheelTemperature;
+    public double manipulatorLeftWheelTemperature;
   }
 
   default void setOpeningPos(double position) {}

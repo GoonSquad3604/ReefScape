@@ -86,7 +86,7 @@ public class Climber extends SubsystemBase {
   }
 
   /* Returns the climb position based on smart dashboard option */
-  public PathPlannerPath climbPath() {
+  public PathPlannerPath getClimbPath() {
     try {
       return PathPlannerPath.fromPathFile(cageChooser.get());
     } catch (Exception e) {

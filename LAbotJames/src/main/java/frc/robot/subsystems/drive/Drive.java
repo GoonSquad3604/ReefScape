@@ -483,6 +483,62 @@ public class Drive extends SubsystemBase {
     return FieldConstants.Reef.centerFaces.get(closestPanel);
   }
 
+  public int getClosestReefPanelInt() {
+    double smallestDistance = 9999999;
+    int closestPanel = 0;
+    for (int i = 0; i < 6; i++) {
+      if (FieldConstants.Reef.centerFaces
+              .get(i)
+              .getTranslation()
+              .getDistance(getPose().getTranslation())
+          <= smallestDistance) {
+        smallestDistance =
+            FieldConstants.Reef.centerFaces
+                .get(i)
+                .getTranslation()
+                .getDistance(getPose().getTranslation());
+        closestPanel = i;
+      }
+    }
+    return closestPanel;
+  }
+
+  public PathPlannerPath getClosestReefPath() {
+
+    int closestPanelInt = getClosestReefPanelInt();
+    String pathName = "";
+
+    switch (closestPanelInt) {
+      case 1:
+        pathName = "AlgaeFront";
+        break;
+      case 2:
+        pathName = "AlgaeFrontLeft";
+        break;
+      case 3:
+        pathName = "AlgaeBackLeft";
+        break;
+      case 4:
+        pathName = "AlgaeBack";
+        break;
+      case 5:
+        pathName = "AlgaeBackRight";
+        break;
+      case 6:
+        pathName = "AlgaeFrontRight";
+        break;
+      default:
+        pathName = null;
+    }
+
+    try {
+      return PathPlannerPath.fromPathFile(pathName);
+    } catch (Exception e) {
+      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+      return null;
+    }
+  }
+
   public Pose2d getClosestReefBranch(boolean isLeft) {
     // double smallestDistance = 9999999;
     // int closestPanel = 0;

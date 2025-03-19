@@ -62,7 +62,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command goToL2Algae() {
-    return run(
+    return runOnce(
         () -> {
           arm.elbowAlgaeL25();
           arm.wristAlgaeL25();
@@ -71,7 +71,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command goToL3Algae() {
-    return run(
+    return runOnce(
         () -> {
           arm.elbowAlgaeL35();
           arm.wristAlgaeL35();
@@ -120,7 +120,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command intake() {
-    return run(
+    return runOnce(
         () -> {
           manipulator.intakeGamePiece();
         });
@@ -159,6 +159,14 @@ public class SuperStructure extends SubsystemBase {
             default:
               manipulator.runWheels(0);
           }
+        });
+  }
+
+  public Command barge() {
+    return runOnce(
+        () -> {
+          arm.barge();
+          manipulator.runWheels(ManipulatorConstants.algaeIntake);
         });
   }
 

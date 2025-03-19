@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
+import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
@@ -9,7 +11,6 @@ import frc.robot.subsystems.Arm.ArmConstants;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Manipulator.Manipulator;
-import frc.robot.subsystems.Manipulator.ManipulatorConstants;
 import frc.robot.util.LevelState;
 import frc.robot.util.RobotMode;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -210,21 +211,21 @@ public class StateController extends SubsystemBase {
   }
 
   public Command setCoralMode(Manipulator manipulator) {
-    return run(
+    return runOnce(
         () -> {
           setCoral();
         });
   }
 
   public Command setAlgaeMode(Manipulator manipulator) {
-    return run(
+    return runOnce(
         () -> {
           setAlgae();
         });
   }
 
   public Command setClimbMode(Manipulator manipulator) {
-    return run(
+    return runOnce(
         () -> {
           setClimb();
         });
@@ -279,18 +280,18 @@ public class StateController extends SubsystemBase {
 
     armIsReady = false;
     elevatorIsReady = false;
-    manipulatorIsReady = manipulator.isInPosition();
+    manipulatorIsReady = manipulator.isInPosition(m_Level);
 
     if (isL1()) {
       armIsReady =
           Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL1) < 0.075
               && Math.abs(arm.getWristPos() - ArmConstants.coralWristL1) < 0.075;
-      elevatorIsReady = Math.abs(elevator.getPos() - ManipulatorConstants.zeroPower) < 0.50001;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l1Pos) < 0.50001;
     } else if (isL2()) {
       armIsReady =
           Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.075
               && Math.abs(arm.getWristPos() - ArmConstants.coralWristL2) < 0.075;
-      elevatorIsReady = Math.abs(elevator.getPos() - ManipulatorConstants.zeroPower) < 0.500015;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l2Pos) < 0.500015;
     } else if (isL3()) {
       armIsReady =
           Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL3) < 0.075
@@ -316,6 +317,33 @@ public class StateController extends SubsystemBase {
     // Logger.recordOutput("ElevatorIsInPosition", elevatorIsReady);
 
     return autoReadyFireIsTrue;
+  }
+
+  public PathPlannerPath getSourcePath(boolean isLeft) {
+
+    try {
+      if (isLeft) {
+        return PathPlannerPath.fromPathFile("LeftSource");
+      } else {
+        return PathPlannerPath.fromPathFile("RightSource");
+      }
+    } catch (Exception e) {
+      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+      return null;
+    }
+  }
+
+  public PathPlannerPath getAlgaePath(boolean processor) {
+    try {
+      if (processor) {
+        return PathPlannerPath.fromPathFile("Processor");
+      } else {
+        return null;
+      }
+    } catch (Exception e) {
+      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+      return null;
+    }
   }
 
   public void periodic() {

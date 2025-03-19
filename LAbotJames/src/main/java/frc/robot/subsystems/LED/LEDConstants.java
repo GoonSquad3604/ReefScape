@@ -15,6 +15,8 @@ public final class LEDConstants {
 
   static {
     stripes.add(Color.kRed);
+    stripes.add(Color.kDarkRed);
+    stripes.add(Color.kCrimson);
     stripes.add(Color.kOrange);
     stripes.add(Color.kYellow);
     stripes.add(Color.kGreen);
