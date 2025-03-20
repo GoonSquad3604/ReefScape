@@ -204,17 +204,18 @@ public class LEDs extends SubsystemBase {
   }
 
   public Command defaultLeds(Supplier<RobotMode> mode) {
-    return run(() -> {
-          if (mode.get().equals(RobotMode.CORAL)) {
-            solid(Color.kGhostWhite);
-          } else if (mode.get().equals(RobotMode.ALGAE)) {
-            solid(Color.kBlue);
-          } else if (mode.get().equals(RobotMode.CLIMB)) {
-            stripes(LEDConstants.stripes, LEDConstants.STRIP_LENGTH, 1);
-          } else {
-            wave(Color.kDarkViolet, Color.kBlack, 1, 1);
-          }
-        })
+    return runOnce(
+            () -> {
+              if (mode.get().equals(RobotMode.CORAL)) {
+                solid(Color.kGhostWhite);
+              } else if (mode.get().equals(RobotMode.ALGAE)) {
+                solid(Color.kBlue);
+              } else if (mode.get().equals(RobotMode.CLIMB)) {
+                stripes(LEDConstants.stripes, LEDConstants.STRIP_LENGTH, 1);
+              } else {
+                wave(Color.kDarkViolet, Color.kBlack, 1, 1);
+              }
+            })
         .ignoringDisable(true);
   }
 }
