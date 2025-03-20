@@ -117,7 +117,7 @@ public class FieldConstants {
         double robotCenterDistanceFromBranch =
             Units.inchesToMeters(
                 22.50
-                    * (20.0
+                    * (18.5
                         / 22.5)); // placeholder - represents distance of robot center from branch
         // 30.75
         // 20 + 3.0

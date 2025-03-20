@@ -210,7 +210,7 @@ public class StateController extends SubsystemBase {
     return m_Branch;
   }
 
-  public Command setCoralMode(Manipulator manipulator) {
+  public Command setCoralMode() {
     return runOnce(
         () -> {
           setCoral();

@@ -33,8 +33,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.AutoAline.Target;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
@@ -189,31 +187,13 @@ public class RobotContainer {
       DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
     }
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
     // usable commands
 
     // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Named Commands
     NamedCommands.registerCommand("lEDTest", lED.solidCommand(Color.kBlanchedAlmond));
-    NamedCommands.registerCommand("in take", stateController.setIntakeMode());
+    NamedCommands.registerCommand("in_take", stateController.setIntakeMode());
     NamedCommands.registerCommand(
         "fire",
         new InstantCommand(() -> manipulator.runWheels(ManipulatorConstants.coralShoot))
@@ -253,7 +233,7 @@ public class RobotContainer {
                     arm.coralL4()
                         .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)))),
             stateController::getLevel));
-    NamedCommands.registerCommand("SetCoral", stateController.setCoralMode(manipulator));
+    NamedCommands.registerCommand("SetCoral", stateController.setCoralMode());
     NamedCommands.registerCommand("SetAlgee", stateController.setAlgaeMode(manipulator));
     NamedCommands.registerCommand("SetLFour", stateController.setL4());
     NamedCommands.registerCommand("SetLthree", stateController.setL3());
@@ -262,10 +242,32 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "HOMe",
         superStructure
-            .goToProcessor()
+            .goHome()
             .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
             .until(() -> !elevator.mahoming)
             .andThen(elevator.runOnce(() -> elevator.stop())));
+
+    NamedCommands.registerCommand(
+        "waitUntilGamePiece", Commands.waitUntil(manipulator::hasGamePiece));
+
+    // Set up auto routines
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    // Set up SysId routines
+    //  autoChooser.addOption(
+    //      "Drive Wheel Radius Characterization",
+    // DriveCommands.wheelRadiusCharacterization(drive));
+    //  autoChooser.addOption(
+    //      "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    //  autoChooser.addOption(
+    //      "Drive SysId (Quasistatic Forward)",
+    //      drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    //  autoChooser.addOption(
+    //      "Drive SysId (Quasistatic Reverse)",
+    //      drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    //  autoChooser.addOption(
+    //      "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    //  autoChooser.addOption(
+    //      "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     configureButtonBindings();
   }
@@ -298,7 +300,7 @@ public class RobotContainer {
     Trigger LMahome = new Trigger(() -> stateController.isMahome());
 
     Trigger operatorManualOverride = operatorButtonBox.button(11);
-    Trigger driverPathOverride = new Trigger(() -> driverController.getLeftTriggerAxis() > 0.01);
+    // Trigger driverPathOverride = new Trigger(() -> driverController.getLeftTriggerAxis() > 0.01);
     BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
 
     // Rumble controler for 1s when endgame
@@ -404,6 +406,31 @@ public class RobotContainer {
     driverController.povDown().and(climbMode).onTrue(climber.moveClimberDown());
     driverController.povDown().and(climbMode).onFalse(climber.stop());
 
+    driverController
+        .back()
+        .and(coralMode)
+        .onTrue(
+            arm.home()
+                .alongWith(
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                        .until(() -> !elevator.mahoming)
+                        .andThen(elevator.runOnce(() -> elevator.stop())))
+                .andThen(stateController.setIntakeMode()));
+
+    driverController
+        .back()
+        .and(coralMode)
+        .onTrue(
+            Commands.either(
+                stateController.setNoIntakeMode(),
+                arm.home()
+                    .alongWith(
+                        new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                            .until(() -> !elevator.mahoming)
+                            .andThen(elevator.runOnce(() -> elevator.stop())))
+                    .andThen(stateController.setIntakeMode()),
+                intakeMode));
+
     /* MANUAL CORAL PATHFINDS */
 
     // driverController
@@ -444,28 +471,28 @@ public class RobotContainer {
     //             stateController::getLevel));
 
     // OVERRIDE, Left bumper, coral mode, has piece -> closest left pole
-    driverController
-        .leftBumper()
-        .and(coralMode)
-        .and(hasGamePiece)
-        .and(driverPathOverride)
-        .whileTrue(
-            Commands.defer(
-                    () -> AutoAline.autoAlineTo(Target.LEFT_POLE, this, joystickSupplier),
-                    Set.of(drive))
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+    // driverController
+    //     .leftBumper()
+    //     .and(coralMode)
+    //     .and(hasGamePiece)
+    //     .and(driverPathOverride)
+    //     .whileTrue(
+    //         Commands.defer(
+    //                 () -> AutoAline.autoAlineTo(Target.LEFT_POLE, this, joystickSupplier),
+    //                 Set.of(drive))
+    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     // OVERRIDE, Right bumper, coral mode, has piece -> closest right pole
-    driverController
-        .rightBumper()
-        .and(coralMode)
-        .and(hasGamePiece)
-        .and(driverPathOverride)
-        .whileTrue(
-            Commands.defer(
-                    () -> AutoAline.autoAlineTo(Target.RIGHT_POLE, this, joystickSupplier),
-                    Set.of(drive))
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+    // driverController
+    //     .rightBumper()
+    //     .and(coralMode)
+    //     .and(hasGamePiece)
+    //     .and(driverPathOverride)
+    //     .whileTrue(
+    //         Commands.defer(
+    //                 () -> AutoAline.autoAlineTo(Target.RIGHT_POLE, this, joystickSupplier),
+    //                 Set.of(drive))
+    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     /* SOURCE PATHFINDS */
 
@@ -476,11 +503,7 @@ public class RobotContainer {
         .and(hasNoGamePiece)
         .whileTrue(
             Commands.defer(
-                    () ->
-                        stateController
-                            .setIntakeMode()
-                            .andThen(drive.pathfindToPath(stateController.getSourcePath(true))),
-                    Set.of(drive))
+                    () -> drive.pathfindToPath(stateController.getSourcePath(true)), Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     // Right bumper, coral mode, no piece -> right source
@@ -490,11 +513,7 @@ public class RobotContainer {
         .and(hasNoGamePiece)
         .whileTrue(
             Commands.defer(
-                    () ->
-                        stateController
-                            .setIntakeMode()
-                            .andThen(drive.pathfindToPath(stateController.getSourcePath(false))),
-                    Set.of(drive))
+                    () -> drive.pathfindToPath(stateController.getSourcePath(false)), Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     /* DEFAULT CORAL PATHFINDS */
@@ -502,7 +521,7 @@ public class RobotContainer {
         .rightBumper()
         .and(coralMode)
         .and(hasGamePiece)
-        .and(driverPathOverride.negate())
+        // .and(driverPathOverride.negate())
         .whileTrue(
             Commands.defer(
                 () ->
@@ -514,7 +533,7 @@ public class RobotContainer {
         .leftBumper()
         .and(coralMode)
         .and(hasGamePiece)
-        .and(driverPathOverride.negate())
+        // .and(driverPathOverride.negate())
         .whileTrue(
             Commands.defer(
                 () ->
@@ -539,7 +558,7 @@ public class RobotContainer {
 
     // Right bumper, algae mode, has piece -> processor
     driverController
-        .leftBumper()
+        .rightBumper()
         .and(algaeMode)
         .and(hasGamePiece)
         .whileTrue(
@@ -548,30 +567,32 @@ public class RobotContainer {
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     // Left bumper, algae mode, no piece -> closest reef center face (same as right bumper)
-    driverController
-        .leftBumper()
-        .and(algaeMode)
-        .and(hasNoGamePiece)
-        .whileTrue(
-            Commands.defer(
-                () ->
-                    drive
-                        .pathfindToPath(drive.getClosestReefPath())
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
-                Set.of(drive)));
+    // doesnt work rn
+    // driverController
+    //     .leftBumper()
+    //     .and(algaeMode)
+    //     .and(hasNoGamePiece)
+    //     .whileTrue(
+    //         Commands.defer(
+    //             () ->
+    //                 drive
+    //                     .pathfindToPath(drive.getClosestReefPath())
+    //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
+    //             Set.of(drive)));
 
     // Right bumper, algae mode, no piece -> closest reef center face (same as left bumper)
-    driverController
-        .leftBumper()
-        .and(algaeMode)
-        .and(hasNoGamePiece)
-        .whileTrue(
-            Commands.defer(
-                () ->
-                    drive
-                        .pathfindToPath(drive.getClosestReefPath())
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
-                Set.of(drive)));
+    // doesnt work rn
+    // driverController
+    //     .rightBumper()
+    //     .and(algaeMode)
+    //     .and(hasNoGamePiece)
+    //     .whileTrue(
+    //         Commands.defer(
+    //             () ->
+    //                 drive
+    //                     .pathfindToPath(drive.getClosestReefPath())
+    //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
+    //             Set.of(drive)));
 
     /* CLIMB PATHFIND */
 
@@ -590,10 +611,13 @@ public class RobotContainer {
     /* OPERATOR BUTTONS */
 
     // Set mode to coral
-    operatorButtonBox.button(1).onTrue(stateController.setCoralMode(manipulator));
+    operatorButtonBox.button(1).onTrue(stateController.setCoralMode());
 
     // Set mode to algae
-    operatorButtonBox.button(2).onTrue(stateController.setAlgaeMode(manipulator));
+    operatorButtonBox
+        .button(2)
+        .onTrue(
+            stateController.setAlgaeMode(manipulator).andThen(stateController.setNoIntakeMode()));
 
     // Set mode to climb when button coral and algae are pressed
     operatorButtonBox
@@ -740,6 +764,7 @@ public class RobotContainer {
                 .alongWith(
                     stateController
                         .setNoIntakeMode()
+                        .andThen(manipulator.stopIntake())
                         .alongWith(
                             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)))
                 .until(() -> !elevator.mahoming)
@@ -758,7 +783,10 @@ public class RobotContainer {
                     elevator.runOnce(() -> elevator.stop()).andThen(stateController.setMahome())));
 
     // Set arm to climb position
-    operatorButtonBox.button(8).onTrue(arm.climb());
+    operatorButtonBox
+        .button(8)
+        .and(climbMode)
+        .onTrue(arm.climb().alongWith(climber.setClimberHome()));
 
     // Climb up
     // operatorButtonBox.button(9).and(climbMode).onTrue(climber.setClimberUp());
@@ -786,8 +814,15 @@ public class RobotContainer {
     //             .alongWith(lED.defaultLeds(() -> stateController.getMode())));
 
     // makes the mode = intake
-    // home button makes intake false for cancel
-    operatorButtonBox.button(10).and(coralMode).onTrue(stateController.setIntakeMode());
+    // tap again, or press home for no intake mode
+    // operatorButtonBox.button(10).and(coralMode).onTrue(stateController.setIntakeMode());
+
+    operatorButtonBox
+        .button(10)
+        .and(coralMode)
+        .onTrue(
+            Commands.either(
+                stateController.setNoIntakeMode(), stateController.setIntakeMode(), intakeMode));
 
     // when intake + coral, begin to intake
     intakeMode
@@ -808,7 +843,11 @@ public class RobotContainer {
     intakeMode
         .and(coralMode)
         .onFalse(
-            superStructure.goHome().alongWith(lED.defaultLeds(() -> stateController.getMode())));
+            arm.home()
+                .alongWith(
+                    manipulator
+                        .stopIntake()
+                        .alongWith(lED.defaultLeds(() -> stateController.getMode()))));
 
     operatorButtonBox
         .button(10)
