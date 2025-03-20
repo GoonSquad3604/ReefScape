@@ -67,16 +67,9 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "in_take"
-                }
-              }
-            ]
+            "name": "waitUntilGamePiece"
           }
         },
         {
@@ -136,16 +129,9 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "in_take"
-                }
-              }
-            ]
+            "name": "waitUntilGamePiece"
           }
         }
       ]

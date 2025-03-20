@@ -178,7 +178,8 @@ public class RobotContainer {
     stateController = StateController.getInstance();
     superStructure = new SuperStructure(manipulator, arm, elevator, stateController);
 
-    lED.setDefaultCommand(lED.defaultLeds(() -> stateController.getMode()));
+    lED.setDefaultCommand(
+        lED.defaultLeds(() -> stateController.getMode(), () -> stateController.isIntakeMode()));
 
     // left and right path setup
     try {
@@ -832,22 +833,23 @@ public class RobotContainer {
                 .goToSource()
                 .alongWith(
                     // leds flash until game piece
-                    lED.strobeCommand(Color.kRed, 0.3333604)
-                        .until(() -> manipulator.hasGamePiece()))
-                .andThen(
-                    manipulator
-                        .intakeCoral()
-                        .withTimeout(.5)
-                        .andThen(stateController.setNoIntakeMode())));
+                    lED.strobeCommand(Color.kRed, 0.3333604)));
+
+    // .until(() -> manipulator.hasGamePiece()))
+    // .andThen(
+    //     manipulator
+    //         .intakeCoral()
+    //         .withTimeout(.5)
+    //         .andThen(stateController.setNoIntakeMode())));
+
+    intakeMode.and(coralMode).onFalse(arm.home().alongWith(manipulator.stopIntake()));
+    // .alongWith(lED.defaultLeds(() -> stateController.getMode()))));
 
     intakeMode
         .and(coralMode)
-        .onFalse(
-            arm.home()
-                .alongWith(
-                    manipulator
-                        .stopIntake()
-                        .alongWith(lED.defaultLeds(() -> stateController.getMode()))));
+        .and(hasGamePiece)
+        .onTrue(
+            manipulator.intakeCoral().withTimeout(.5).andThen(stateController.setNoIntakeMode()));
 
     operatorButtonBox
         .button(10)

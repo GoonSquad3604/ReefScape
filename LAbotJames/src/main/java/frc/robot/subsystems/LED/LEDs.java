@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Conversions;
 import frc.robot.util.RobotMode;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -159,7 +160,7 @@ public class LEDs extends SubsystemBase {
   }
 
   public Command strobeCommand(Color color, double duration) {
-    return run(() -> strobe(color, duration)).ignoringDisable(true);
+    return runOnce(() -> strobe(color, duration)).ignoringDisable(true);
   }
 
   public Command strobeCommand(Supplier<Color> color, double duration) {
@@ -203,10 +204,12 @@ public class LEDs extends SubsystemBase {
     return run(() -> mapped(currentValue.getAsDouble())).ignoringDisable(true);
   }
 
-  public Command defaultLeds(Supplier<RobotMode> mode) {
+  public Command defaultLeds(Supplier<RobotMode> mode, BooleanSupplier intakng) {
     return runOnce(
             () -> {
-              if (mode.get().equals(RobotMode.CORAL)) {
+              if (intakng.getAsBoolean()) {
+                strobe(Color.kRed, 0.333);
+              } else if (mode.get().equals(RobotMode.CORAL)) {
                 solid(Color.kGhostWhite);
               } else if (mode.get().equals(RobotMode.ALGAE)) {
                 solid(Color.kBlue);
