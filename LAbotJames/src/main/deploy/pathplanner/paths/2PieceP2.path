@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "intakeUntilPiece",
+      "name": "",
       "waypointRelativePos": 0.3255813953488374,
       "endWaypointRelativePos": null,
       "command": null

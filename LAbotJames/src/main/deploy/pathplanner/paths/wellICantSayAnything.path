@@ -68,19 +68,19 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "goToL4",
+      "name": "",
       "waypointRelativePos": 0.5,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "fire",
+      "name": "",
       "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "intake",
+      "name": "",
       "waypointRelativePos": 1.5,
       "endWaypointRelativePos": null,
       "command": null

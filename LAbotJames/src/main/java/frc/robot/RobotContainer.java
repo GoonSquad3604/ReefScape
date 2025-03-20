@@ -253,6 +253,19 @@ public class RobotContainer {
                     arm.coralL4()
                         .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)))),
             stateController::getLevel));
+    NamedCommands.registerCommand("SetCoral", stateController.setCoralMode(manipulator));
+    NamedCommands.registerCommand("SetAlgee", stateController.setAlgaeMode(manipulator));
+    NamedCommands.registerCommand("SetLFour", stateController.setL4());
+    NamedCommands.registerCommand("SetLthree", stateController.setL3());
+    NamedCommands.registerCommand("SetLWon", stateController.setL1());
+    NamedCommands.registerCommand("Set2", stateController.setL2());
+    NamedCommands.registerCommand(
+        "HOMe",
+        superStructure
+            .goToProcessor()
+            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
+            .until(() -> !elevator.mahoming)
+            .andThen(elevator.runOnce(() -> elevator.stop())));
 
     configureButtonBindings();
   }

@@ -87,7 +87,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.CurrentLimits.SupplyCurrentLimit = 30; // was 20 before changing algae intake
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.CurrentLimits.StatorCurrentLimit = 40;
+    config.CurrentLimits.StatorCurrentLimit = 60;
     config.Voltage.PeakForwardVoltage = 12.0;
     config.Voltage.PeakReverseVoltage = -12.0;
     config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
