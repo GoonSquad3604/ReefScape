@@ -116,7 +116,10 @@ public class FieldConstants {
         double adjustY = Units.inchesToMeters(6.469);
         double robotCenterDistanceFromBranch =
             Units.inchesToMeters(
-                22.50); // placeholder - represents distance of robot center from branch 30.75
+                22.50
+                    * (20.0
+                        / 22.5)); // placeholder - represents distance of robot center from branch
+        // 30.75
         // 20 + 3.0
         // / 4 + 12
         // - 2
@@ -161,14 +164,14 @@ public class FieldConstants {
                         .transformBy(
                             new Transform2d(
                                 adjustX + robotCenterDistanceFromBranch,
-                                adjustY - robotWhyAdjust,
+                                adjustY - -robotWhyAdjust,
                                 new Rotation2d()))
                         .getX(),
                     poseDirectionRobot
                         .transformBy(
                             new Transform2d(
                                 adjustX + robotCenterDistanceFromBranch,
-                                adjustY - robotWhyAdjust,
+                                adjustY - -robotWhyAdjust,
                                 new Rotation2d()))
                         .getY()),
                 poseDirectionRobot.getRotation().rotateBy(Rotation2d.k180deg));
@@ -179,14 +182,14 @@ public class FieldConstants {
                         .transformBy(
                             new Transform2d(
                                 adjustX + robotCenterDistanceFromBranch,
-                                -adjustY - robotWhyAdjust,
+                                -adjustY - -robotWhyAdjust,
                                 new Rotation2d()))
                         .getX(),
                     poseDirectionRobot
                         .transformBy(
                             new Transform2d(
                                 adjustX + robotCenterDistanceFromBranch,
-                                -adjustY - robotWhyAdjust,
+                                -adjustY - -robotWhyAdjust,
                                 new Rotation2d()))
                         .getY()),
                 poseDirectionRobot.getRotation().rotateBy(Rotation2d.k180deg));

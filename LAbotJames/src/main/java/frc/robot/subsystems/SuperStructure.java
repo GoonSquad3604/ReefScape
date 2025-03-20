@@ -141,7 +141,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command fire() {
-    return run(
+    return runOnce(
         () -> {
           switch (stateController.getLevel()) {
             case L1:
@@ -166,7 +166,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.barge();
-          manipulator.runWheels(ManipulatorConstants.algaeIntake);
+          // manipulator.runWheels(ManipulatorConstants.algaeIntake);
         });
   }
 
@@ -277,7 +277,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command armClimb() {
-    return run(
+    return runOnce(
         () -> {
           arm.climb();
         });

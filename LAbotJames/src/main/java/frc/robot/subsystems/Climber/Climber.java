@@ -51,11 +51,6 @@ public class Climber extends SubsystemBase {
     cageChooser.addOption("Right Cage", "RightClimber");
   }
 
-  /* Deploys the climber. */
-  public Command setClimberDown() {
-    return runOnce(() -> io.setPosition(ClimberConstants.positionDown));
-  }
-
   /* Raises the climber. */
   public Command setClimberUp() {
     return runOnce(() -> io.setPosition(ClimberConstants.positionUp));
