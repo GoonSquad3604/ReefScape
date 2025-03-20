@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 4.99,
-        "y": 2.754
+        "x": 5.01,
+        "y": 2.88
       },
       "prevControl": {
-        "x": 5.273504807630985,
-        "y": 2.3650494348692286
+        "x": 5.293504807630985,
+        "y": 2.4910494348692285
       },
       "nextControl": null,
       "isLocked": false,
@@ -52,7 +52,7 @@
     "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": null,
+  "folder": "autoAlineHornCoralPos",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 119.99999999999999
