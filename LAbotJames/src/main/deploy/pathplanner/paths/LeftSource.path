@@ -45,7 +45,7 @@
     "rotation": -51.633
   },
   "reversed": false,
-  "folder": null,
+  "folder": "autoAlineHornCoralPos",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -51.633
