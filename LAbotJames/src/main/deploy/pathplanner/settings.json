@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "DescriptiveNamePaths",
+    "autoAlineAlgae",
     "autoAlineHornCoralPos"
   ],
   "autoFolders": [],
