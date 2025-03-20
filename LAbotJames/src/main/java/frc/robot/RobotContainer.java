@@ -612,11 +612,11 @@ public class RobotContainer {
     /* OPERATOR BUTTONS */
 
     // Set mode to coral
-    operatorButtonBox.button(1).onTrue(stateController.setCoralMode());
+    operatorButtonBox.button(1 + 1).onTrue(stateController.setCoralMode());
 
     // Set mode to algae
     operatorButtonBox
-        .button(2)
+        .button(2 - 1)
         .onTrue(
             stateController.setAlgaeMode(manipulator).andThen(stateController.setNoIntakeMode()));
 
@@ -926,18 +926,18 @@ public class RobotContainer {
 
     /* REEF BOX (the reef is a lie) */
 
-    operatorReefBox.button(1).onTrue(stateController.setBranch(Branch.FRONT_LEFTBRANCH));
-    operatorReefBox.button(2).onTrue(stateController.setBranch(Branch.FRONT_RIGHTBRANCH));
-    operatorReefBox.button(3).onTrue(stateController.setBranch(Branch.FRONTLEFT_LEFTBRANCH));
-    operatorReefBox.button(4).onTrue(stateController.setBranch(Branch.FRONTLEFT_RIGHTBRANCH));
-    operatorReefBox.button(5).onTrue(stateController.setBranch(Branch.BACKLEFT_LEFTBRANCH));
-    operatorReefBox.button(6).onTrue(stateController.setBranch(Branch.BACKLEFT_RIGHTBRANCH));
-    operatorReefBox.button(7).onTrue(stateController.setBranch(Branch.BACK_LEFTBRANCH));
-    operatorReefBox.button(8).onTrue(stateController.setBranch(Branch.BACK_RIGHTBRANCH));
-    operatorReefBox.button(9).onTrue(stateController.setBranch(Branch.BACKRIGHT_LEFTBRANCH));
-    operatorReefBox.button(10).onTrue(stateController.setBranch(Branch.BACKRIGHT_RIGHTBRANCH));
-    operatorReefBox.button(12).onTrue(stateController.setBranch(Branch.FRONTRIGHT_RIGHTBRANCH));
-    operatorReefBox.button(11).onTrue(stateController.setBranch(Branch.FRONTRIGHT_LEFTBRANCH));
+    operatorReefBox.button(12).onTrue(stateController.setBranch(Branch.FRONT_LEFTBRANCH));
+    operatorReefBox.button(11).onTrue(stateController.setBranch(Branch.FRONT_RIGHTBRANCH));
+    operatorReefBox.button(10).onTrue(stateController.setBranch(Branch.FRONTLEFT_LEFTBRANCH));
+    operatorReefBox.button(9).onTrue(stateController.setBranch(Branch.FRONTLEFT_RIGHTBRANCH));
+    operatorReefBox.button(8).onTrue(stateController.setBranch(Branch.BACKLEFT_LEFTBRANCH));
+    operatorReefBox.button(7).onTrue(stateController.setBranch(Branch.BACKLEFT_RIGHTBRANCH));
+    operatorReefBox.button(6).onTrue(stateController.setBranch(Branch.BACK_LEFTBRANCH));
+    operatorReefBox.button(5).onTrue(stateController.setBranch(Branch.BACK_RIGHTBRANCH));
+    operatorReefBox.button(4).onTrue(stateController.setBranch(Branch.BACKRIGHT_LEFTBRANCH));
+    operatorReefBox.button(3).onTrue(stateController.setBranch(Branch.BACKRIGHT_RIGHTBRANCH));
+    operatorReefBox.button(1).onTrue(stateController.setBranch(Branch.FRONTRIGHT_RIGHTBRANCH));
+    operatorReefBox.button(2).onTrue(stateController.setBranch(Branch.FRONTRIGHT_LEFTBRANCH));
 
     /* TEST CONTROLLER */
 
