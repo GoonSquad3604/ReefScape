@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "SetLFour"
+            "name": "SetL4"
           }
         },
         {
@@ -35,7 +35,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.5
+                  "waitTime": 1.333
                 }
               }
             ]
@@ -50,7 +50,13 @@
         {
           "type": "named",
           "data": {
-            "name": "HOMe"
+            "name": "Home"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake2"
           }
         },
         {
@@ -67,22 +73,15 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "in_take"
-                }
-              }
-            ]
+            "name": "waitUntilGamePiece"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "SetLFour"
+            "name": "SetL4"
           }
         },
         {
@@ -104,7 +103,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.5
+                  "waitTime": 1.333
                 }
               }
             ]
@@ -119,7 +118,13 @@
         {
           "type": "named",
           "data": {
-            "name": "HOMe"
+            "name": "Home"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake2"
           }
         },
         {
@@ -136,16 +141,9 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "in_take"
-                }
-              }
-            ]
+            "name": "waitUntilGamePiece"
           }
         }
       ]

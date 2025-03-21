@@ -439,8 +439,8 @@ public class Drive extends SubsystemBase {
 
     PathConstraints constraints =
         new PathConstraints(
-            TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
-            PATH_MAX_ACCEL,
+            PF_MAX_SPEED_OR_SOMETHING,
+            PF_MAX_ACCEL,
             Units.degreesToRadians(PATH_MAX_ANGULAR_VELO),
             Units.degreesToRadians(PATH_MAX_ANGULAR_ACCEL));
 

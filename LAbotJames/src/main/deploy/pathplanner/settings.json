@@ -3,8 +3,8 @@
   "robotLength": 0.889,
   "holonomicMode": true,
   "pathFolders": [
-    "DescriptiveNamePaths",
-    "autoAlineAlgae",
+    "MiddleDual1PiecePROCESSOR",
+    "Right2Piece",
     "autoAlineHornCoralPos"
   ],
   "autoFolders": [],
