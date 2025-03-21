@@ -13,13 +13,13 @@
         {
           "type": "named",
           "data": {
-            "name": "SetLFour"
+            "name": "SetL4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DescriptiveNames1"
+            "pathName": "MiddleToBackLeft"
           }
         },
         {
@@ -35,7 +35,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.5
+                  "waitTime": 1.333
                 }
               }
             ]
@@ -50,57 +50,31 @@
         {
           "type": "named",
           "data": {
-            "name": "HOMe"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "DescriptiveNames2"
-                }
-              }
-            ]
+            "name": "Home"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "waitUntilGamePiece"
+            "name": "SetAlgae"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "SetLFour"
+            "name": "AlgaeL2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "NotDescriptiveNames3"
+            "pathName": "BackLeftToBackCenterFace"
           }
         },
         {
-          "type": "race",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "goTo_Elevator_State"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.5
-                }
-              }
-            ]
+            "pathName": "BackCenterFaceToProcessor"
           }
         },
         {
@@ -112,26 +86,7 @@
         {
           "type": "named",
           "data": {
-            "name": "HOMe"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "pseudoDescriptiveNames4"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "waitUntilGamePiece"
+            "name": "Home"
           }
         }
       ]

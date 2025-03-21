@@ -31,14 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "in_take",
-      "waypointRelativePos": 0.3329633740288538,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -52,7 +45,7 @@
     "rotation": 55.0
   },
   "reversed": false,
-  "folder": "DescriptiveNamePaths",
+  "folder": "Right2Piece",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 119.99999999999999

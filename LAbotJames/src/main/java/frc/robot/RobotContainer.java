@@ -17,11 +17,9 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -181,24 +179,14 @@ public class RobotContainer {
     lED.setDefaultCommand(
         lED.defaultLeds(() -> stateController.getMode(), () -> stateController.isIntakeMode()));
 
-    // left and right path setup
-    try {
-      PathPlannerPath.fromPathFile("LeftSource");
-    } catch (Exception e) {
-      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-    }
-
-    // usable commands
-
-    // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
     // Named Commands
     NamedCommands.registerCommand("lEDTest", lED.solidCommand(Color.kBlanchedAlmond));
     NamedCommands.registerCommand("in_take", stateController.setIntakeMode());
+    NamedCommands.registerCommand("intake2", superStructure.goToSource());
     NamedCommands.registerCommand(
         "fire",
         new InstantCommand(() -> manipulator.runWheels(ManipulatorConstants.coralShoot))
-            .andThen(Commands.waitSeconds(1))
+            .andThen(Commands.waitSeconds(0.8))
             .andThen(manipulator.stopIntake()));
     NamedCommands.registerCommand(
         "goTo_Elevator_State",
@@ -235,13 +223,13 @@ public class RobotContainer {
                         .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)))),
             stateController::getLevel));
     NamedCommands.registerCommand("SetCoral", stateController.setCoralMode());
-    NamedCommands.registerCommand("SetAlgee", stateController.setAlgaeMode(manipulator));
-    NamedCommands.registerCommand("SetLFour", stateController.setL4());
-    NamedCommands.registerCommand("SetLthree", stateController.setL3());
-    NamedCommands.registerCommand("SetLWon", stateController.setL1());
-    NamedCommands.registerCommand("Set2", stateController.setL2());
+    NamedCommands.registerCommand("SetAlgae", stateController.setAlgaeMode(manipulator));
+    NamedCommands.registerCommand("SetL4", stateController.setL4());
+    NamedCommands.registerCommand("SetL3", stateController.setL3());
+    NamedCommands.registerCommand("SetL1", stateController.setL1());
+    NamedCommands.registerCommand("SetL2", stateController.setL2());
     NamedCommands.registerCommand(
-        "HOMe",
+        "Home",
         superStructure
             .goHome()
             .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
@@ -251,8 +239,13 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "waitUntilGamePiece", Commands.waitUntil(manipulator::hasGamePiece));
 
+    NamedCommands.registerCommand("AlgaeL2", superStructure.goToL2Algae());
+
+    configureButtonBindings();
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
     // Set up SysId routines
     //  autoChooser.addOption(
     //      "Drive Wheel Radius Characterization",
@@ -270,7 +263,6 @@ public class RobotContainer {
     //  autoChooser.addOption(
     //      "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    configureButtonBindings();
   }
 
   /**
@@ -300,7 +292,7 @@ public class RobotContainer {
     Trigger L1 = new Trigger(() -> stateController.isL1());
     Trigger LMahome = new Trigger(() -> stateController.isMahome());
 
-    Trigger operatorManualOverride = operatorButtonBox.button(11);
+    // Trigger operatorManualOverride = operatorButtonBox.button(11);
     // Trigger driverPathOverride = new Trigger(() -> driverController.getLeftTriggerAxis() > 0.01);
     BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
 
@@ -826,14 +818,7 @@ public class RobotContainer {
                 stateController.setNoIntakeMode(), stateController.setIntakeMode(), intakeMode));
 
     // when intake + coral, begin to intake
-    intakeMode
-        .and(coralMode)
-        .onTrue(
-            superStructure
-                .goToSource()
-                .alongWith(
-                    // leds flash until game piece
-                    lED.strobeCommand(Color.kRed, 0.3333604)));
+    intakeMode.and(coralMode).onTrue(superStructure.goToSource());
 
     // .until(() -> manipulator.hasGamePiece()))
     // .andThen(
@@ -842,14 +827,15 @@ public class RobotContainer {
     //         .withTimeout(.5)
     //         .andThen(stateController.setNoIntakeMode())));
 
-    intakeMode.and(coralMode).onFalse(arm.home().alongWith(manipulator.stopIntake()));
-    // .alongWith(lED.defaultLeds(() -> stateController.getMode()))));
-
     intakeMode
         .and(coralMode)
-        .and(hasGamePiece)
-        .onTrue(
-            manipulator.intakeCoral().withTimeout(.5).andThen(stateController.setNoIntakeMode()));
+        .onFalse(
+            arm.home()
+                .alongWith(manipulator.intakeCoral().withTimeout(.5))
+                .andThen(manipulator.stopIntake()));
+    // .alongWith(lED.defaultLeds(() -> stateController.getMode()))));
+
+    intakeMode.and(coralMode).and(hasGamePiece).onTrue(stateController.setNoIntakeMode());
 
     operatorButtonBox
         .button(10)
@@ -864,17 +850,14 @@ public class RobotContainer {
 
     operatorButtonBox.button(10).and(algaeMode).onFalse(Commands.runOnce(() -> arm.processor()));
 
-    // // Vomit
-    // operatorButtonBox
-    //     .button(11)
-    //     .whileTrue(
-    //         manipulator
-    //             .vomit()
-    //             .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.l2Pos)));
+    // Vomit
+    operatorButtonBox
+        .button(11)
+        .whileTrue(manipulator.vomit().alongWith(new ElevatorToSetpoint(elevator, 6.3604)));
 
-    // operatorButtonBox
-    //     .button(11)
-    //     .onFalse(elevator.runOnce(() -> elevator.stop()).alongWith(manipulator.stopIntake()));
+    operatorButtonBox
+        .button(11)
+        .onFalse(elevator.runOnce(() -> elevator.stop()).alongWith(manipulator.stopIntake()));
 
     // Fire
 

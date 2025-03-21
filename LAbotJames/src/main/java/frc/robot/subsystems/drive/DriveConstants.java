@@ -11,7 +11,7 @@ public final class DriveConstants {
   public static final double PATH_MAX_ACCEL = 3;
   public static final double PF_MAX_ACCEL = 1;
   public static final double PATH_MAX_ANGULAR_VELO = 540;
-  public static final double PATH_MAX_ANGULAR_ACCEL = 720;
+  public static final double PATH_MAX_ANGULAR_ACCEL = 720 / 2;
   public static final double PF_MAX_SPEED_OR_SOMETHING = 4.5050;
 
   public static final PPHolonomicDriveController PP_DRIVE_CONTROLLER =
