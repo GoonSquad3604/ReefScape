@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.983041870014971,
+        "x": 2.9830418700149712,
         "y": 3.994310249373436
       },
       "isLocked": false,
@@ -52,7 +52,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "autoAlineHornCoralPos",
+  "folder": "CoralAutoAlinePaths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

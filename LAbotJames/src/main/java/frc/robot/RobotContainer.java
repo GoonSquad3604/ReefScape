@@ -183,6 +183,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("lEDTest", lED.solidCommand(Color.kBlanchedAlmond));
     NamedCommands.registerCommand("in_take", stateController.setIntakeMode());
     NamedCommands.registerCommand("intake2", superStructure.goToSource());
+    NamedCommands.registerCommand("stopIntake", manipulator.stopIntaking());
     NamedCommands.registerCommand(
         "fire",
         new InstantCommand(() -> manipulator.runWheels(ManipulatorConstants.coralShoot))
@@ -779,7 +780,7 @@ public class RobotContainer {
     operatorButtonBox
         .button(8)
         .and(climbMode)
-        .onTrue(arm.climb().alongWith(climber.setClimberHome()));
+        .onTrue(arm.climb()); // .alongWith(climber.setClimberHome()));
 
     // Climb up
     // operatorButtonBox.button(9).and(climbMode).onTrue(climber.setClimberUp());
