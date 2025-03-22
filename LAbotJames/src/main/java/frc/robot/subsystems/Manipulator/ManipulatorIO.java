@@ -20,6 +20,7 @@ public interface ManipulatorIO {
     public double manipulatorOpeningMotorVoltage;
 
     public double manipulatorLeftWheelMotorCurrent;
+    public double manipulatorLeftWheelStatorCurrent;
     public double manipulatorRightWheelMotorCurrent;
     public double manipulatorOpeningMotorCurrent;
 

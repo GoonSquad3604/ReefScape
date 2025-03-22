@@ -310,7 +310,8 @@ public class StateController extends SubsystemBase {
             && !elevator.mahoming
             && manipulatorIsReady
             && armIsReady
-            && elevatorIsReady;
+            && elevatorIsReady
+            && !DriverStation.isAutonomous();
 
     // Logger.recordOutput("laserCanSees", manipulator);
     // Logger.recordOutput("ArmIsInPosition", armIsReady);
