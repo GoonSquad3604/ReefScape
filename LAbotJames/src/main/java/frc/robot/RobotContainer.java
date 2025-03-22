@@ -89,7 +89,7 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandJoystick operatorButtonBox = new CommandJoystick(1);
   private final CommandJoystick operatorReefBox = new CommandJoystick(2);
-  private final CommandXboxController testController = new CommandXboxController(3);
+  //   private final CommandXboxController testController = new CommandXboxController(3);
   private final Supplier<Translation2d> joystickSupplier =
       () -> new Translation2d(driverController.getLeftY(), driverController.getLeftX());
 
@@ -186,7 +186,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "fire",
         new InstantCommand(() -> manipulator.runWheels(ManipulatorConstants.coralShoot))
-            .andThen(Commands.waitSeconds(0.8))
+            .andThen(Commands.waitSeconds(0.5))
             .andThen(manipulator.stopIntake()));
     NamedCommands.registerCommand(
         "goTo_Elevator_State",
@@ -853,7 +853,7 @@ public class RobotContainer {
     // Vomit
     operatorButtonBox
         .button(11)
-        .whileTrue(manipulator.vomit().alongWith(new ElevatorToSetpoint(elevator, 6.3604)));
+        .whileTrue(manipulator.vomit().alongWith(new ElevatorToSetpoint(elevator, 7.3604)));
 
     operatorButtonBox
         .button(11)
@@ -924,20 +924,20 @@ public class RobotContainer {
 
     /* TEST CONTROLLER */
 
-    testController.povLeft().onTrue(arm.elbowUp());
-    testController.povLeft().onFalse(arm.stopElbow());
+    // testController.povLeft().onTrue(arm.elbowUp());
+    // testController.povLeft().onFalse(arm.stopElbow());
 
-    testController.povRight().onTrue(arm.elbowDown());
-    testController.povRight().onFalse(arm.stopElbow());
+    // testController.povRight().onTrue(arm.elbowDown());
+    // testController.povRight().onFalse(arm.stopElbow());
 
-    testController.y().whileTrue(arm.wristUp());
-    testController.y().onFalse(arm.stopWrist());
+    // testController.y().whileTrue(arm.wristUp());
+    // testController.y().onFalse(arm.stopWrist());
 
-    testController.a().whileTrue(arm.wristDown());
-    testController.a().onFalse(arm.stopWrist());
+    // testController.a().whileTrue(arm.wristDown());
+    // testController.a().onFalse(arm.stopWrist());
 
-    testController.start().onTrue(new ElevatorToSetpoint(elevator, 6.0 - 0.0));
-    ;
+    // testController.start().onTrue(new ElevatorToSetpoint(elevator, 6.0 - 0.0));
+    // ;
   }
 
   /**
