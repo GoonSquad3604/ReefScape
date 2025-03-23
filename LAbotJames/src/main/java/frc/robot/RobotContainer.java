@@ -89,7 +89,7 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandJoystick operatorButtonBox = new CommandJoystick(1);
   private final CommandJoystick operatorReefBox = new CommandJoystick(2);
-  //   private final CommandXboxController testController = new CommandXboxController(3);
+  // private final CommandXboxController testController = new CommandXboxController(3);
   private final Supplier<Translation2d> joystickSupplier =
       () -> new Translation2d(driverController.getLeftY(), driverController.getLeftX());
 
@@ -394,11 +394,30 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // Climb buttons (only while in climb mode)
-    driverController.povUp().and(climbMode).onTrue(climber.moveClimberUp());
-    driverController.povUp().and(climbMode).onFalse(climber.stop());
 
-    driverController.povDown().and(climbMode).onTrue(climber.moveClimberDown());
-    driverController.povDown().and(climbMode).onFalse(climber.stop());
+    driverController
+        .povUp()
+        .or(driverController.povUpLeft().or(driverController.povUpRight()))
+        .and(climbMode)
+        .onTrue(climber.moveClimberUp());
+    driverController
+        .povUp()
+        .or(driverController.povUpLeft().or(driverController.povUpRight()))
+        .and(climbMode)
+        .onFalse(climber.stop());
+
+    driverController
+        .povDown()
+        // .or(driverController.povDownLeft())
+        // .or(driverController.povDownRight())
+        .and(climbMode)
+        .onTrue(climber.moveClimberDown());
+    driverController
+        .povDown()
+        // .or(driverController.povDownLeft())
+        // .or(driverController.povDownRight())
+        .and(climbMode)
+        .onFalse(climber.stop());
 
     driverController
         .back()
@@ -679,9 +698,10 @@ public class RobotContainer {
         .onFalse(
             superStructure
                 .goToProcessor()
-                .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
-                .until(() -> !elevator.mahoming)
-                .andThen(elevator.runOnce(() -> elevator.stop())));
+                .alongWith(
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                        .until(() -> !elevator.mahoming)
+                        .andThen(elevator.runOnce(() -> elevator.stop()))));
 
     // L2 Coral (queue)
     // operatorButtonBox
@@ -718,9 +738,10 @@ public class RobotContainer {
         .onFalse(
             superStructure
                 .goToProcessor()
-                .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
-                .until(() -> !elevator.mahoming)
-                .andThen(elevator.runOnce(() -> elevator.stop())));
+                .alongWith(
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                        .until(() -> !elevator.mahoming)
+                        .andThen(elevator.runOnce(() -> elevator.stop()))));
 
     // L1 Coral (queue)
     // operatorButtonBox
@@ -924,6 +945,8 @@ public class RobotContainer {
     operatorReefBox.button(2).onTrue(stateController.setBranch(Branch.FRONTRIGHT_LEFTBRANCH));
 
     /* TEST CONTROLLER */
+
+    // testController.povDown().onTrue(superStructure.goToSource());
 
     // testController.povLeft().onTrue(arm.elbowUp());
     // testController.povLeft().onFalse(arm.stopElbow());

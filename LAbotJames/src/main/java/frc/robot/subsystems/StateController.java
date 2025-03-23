@@ -286,7 +286,8 @@ public class StateController extends SubsystemBase {
       armIsReady =
           Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL1) < 0.075
               && Math.abs(arm.getWristPos() - ArmConstants.coralWristL1) < 0.075;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l1Pos) < 0.50001;
+      elevatorIsReady = false; // or !true
+
     } else if (isL2()) {
       armIsReady =
           Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.075
