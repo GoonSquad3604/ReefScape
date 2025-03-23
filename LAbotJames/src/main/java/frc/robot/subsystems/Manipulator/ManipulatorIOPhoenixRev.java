@@ -84,9 +84,9 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    config.CurrentLimits.SupplyCurrentLimitEnable = true;
+    config.CurrentLimits.SupplyCurrentLimitEnable = false;
     config.CurrentLimits.SupplyCurrentLimit = 40; // was 20 before changing algae intake
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimitEnable = false;
     config.CurrentLimits.StatorCurrentLimit = 60;
     config.Voltage.PeakForwardVoltage = 12.0;
     config.Voltage.PeakReverseVoltage = -12.0;

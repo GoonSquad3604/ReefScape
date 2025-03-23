@@ -79,6 +79,18 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.375
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopIntake"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "SetL4"

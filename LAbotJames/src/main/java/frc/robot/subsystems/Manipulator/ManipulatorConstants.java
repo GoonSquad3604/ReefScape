@@ -40,12 +40,13 @@ public final class ManipulatorConstants {
   public static final double wheelL3RPM = 60;
   public static final double wheelL4RPM = 59;
 
-  public static final double algaeShoot = 1;
-  public static final double algaeIntake = -0.15003604;
+  public static final double algaeShoot = 0.90;
+  public static final double algaeIntake = -0.20;
+  public static final double algaeIntakeSlow = -0.102;
 
   public static final double coralShoot = -0.3604;
   public static final double coralIntake = 0.5;
 
-  public static final double reefThreshold = 540 / (540.0 / 500);
-  public static final double l4Threshold = 400;
+  public static final double reefThreshold = 500;
+  public static final double l4Threshold = 455;
 }

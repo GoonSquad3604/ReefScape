@@ -3,9 +3,10 @@
   "robotLength": 0.889,
   "holonomicMode": true,
   "pathFolders": [
+    "CoralAutoAlinePaths",
     "MiddleDual1PiecePROCESSOR",
-    "Right2Piece",
-    "autoAlineHornCoralPos"
+    "Left2Piece",
+    "Right2Piece"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
