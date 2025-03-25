@@ -89,7 +89,7 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandJoystick operatorButtonBox = new CommandJoystick(1);
   private final CommandJoystick operatorReefBox = new CommandJoystick(2);
-  // private final CommandXboxController testController = new CommandXboxController(3);
+  private final CommandXboxController testController = new CommandXboxController(3);
   private final Supplier<Translation2d> joystickSupplier =
       () -> new Translation2d(driverController.getLeftY(), driverController.getLeftX());
 
@@ -510,14 +510,14 @@ public class RobotContainer {
     /* SOURCE PATHFINDS */
 
     // Left bumper, coral mode, no piece -> left source
-    driverController
-        .leftBumper()
-        .and(coralMode)
-        .and(hasNoGamePiece)
-        .whileTrue(
-            Commands.defer(
-                    () -> drive.pathfindToPath(stateController.getSourcePath(true)), Set.of(drive))
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+    // driverController
+    //     .leftBumper()
+    //     .and(coralMode)
+    //     .and(hasNoGamePiece)
+    //     .whileTrue(
+    //         Commands.defer(
+    //                 () -> drive.pathfindToPath(stateController.getSourcePath(true)), Set.of(drive))
+    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     // Right bumper, coral mode, no piece -> right source
     driverController
@@ -946,8 +946,14 @@ public class RobotContainer {
 
     /* TEST CONTROLLER */
 
-    // testController.povDown().onTrue(superStructure.goToSource());
-
+    // testController
+    //     .povDown()
+    //     .onTrue(
+    //         superStructure
+    //             .goToSource()
+    //             .repeatedly()
+    //             .until(hasGamePiece)
+    //             .andThen(manipulator.stopIntaking()));
     // testController.povLeft().onTrue(arm.elbowUp());
     // testController.povLeft().onFalse(arm.stopElbow());
 
@@ -962,6 +968,12 @@ public class RobotContainer {
 
     // testController.start().onTrue(new ElevatorToSetpoint(elevator, 6.0 - 0.0));
     // ;
+
+    testController.povUp().onTrue(
+        Commands.defer( 
+            () -> new ElevatorToSetpoint(elevator, elevator.getPos() + 1), 
+                Set.of(elevator)));
+
   }
 
   /**

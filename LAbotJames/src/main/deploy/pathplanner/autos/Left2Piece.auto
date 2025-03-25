@@ -79,12 +79,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.375
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "stopIntake"
