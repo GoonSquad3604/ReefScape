@@ -169,6 +169,10 @@ public class Manipulator extends SubsystemBase {
     return runOnce(() -> io.setWheelPower(ManipulatorConstants.algaeIntake));
   }
 
+  public Command keepAlgaeIn() {
+    return runOnce(() -> io.setWheelPower(ManipulatorConstants.algaeIntakeSlow));
+  }
+
   public Command shootAlgae() {
     return runOnce(() -> io.setWheelPower(ManipulatorConstants.algaeShoot));
   }
