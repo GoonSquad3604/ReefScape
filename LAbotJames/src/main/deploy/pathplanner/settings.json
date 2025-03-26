@@ -4,8 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [
     "CoralAutoAlinePaths",
-    "MiddleDual1PiecePROCESSOR",
     "Left2Piece",
+    "MiddleDual1PiecePROCESSOR",
+    "ClimberPaths",
     "Right2Piece"
   ],
   "autoFolders": [],

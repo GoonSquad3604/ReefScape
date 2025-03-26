@@ -516,7 +516,8 @@ public class RobotContainer {
     //     .and(hasNoGamePiece)
     //     .whileTrue(
     //         Commands.defer(
-    //                 () -> drive.pathfindToPath(stateController.getSourcePath(true)), Set.of(drive))
+    //                 () -> drive.pathfindToPath(stateController.getSourcePath(true)),
+    // Set.of(drive))
     //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     // Right bumper, coral mode, no piece -> right source
@@ -616,9 +617,15 @@ public class RobotContainer {
         .whileTrue(
             Commands.defer(
                 () ->
-                    drive
-                        .pathfindToPath(climber.getClimbPath())
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                        .until(() -> !elevator.mahoming)
+                        .andThen(elevator.runOnce(() -> elevator.stop()))
+                        .alongWith(
+                            arm.climb()
+                                .andThen(
+                                    drive
+                                        .pathfindToPath(climber.getClimbPath())
+                                        .andThen(climber.setClimberUp()))),
                 Set.of(drive, climber)));
 
     /* OPERATOR BUTTONS */
@@ -969,11 +976,11 @@ public class RobotContainer {
     // testController.start().onTrue(new ElevatorToSetpoint(elevator, 6.0 - 0.0));
     // ;
 
-    testController.povUp().onTrue(
-        Commands.defer( 
-            () -> new ElevatorToSetpoint(elevator, elevator.getPos() + 1), 
-                Set.of(elevator)));
-
+    testController
+        .povUp()
+        .onTrue(
+            Commands.defer(
+                () -> new ElevatorToSetpoint(elevator, elevator.getPos() + 1), Set.of(elevator)));
   }
 
   /**
