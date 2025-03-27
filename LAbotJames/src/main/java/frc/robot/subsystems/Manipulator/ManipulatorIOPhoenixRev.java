@@ -34,7 +34,8 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
 
   private TalonFXS leftWheel, rightWheel;
   private SparkFlex opening;
-  private DigitalInput manipulatorSensor;
+  // private DigitalInput manipulatorSensor;
+  private LaserCan manipulatorSensor;
   private AbsoluteEncoder openingAbsoluteEncoder;
   private SparkFlexConfig openingConfig;
   private LaserCan manipulatorDistanceSensor;
@@ -63,7 +64,7 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     leftWheel = new TalonFXS(ManipulatorConstants.leftWheelMotorID);
     rightWheel = new TalonFXS(ManipulatorConstants.rightWheelMotorID);
     // opening = new SparkFlex(ManipulatorConstants.openingMotorID, MotorType.kBrushless);
-    manipulatorSensor = new DigitalInput(ManipulatorConstants.manipulatorSensorID);
+    manipulatorSensor = new LaserCan(ManipulatorConstants.manipulatorSensorID);
     manipulatorDistanceSensor = new LaserCan(ManipulatorConstants.manipulatorDistanceSensorID);
     velocityTorqueControlRequest = new VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
     torqueControlRequest = new TorqueCurrentFOC(0).withUpdateFreqHz(0);
@@ -75,6 +76,15 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
       manipulatorDistanceSensor.setRangingMode(RangingMode.SHORT);
       manipulatorDistanceSensor.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 6, 8));
       manipulatorDistanceSensor.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);
+    } catch (ConfigurationFailedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    try {
+      manipulatorSensor.setRangingMode(RangingMode.SHORT);
+      manipulatorSensor.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 6, 8));
+      manipulatorSensor.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);
     } catch (ConfigurationFailedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -166,8 +176,15 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     // inputs.manipulatorOpeningMotorCurrent = opening.getOutputCurrent();
     // inputs.manipulatorOpeningMotorPos = openingAbsoluteEncoder.getPosition();
     // inputs.manipulatorOpeningMotorVelocity = openingAbsoluteEncoder.getVelocity();
-    inputs.manipulatorSensor = !manipulatorSensor.get();
+    inputs.manipulatorOtherDistance = 
+        manipulatorSensor.getMeasurement().status 
+                == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
+            ? manipulatorSensor.getMeasurement().distance_mm
+            : 3604;
 
+    inputs.manipulatorSensor = 
+        inputs.manipulatorOtherDistance <= ManipulatorConstants.hasGamePieceThreshold;
+    
     inputs.manipulatorDistance =
         manipulatorDistanceSensor.getMeasurement().status
                 == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
@@ -205,10 +222,10 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     opening.getClosedLoopController().setReference(position, SparkFlex.ControlType.kPosition);
   }
 
-  @Override
-  public boolean getManipulatorSensor() {
-    return !manipulatorSensor.get();
-  }
+  // @Override
+  // public boolean getManipulatorSensor() {
+  // return !manipulatorSensor.get();
+  // }
 
   public void setOpeningPower(double power) {
     opening.set(power);

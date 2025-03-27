@@ -14,6 +14,7 @@ public interface ManipulatorIO {
     public boolean manipulatorOpeningMotorConnected = false;
 
     public boolean manipulatorSensor = false;
+    public double manipulatorOtherDistance;
 
     public double manipulatorLeftWheelMotorVoltage;
     public double manipulatorRightWheelMotorVoltage;
