@@ -52,7 +52,7 @@ public class VisionConstants {
           Units.inchesToMeters(-8.875),
           Units.inchesToMeters(7.0625),
           Units.inchesToMeters(32.1875),
-          new Rotation3d(0.0, -12 * (Math.PI / 180), Math.PI));
+          new Rotation3d(0.0, -12 * (Math.PI / 180), Math.PI)); // 12 to 25
   // Front Right Camerra
   public static Transform3d robotToCamera3 =
       new Transform3d(

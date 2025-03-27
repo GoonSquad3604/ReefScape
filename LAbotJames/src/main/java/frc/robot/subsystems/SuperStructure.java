@@ -66,7 +66,7 @@ public class SuperStructure extends SubsystemBase {
         () -> {
           arm.elbowAlgaeL25();
           arm.wristAlgaeL25();
-          // manipulator.runWheels(ManipulatorConstants.algaeIntake);
+          manipulator.runWheels(ManipulatorConstants.algaeIntake);
         });
   }
 
@@ -75,7 +75,7 @@ public class SuperStructure extends SubsystemBase {
         () -> {
           arm.elbowAlgaeL35();
           arm.wristAlgaeL35();
-          // manipulator.runWheels(ManipulatorConstants.algaeIntake);
+          manipulator.runWheels(ManipulatorConstants.algaeIntake);
         });
   }
 
@@ -91,7 +91,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.processor();
-          // anipulator.runWheels(ManipulatorConstants.algaeIntake);
+          manipulator.runWheels(ManipulatorConstants.algaeIntake);
         });
   }
 
@@ -99,7 +99,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.intakeFromGround();
-          // manipulator.runWheels(ManipulatorConstants.algaeIntake);
+          manipulator.runWheels(ManipulatorConstants.algaeIntake);
         });
   }
 

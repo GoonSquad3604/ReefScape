@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.subsystems.StateController;
 import frc.robot.util.LevelState;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
@@ -58,7 +59,7 @@ public class Manipulator extends SubsystemBase {
   }
 
   public boolean hasGamePiece() {
-    return io.getManipulatorSensor();
+    return inputs.manipulatorOtherDistance <= ManipulatorConstants.hasGamePieceThreshold;
   }
 
   public void setOpeningToCoral() {
@@ -173,8 +174,13 @@ public class Manipulator extends SubsystemBase {
     return runOnce(() -> io.setWheelPower(ManipulatorConstants.algaeIntakeSlow));
   }
 
-  public Command shootAlgae() {
-    return runOnce(() -> io.setWheelPower(ManipulatorConstants.algaeShoot));
+  public Command shootAlgae(StateController stateController) {
+    if(stateController.isL4()){
+      return runOnce(() -> io.setWheelPower(ManipulatorConstants.bargeShoot));
+    }
+    else{
+      return runOnce(() -> io.setWheelPower(ManipulatorConstants.processorShoot));
+    }
   }
 
   public Command shootCoral() {

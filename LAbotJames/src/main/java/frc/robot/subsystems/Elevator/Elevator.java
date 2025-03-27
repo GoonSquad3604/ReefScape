@@ -160,7 +160,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command setMahoming() {
-    return run(() -> mahoming = true);
+    return runOnce(() -> mahoming = true);
   }
 
   @Override

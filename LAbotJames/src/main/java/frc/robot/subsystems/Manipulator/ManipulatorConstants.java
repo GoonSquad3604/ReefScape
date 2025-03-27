@@ -40,7 +40,8 @@ public final class ManipulatorConstants {
   public static final double wheelL3RPM = 60;
   public static final double wheelL4RPM = 59;
 
-  public static final double algaeShoot = 1.0;
+  public static final double bargeShoot = .9;
+  public static final double processorShoot = 0.3;
   public static final double algaeIntake = -0.5;
   public static final double algaeIntakeSlow = -0.10;
 
@@ -49,6 +50,7 @@ public final class ManipulatorConstants {
 
   public static final double reefThreshold = 500;
   public static final double l4Threshold = 455;
+  public static final double hasGamePieceThreshold = 36.04;
 
   public static final double leftToRightRatio = -0.8;
 }
