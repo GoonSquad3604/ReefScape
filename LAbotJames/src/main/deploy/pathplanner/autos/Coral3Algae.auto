@@ -5,45 +5,59 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "CoralFirst"
+            "name": "SetCoral"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Algae1"
+            "name": "SetL4"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "FirstNet"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CoralFirst"
+                }
+              },
+              {
+                "type": "race",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "goTo_Elevator_State"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.333
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Algae2"
+            "name": "SetAlgae"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "@secondNet"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Algae3"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "3rdNet"
+            "name": "AlgaeL2"
           }
         }
       ]
