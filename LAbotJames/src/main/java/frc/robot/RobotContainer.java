@@ -82,7 +82,7 @@ public class RobotContainer {
   private final Arm arm;
   private final Manipulator manipulator;
   private final Climber climber;
-  private final Elevator elevator;
+  public final Elevator elevator;
   private final LEDs lED;
 
   // Controller
@@ -636,7 +636,9 @@ public class RobotContainer {
     /* OPERATOR BUTTONS */
 
     // Set mode to coral
-    operatorButtonBox.button(1 + 1).onTrue(stateController.setCoralMode());
+    operatorButtonBox
+        .button(1 + 1)
+        .onTrue(stateController.setCoralMode().andThen(manipulator.stopIntake()));
 
     // Set mode to algae
     operatorButtonBox
@@ -881,18 +883,26 @@ public class RobotContainer {
     algaeMode.and(hasGamePiece).whileTrue(manipulator.keepAlgaeIn());
     algaeMode.and(hasGamePiece.negate()).whileTrue(manipulator.intakeAlgae());
 
+    climbMode.onTrue(manipulator.stopIntake());
+
     operatorButtonBox
         .button(10)
         .and(algaeMode)
-        .onTrue(
+        .toggleOnTrue(
             superStructure
                 .intakeFromGround()
-                .alongWith(
-                    new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                        .until(() -> !elevator.mahoming)
-                        .andThen(elevator.runOnce(() -> elevator.stop()))));
+                .repeatedly()
+                .until(hasGamePiece)
+                .andThen(Commands.runOnce(() -> arm.processor()))
+            /*  .alongWith(
+            //     new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+            //         .until(() -> !elevator.mahoming)
+                .andThen(elevator.runOnce(() -> elevator.stop())) */ );
 
-    operatorButtonBox.button(10).and(algaeMode).onFalse(Commands.runOnce(() -> arm.processor()));
+    operatorButtonBox
+        .button(10)
+        .and(algaeMode)
+        .toggleOnFalse(Commands.runOnce(() -> arm.processor()));
 
     // Vomit
     operatorButtonBox
@@ -925,7 +935,7 @@ public class RobotContainer {
         .and(algaeMode)
         .onFalse(
             manipulator
-                .stopIntake()
+                .intakeAlgae()
                 .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
                 .until(() -> !elevator.mahoming)
                 .andThen(elevator.runOnce(() -> elevator.stop())));
