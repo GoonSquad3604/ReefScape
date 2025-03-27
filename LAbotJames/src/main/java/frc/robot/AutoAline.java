@@ -56,6 +56,7 @@ public class AutoAline {
       new Pose2d(); // The most recently targeted position (not null)
 
   private static PathPlannerPath targetPath;
+  private static Pose2d targetPose;
   // private static PathPlannerPath lastTargetedPath = new PathPlannerPath();
 
   public static Pose2d getActiveTarget() {
@@ -107,6 +108,15 @@ public class AutoAline {
               // lastTargetedPath = targetPath;
             }),
         Commands.defer(() -> robot.drive.pathfindToPath(targetPath), Set.of(robot.drive)));
+  }
+
+  public static Command autoAlineToPose(RobotContainer robot, Branch branch) {
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> {
+              targetPose = poseGetter(branch);
+            }),
+        Commands.defer(() -> robot.drive.pathfindToFieldPose(targetPose), Set.of(robot.drive)));
   }
 
   private static Command driveToTargetCommand(Drive drive, ProfiledPIDController angleController) {
@@ -317,6 +327,59 @@ public class AutoAline {
 
     try {
       return PathPlannerPath.fromPathFile(pathName);
+    } catch (Exception e) {
+      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+      return null;
+    }
+  }
+
+  public static Pose2d poseGetter(Branch branch) {
+
+    Pose2d thePose = new Pose2d();
+
+    switch (branch) {
+      case BACK_LEFTBRANCH:
+        thePose = FieldConstants.Reef.leftRobotBranchPoses.get(3);
+        break;
+      case BACK_RIGHTBRANCH:
+        thePose = FieldConstants.Reef.rightRobotBranchPoses.get(3);
+        break;
+      case BACKLEFT_LEFTBRANCH:
+        thePose = FieldConstants.Reef.leftRobotBranchPoses.get(2);
+        break;
+      case BACKLEFT_RIGHTBRANCH:
+        thePose = FieldConstants.Reef.rightRobotBranchPoses.get(2);
+        break;
+      case BACKRIGHT_LEFTBRANCH:
+        thePose = FieldConstants.Reef.leftRobotBranchPoses.get(4);
+        break;
+      case BACKRIGHT_RIGHTBRANCH:
+        thePose = FieldConstants.Reef.rightRobotBranchPoses.get(4);
+        break;
+      case FRONT_LEFTBRANCH:
+        thePose = FieldConstants.Reef.leftRobotBranchPoses.get(0);
+        break;
+      case FRONT_RIGHTBRANCH:
+        thePose = FieldConstants.Reef.rightRobotBranchPoses.get(0);
+        break;
+      case FRONTLEFT_LEFTBRANCH:
+        thePose = FieldConstants.Reef.leftRobotBranchPoses.get(1);
+        break;
+      case FRONTLEFT_RIGHTBRANCH:
+        thePose = FieldConstants.Reef.rightRobotBranchPoses.get(1);
+        break;
+      case FRONTRIGHT_LEFTBRANCH:
+        thePose = FieldConstants.Reef.leftRobotBranchPoses.get(5);
+        break;
+      case FRONTRIGHT_RIGHTBRANCH:
+        thePose = FieldConstants.Reef.rightRobotBranchPoses.get(5);
+        break;
+      default:
+        thePose = null;
+    }
+
+    try {
+      return thePose;
     } catch (Exception e) {
       DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
       return null;

@@ -23,7 +23,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": null
+                  "pathName": "LeftOnePieceP1"
                 }
               },
               {
@@ -61,7 +61,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LefttWo"
+                  "pathName": "LeftOnePieceP2"
                 }
               },
               {

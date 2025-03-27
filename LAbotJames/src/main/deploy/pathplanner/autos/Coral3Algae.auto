@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CoralFirst"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Algae1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FirstNet"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Algae2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "@secondNet"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Algae3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3rdNet"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
