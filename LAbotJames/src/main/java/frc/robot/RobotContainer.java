@@ -628,9 +628,15 @@ public class RobotContainer {
         .whileTrue(
             Commands.defer(
                 () ->
-                    drive
-                        .pathfindToPath(climber.getClimbPath())
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                        .until(() -> !elevator.mahoming)
+                        .andThen(elevator.runOnce(() -> elevator.stop()))
+                        .alongWith(
+                            arm.climb()
+                                .andThen(
+                                    drive
+                                        .pathfindToPath(climber.getClimbPath())
+                                        .andThen(climber.setClimberUp()))),
                 Set.of(drive, climber)));
 
     /* OPERATOR BUTTONS */
