@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 5.74,
-        "y": 4.23
+        "y": 4.065
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.738803778039515,
-        "y": 4.278897985377624
+        "x": 6.74,
+        "y": 4.065
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.74,
-        "y": 4.065
+        "x": 7.578,
+        "y": 4.860961538461539
       },
       "prevControl": {
-        "x": 6.7394017506833865,
-        "y": 4.030414732457556
+        "x": 6.578,
+        "y": 4.860961538461539
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "@barge",
