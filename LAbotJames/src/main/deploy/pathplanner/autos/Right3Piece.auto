@@ -23,23 +23,36 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "JankDescriptibNamesOne"
+                  "pathName": "DescriptiveNames1"
                 }
               },
               {
-                "type": "race",
+                "type": "sequential",
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "wait",
                       "data": {
-                        "name": "goTo_Elevator_State"
+                        "waitTime": 0.234
                       }
                     },
                     {
-                      "type": "wait",
+                      "type": "race",
                       "data": {
-                        "waitTime": 1.333
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "goTo_Elevator_State"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.3333333333333333
+                            }
+                          }
+                        ]
                       }
                     }
                   ]
@@ -95,36 +108,35 @@
         {
           "type": "named",
           "data": {
+            "name": "stopIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "SetL4"
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
+          "data": {
+            "pathName": "Right3PiecePt3"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "NotDescriptibNames3"
+                  "name": "goTo_Elevator_State"
                 }
               },
               {
-                "type": "race",
+                "type": "wait",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "goTo_Elevator_State"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.333
-                      }
-                    }
-                  ]
+                  "waitTime": 1.333
                 }
               }
             ]
@@ -143,7 +155,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "pseudoDescriptiveNames4"
+                  "pathName": "Right3PiecePt4"
                 }
               },
               {
@@ -175,32 +187,37 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
+          "data": {
+            "name": "stopIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SetL4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right3PiecePt5"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Jank5NamesDescriptive"
+                  "name": "goTo_Elevator_State"
                 }
               },
               {
-                "type": "race",
+                "type": "wait",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "goTo_Elevator_State"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.333
-                      }
-                    }
-                  ]
+                  "waitTime": 1.333
                 }
               }
             ]
@@ -210,6 +227,18 @@
           "type": "named",
           "data": {
             "name": "fire"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Home"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right3PiecePt6"
           }
         }
       ]

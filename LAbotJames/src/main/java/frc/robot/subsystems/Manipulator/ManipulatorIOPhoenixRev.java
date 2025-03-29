@@ -26,7 +26,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.PhoenixUtil;
 import frc.robot.util.SparkUtil;
 
@@ -176,15 +175,14 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     // inputs.manipulatorOpeningMotorCurrent = opening.getOutputCurrent();
     // inputs.manipulatorOpeningMotorPos = openingAbsoluteEncoder.getPosition();
     // inputs.manipulatorOpeningMotorVelocity = openingAbsoluteEncoder.getVelocity();
-    inputs.manipulatorOtherDistance = 
-        manipulatorSensor.getMeasurement().status 
-                == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
+    inputs.manipulatorOtherDistance =
+        manipulatorSensor.getMeasurement().status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
             ? manipulatorSensor.getMeasurement().distance_mm
             : 3604;
 
-    inputs.manipulatorSensor = 
+    inputs.manipulatorSensor =
         inputs.manipulatorOtherDistance <= ManipulatorConstants.hasGamePieceThreshold;
-    
+
     inputs.manipulatorDistance =
         manipulatorDistanceSensor.getMeasurement().status
                 == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT

@@ -3,13 +3,15 @@
   "robotLength": 0.889,
   "holonomicMode": true,
   "pathFolders": [
-    "@barge",
+    "AlgaeAutoAlinePaths",
     "ClimberPaths",
     "CoralAutoAlinePaths",
     "Left2Piece",
-    "MiddleDual1PiecePROCESSOR",
-    "Right4Piece",
-    "Right2Piece"
+    "Middle1Coral2Processor",
+    "Middle1Coral3Barge",
+    "Right3Piece",
+    "Right2Piece",
+    "Right4Piece"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

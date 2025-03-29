@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.035079386215687,
-        "y": 2.657481000862612
+        "x": 6.562921920846957,
+        "y": 5.0730978387984385
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 2.96
       },
       "prevControl": {
-        "x": 5.85,
-        "y": 1.7475644347017858
+        "x": 5.775,
+        "y": 1.8774682452694516
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "@barge",
+  "folder": "Middle1Coral3Barge",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

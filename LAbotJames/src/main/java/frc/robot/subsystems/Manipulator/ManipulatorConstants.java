@@ -5,7 +5,7 @@ public final class ManipulatorConstants {
   public static final int leftWheelMotorID = 10;
   public static final int rightWheelMotorID = 11;
   public static final int openingMotorID = 12;
-  public static final int manipulatorSensorID = 0;
+  public static final int manipulatorSensorID = 49;
   public static final int manipulatorDistanceSensorID = 42;
 
   public static final double coralPos = 0.67;
@@ -50,7 +50,7 @@ public final class ManipulatorConstants {
 
   public static final double reefThreshold = 500;
   public static final double l4Threshold = 455;
-  public static final double hasGamePieceThreshold = 36.04;
+  public static final double hasGamePieceThreshold = 125;
 
   public static final double leftToRightRatio = -0.8;
 }
