@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.67,
-        "y": 7.285
+        "x": 5.155,
+        "y": 2.903
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.105,
-        "y": 7.285
+        "x": 6.262159090909091,
+        "y": 2.5043323863636364
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.78,
-        "y": 7.285
+        "x": 6.013,
+        "y": 0.59
       },
       "prevControl": {
-        "x": 9.753294069019546,
-        "y": 7.285
+        "x": 5.972982954545454,
+        "y": 2.594076704545454
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,21 +29,7 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 1.5,
-        "maxAcceleration": 1.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -56,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -90.0
   },
   "reversed": false,
-  "folder": "ClimberPaths",
+  "folder": "Middle1Coral2Processor",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }

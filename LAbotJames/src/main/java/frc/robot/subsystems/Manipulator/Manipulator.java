@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.subsystems.StateController;
 import frc.robot.util.LevelState;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
@@ -174,13 +173,16 @@ public class Manipulator extends SubsystemBase {
     return runOnce(() -> io.setWheelPower(ManipulatorConstants.algaeIntakeSlow));
   }
 
-  public Command shootAlgae(StateController stateController) {
-    if(stateController.isL4()){
+  public Command shootAlgae(boolean isL4) {
+    if (isL4) {
       return runOnce(() -> io.setWheelPower(ManipulatorConstants.bargeShoot));
-    }
-    else{
+    } else {
       return runOnce(() -> io.setWheelPower(ManipulatorConstants.processorShoot));
     }
+  }
+
+  public Command shootAlgaeFaster() {
+    return runOnce(() -> io.setWheelPower(ManipulatorConstants.bargeShoot));
   }
 
   public Command shootCoral() {

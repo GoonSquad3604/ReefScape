@@ -91,7 +91,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.processor();
-          manipulator.runWheels(ManipulatorConstants.algaeIntake);
+          manipulator.runWheels(ManipulatorConstants.algaeIntakeSlow);
         });
   }
 

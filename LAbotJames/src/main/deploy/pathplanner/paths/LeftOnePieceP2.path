@@ -45,7 +45,7 @@
     "rotation": -54.462
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Left2Piece",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -119.745

@@ -77,7 +77,7 @@ public class RobotContainer {
   // Subsystems
   public final Drive drive;
   private final Vision vision;
-  private final StateController stateController;
+  public final StateController stateController;
   private final SuperStructure superStructure;
   private final Arm arm;
   private final Manipulator manipulator;
@@ -182,13 +182,16 @@ public class RobotContainer {
     // Named Commands
     NamedCommands.registerCommand("lEDTest", lED.solidCommand(Color.kBlanchedAlmond));
     NamedCommands.registerCommand("in_take", stateController.setIntakeMode());
-    NamedCommands.registerCommand("intake2", superStructure.goToSource().alongWith(new ElevatorToSetpoint(elevator, 2)));
+    NamedCommands.registerCommand("intake2", superStructure.goToSource());
     NamedCommands.registerCommand("stopIntake", manipulator.stopIntaking());
     NamedCommands.registerCommand(
         "fire",
         new InstantCommand(() -> manipulator.runWheels(ManipulatorConstants.coralShoot))
-            .andThen(Commands.waitSeconds(0.5))
+            .andThen(Commands.waitSeconds(0.25))
             .andThen(manipulator.stopIntake()));
+    NamedCommands.registerCommand(
+        "AlgaeFire",
+        Commands.runOnce(() -> manipulator.runWheels(ManipulatorConstants.bargeShoot)));
     NamedCommands.registerCommand(
         "goTo_Elevator_State",
         Commands.select(
@@ -236,13 +239,31 @@ public class RobotContainer {
             .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
             .until(() -> !elevator.mahoming)
             .andThen(elevator.runOnce(() -> elevator.stop())));
+    NamedCommands.registerCommand(
+        "AlgaeHome",
+        new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+            .until(() -> !elevator.mahoming)
+            .andThen(elevator.runOnce(() -> elevator.stop())));
 
     NamedCommands.registerCommand(
         "waitUntilGamePiece", Commands.waitUntil(manipulator::hasGamePiece));
 
-    NamedCommands.registerCommand("AlgaeL2", superStructure.goToL2Algae());
-    NamedCommands.registerCommand("AlgaeL3", superStructure.goToL3Algae());
-
+    NamedCommands.registerCommand(
+        "AlgaeL2",
+        superStructure
+            .goToL2Algae()
+            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL2Pos)));
+    NamedCommands.registerCommand(
+        "AlgaeL3",
+        superStructure
+            .goToL3Algae()
+            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL3Pos)));
+    NamedCommands.registerCommand(
+        "Barge",
+        superStructure
+            .barge()
+            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos)));
+    NamedCommands.registerCommand("Processor", superStructure.goToProcessor());
 
     configureButtonBindings();
 
@@ -285,6 +306,7 @@ public class RobotContainer {
     Trigger algaeMode = new Trigger(() -> stateController.isAlgaeMode());
     Trigger climbMode = new Trigger(() -> stateController.isClimbMode());
     Trigger intakeMode = new Trigger(() -> stateController.isIntakeMode());
+    Trigger goGoGadgetIntake = new Trigger(() -> stateController.isLongIntakeMode());
 
     Trigger hasGamePiece = new Trigger(() -> stateController.hasGamePiece(manipulator));
     Trigger hasNoGamePiece = new Trigger(() -> !stateController.hasGamePiece(manipulator));
@@ -682,10 +704,12 @@ public class RobotContainer {
         .button(3)
         .and(algaeMode)
         .onTrue(
-            stateController.setL4().alongWith(
-            superStructure
-                .barge()
-                .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos))));
+            stateController
+                .setL4()
+                .alongWith(
+                    superStructure
+                        .barge()
+                        .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos))));
 
     // L3 Coral (queue)
     // operatorButtonBox
@@ -705,27 +729,19 @@ public class RobotContainer {
                     new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
                         .alongWith(stateController.setL3())));
 
-    //Intake L3 Algae or lower elevator to home
-    operatorButtonBox.button(4).and(algaeMode).onTrue(Commands.either(stateController.setMahome().alongWith(
-        superStructure
-            .goToProcessor()
-            .alongWith(
-                new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                    .until(() -> !elevator.mahoming)
-                    .andThen(elevator.runOnce(() -> elevator.stop())))), stateController.setL3().alongWith(
-                        superStructure
-                            .goToL3Algae()
-                            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL3Pos))), () -> stateController.isL3()));
-    
     // Intake L3 algae
-    // operatorButtonBox
-    //     .button(4)
-    //     .and(algaeMode)
-    //     .onTrue(
-    //         stateController.setL3().alongWith(
-    //         superStructure
-    //             .goToL3Algae()
-    //             .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL3Pos))));
+    operatorButtonBox
+        .button(4)
+        .and(algaeMode)
+        .onTrue(
+            stateController
+                .setL3()
+                .alongWith(
+                    superStructure
+                        .goToL3Algae()
+                        .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL3Pos))
+                        .until(hasGamePiece)
+                        .andThen(manipulator.keepAlgaeIn())));
 
     // // Return elevator to home on release
     // operatorButtonBox
@@ -759,27 +775,19 @@ public class RobotContainer {
                         .until(() -> !elevator.mahoming)
                         .andThen(elevator.runOnce(() -> elevator.stop()))));
 
-
-    operatorButtonBox.button(5).and(algaeMode).onTrue(Commands.either(stateController.setMahome().alongWith(
-        superStructure
-            .goToProcessor()
-            .alongWith(
-                new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                    .until(() -> !elevator.mahoming)
-                    .andThen(elevator.runOnce(() -> elevator.stop())))), stateController.setL2().alongWith(
-        superStructure
-            .goToL2Algae()
-            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL2Pos))), () -> stateController.isL2()));
-
     // Intake L2 algae
-    // operatorButtonBox
-    //     .button(5)
-    //     .and(algaeMode)
-    //     .onTrue(
-    //         stateController.setL2().alongWith(
-    //         superStructure
-    //             .goToL2Algae()
-    //             .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL2Pos))));
+    operatorButtonBox
+        .button(5)
+        .and(algaeMode)
+        .onTrue(
+            stateController
+                .setL2()
+                .alongWith(
+                    superStructure
+                        .goToL2Algae()
+                        .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL2Pos))
+                        .until(hasGamePiece)
+                        .andThen(manipulator.keepAlgaeIn())));
 
     // // Return elevator to home on release
     // operatorButtonBox
@@ -826,29 +834,33 @@ public class RobotContainer {
         .button(7)
         .and(coralMode)
         .onTrue(
-            stateController.setMahome().alongWith(
-            arm.home()
-                .alongWith(
-                    stateController
-                        .setNoIntakeMode()
-                        .andThen(manipulator.stopIntake())
-                        .alongWith(
-                            new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)))
-                .until(() -> !elevator.mahoming)
+            stateController
+                .setMahome()
                 .andThen(
-                    elevator.runOnce(() -> elevator.stop()))));
+                    arm.home()
+                        .alongWith(
+                            stateController
+                                .setNoIntakeMode()
+                                .andThen(manipulator.stopIntake())
+                                .alongWith(
+                                    new ElevatorToSetpoint(
+                                        elevator, ElevatorConstants.homePos, true)))
+                        .until(() -> !elevator.mahoming)
+                        .andThen(elevator.runOnce(() -> elevator.stop()))));
 
     operatorButtonBox
         .button(7)
         .and(algaeMode)
         .onTrue(
-            stateController.setMahome().alongWith(
-            superStructure
-                .goToProcessor()
-                .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
-                .until(() -> !elevator.mahoming)
-                .andThen(
-                    elevator.runOnce(() -> elevator.stop()))));
+            stateController
+                .setMahome()
+                .alongWith(
+                    superStructure
+                        .goToProcessor()
+                        .alongWith(
+                            new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
+                        .until(() -> !elevator.mahoming)
+                        .andThen(elevator.runOnce(() -> elevator.stop()))));
 
     // Set arm to climb position
     operatorButtonBox
@@ -889,7 +901,7 @@ public class RobotContainer {
 
     operatorButtonBox
         .button(10)
-        .and(coralMode)
+        // .and(coralMode)
         .onTrue(
             Commands.either(
                 stateController.setNoIntakeMode(), stateController.setIntakeMode(), intakeMode));
@@ -898,6 +910,10 @@ public class RobotContainer {
     intakeMode
         .and(coralMode)
         .onTrue(superStructure.goToSource().alongWith(new ElevatorToSetpoint(elevator, 2)));
+
+    intakeMode.and(algaeMode).onTrue(superStructure.intakeFromGround());
+    intakeMode.and(algaeMode).onFalse(superStructure.goToProcessor());
+    intakeMode.and(algaeMode).and(hasGamePiece).onTrue(stateController.setNoIntakeMode());
 
     // .until(() -> manipulator.hasGamePiece()))
     // .andThen(
@@ -921,29 +937,26 @@ public class RobotContainer {
 
     intakeMode.and(coralMode).and(hasGamePiece).onTrue(stateController.setNoIntakeMode());
 
-    algaeMode.and(hasGamePiece).whileTrue(manipulator.keepAlgaeIn());
+    // algaeMode.and(hasGamePiece).whileTrue(manipulator.keepAlgaeIn());
     // algaeMode.and(hasGamePiece.negate()).whileTrue(manipulator.intakeAlgae());
 
     climbMode.onTrue(manipulator.stopIntake());
 
-    operatorButtonBox
-        .button(10)
-        .and(algaeMode)
-        .toggleOnTrue(
-            superStructure
-                .intakeFromGround()
-                .repeatedly()
-                .until(hasGamePiece)
-                .andThen(Commands.runOnce(() -> arm.processor()))
-            /*  .alongWith(
-            //     new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-            //         .until(() -> !elevator.mahoming)
-                .andThen(elevator.runOnce(() -> elevator.stop())) */ );
+    // operatorButtonBox
+    //     .button(10)
+    //     .and(algaeMode)
+    //     .toggleOnTrue(
+    //         superStructure
+    //             .intakeFromGround()
+    //             .repeatedly()
+    //             .until(hasGamePiece)
+    //             .andThen(superStructure.goToProcessor()));
+    /*  .alongWith(
+    //     new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+    //         .until(() -> !elevator.mahoming)
+        .andThen(elevator.runOnce(() -> elevator.stop())) */
 
-    operatorButtonBox
-        .button(10)
-        .and(algaeMode)
-        .toggleOnFalse(Commands.runOnce(() -> arm.processor()));
+    // operatorButtonBox.button(10).and(algaeMode).toggleOnFalse(superStructure.goToProcessor());
 
     // Vomit
     operatorButtonBox
@@ -969,14 +982,14 @@ public class RobotContainer {
                 .until(() -> !elevator.mahoming)
                 .andThen(elevator.runOnce(() -> elevator.stop())));
 
-    operatorButtonBox.button(12).and(algaeMode).onTrue(manipulator.shootAlgae(stateController));
+    operatorButtonBox.button(12).and(algaeMode).onTrue(manipulator.shootAlgaeFaster());
 
     operatorButtonBox
         .button(12)
         .and(algaeMode)
         .onFalse(
             manipulator
-                .intakeAlgae()
+                .stopIntake()
                 .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
                 .until(() -> !elevator.mahoming)
                 .andThen(elevator.runOnce(() -> elevator.stop())));

@@ -24,6 +24,7 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private RobotTarget m_Target;
   @AutoLogOutput private Pose2d m_TragetPose;
   @AutoLogOutput private Intaking m_Intake;
+  @AutoLogOutput private GoGoGadgetIntakeMode m_goGoGadgetIntake;
   @AutoLogOutput private ReefSide m_Side;
   @AutoLogOutput private LeftOrRight m_LeftOrRight;
   @AutoLogOutput private Branch m_Branch;
@@ -45,6 +46,7 @@ public class StateController extends SubsystemBase {
     m_Side = ReefSide.ONE;
     m_LeftOrRight = LeftOrRight.LEFT;
     m_Branch = Branch.FRONT_RIGHTBRANCH;
+    m_goGoGadgetIntake = GoGoGadgetIntakeMode.SHORT;
   }
 
   public static StateController getInstance() {
@@ -72,6 +74,14 @@ public class StateController extends SubsystemBase {
 
   public void setNoIntake() {
     m_Intake = Intaking.NOINTAKE;
+  }
+
+  public void setLongIntake() {
+    m_goGoGadgetIntake = GoGoGadgetIntakeMode.LONG;
+  }
+
+  public void setShortIntake() {
+    m_goGoGadgetIntake = GoGoGadgetIntakeMode.SHORT;
   }
 
   public Command setL1() {
@@ -184,6 +194,10 @@ public class StateController extends SubsystemBase {
 
   public boolean isIntakeMode() {
     return m_Intake == Intaking.INTAKE;
+  }
+
+  public boolean isLongIntakeMode() {
+    return m_goGoGadgetIntake == GoGoGadgetIntakeMode.LONG;
   }
 
   public boolean hasGamePiece(Manipulator manipulator) {
@@ -365,6 +379,11 @@ public class StateController extends SubsystemBase {
   public enum Intaking {
     INTAKE,
     NOINTAKE
+  }
+
+  public enum GoGoGadgetIntakeMode {
+    SHORT,
+    LONG
   }
 
   public enum ReefSide {
