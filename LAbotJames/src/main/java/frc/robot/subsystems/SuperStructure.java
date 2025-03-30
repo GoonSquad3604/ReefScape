@@ -95,6 +95,14 @@ public class SuperStructure extends SubsystemBase {
         });
   }
 
+  public Command goToLolliPop() {
+    return runOnce(
+        () -> {
+          arm.lollyPop();
+          manipulator.runWheels(ManipulatorConstants.algaeIntake);
+        });
+  }
+
   public Command intakeFromGround() {
     return runOnce(
         () -> {

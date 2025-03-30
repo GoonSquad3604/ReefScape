@@ -196,6 +196,11 @@ public class Arm extends SubsystemBase {
     io.setElbowPosition(ArmConstants.processorElbow);
   }
 
+  public void lollyPop() {
+    io.setWristPosition(ArmConstants.coralWristL1);
+    io.setElbowPosition(ArmConstants.processorElbow);
+  }
+
   public void intakeFromGround() {
     io.setWristPosition(ArmConstants.groundWrist);
     io.setElbowPosition(ArmConstants.groundElbow);

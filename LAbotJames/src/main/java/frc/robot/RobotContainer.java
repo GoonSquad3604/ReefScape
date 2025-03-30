@@ -554,9 +554,7 @@ public class RobotContainer {
             Commands.defer(
                     () ->
                         AutoAline.autoAlineToPose(
-                            this,
-                            AllianceFlipUtil.apply(
-                                FieldConstants.CoralStation.leftCenterIntakePos)),
+                            this, FieldConstants.CoralStation.leftCenterIntakePos),
                     Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
@@ -569,9 +567,7 @@ public class RobotContainer {
             Commands.defer(
                     () ->
                         AutoAline.autoAlineToPose(
-                            this,
-                            AllianceFlipUtil.apply(
-                                FieldConstants.CoralStation.rightCenterIntakePos)),
+                            this, FieldConstants.CoralStation.rightCenterIntakePos),
                     Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
@@ -711,7 +707,7 @@ public class RobotContainer {
                 .setL4()
                 .alongWith(
                     new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
-                        .alongWith(Commands.waitSeconds(0.25).andThen(arm.coralL4()))));
+                        .alongWith(Commands.waitSeconds(0.5).andThen(arm.coralL4()))));
 
     // Go to barge positions
     operatorButtonBox
@@ -835,6 +831,7 @@ public class RobotContainer {
     operatorButtonBox
         .button(6)
         .and(algaeMode)
+        .and(hasGamePiece)
         .onTrue(
             superStructure
                 .goToProcessor()
@@ -842,6 +839,20 @@ public class RobotContainer {
                     new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
                         .until(() -> !elevator.mahoming)
                         .andThen(elevator.runOnce(() -> elevator.stop()))));
+    operatorButtonBox
+        .button(6)
+        .and(algaeMode)
+        .and(hasNoGamePiece)
+        .onTrue(
+            new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                .until(() -> !elevator.mahoming)
+                .andThen(elevator.runOnce(() -> elevator.stop()))
+                .alongWith(
+                    superStructure
+                        .goToLolliPop()
+                        .repeatedly()
+                        .until(hasGamePiece)
+                        .andThen(superStructure.goToProcessor())));
 
     // Goes home (i love patrick mahomes)
     operatorButtonBox

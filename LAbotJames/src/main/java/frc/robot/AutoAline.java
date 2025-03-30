@@ -116,7 +116,9 @@ public class AutoAline {
             () -> {
               targetPose = poseGetter(branch);
             }),
-        Commands.defer(() -> robot.drive.pathfindToFieldPose(targetPose), Set.of(robot.drive)));
+        Commands.defer(
+            () -> robot.drive.pathfindToFieldPose2(AllianceFlipUtil.apply(targetPose)),
+            Set.of(robot.drive)));
   }
 
   public static Command autoAlineToPose(RobotContainer robot, Pose2d source) {
@@ -125,7 +127,9 @@ public class AutoAline {
             () -> {
               targetPose = source;
             }),
-        Commands.defer(() -> robot.drive.pathfindToFieldPose(targetPose), Set.of(robot.drive)));
+        Commands.defer(
+            () -> robot.drive.pathfindToFieldPose2(AllianceFlipUtil.apply(targetPose)),
+            Set.of(robot.drive)));
   }
 
   private static Command driveToTargetCommand(Drive drive, ProfiledPIDController angleController) {
