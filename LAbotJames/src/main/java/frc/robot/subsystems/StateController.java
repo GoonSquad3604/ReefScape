@@ -231,7 +231,7 @@ public class StateController extends SubsystemBase {
         });
   }
 
-  public Command setAlgaeMode(Manipulator manipulator) {
+  public Command setAlgaeMode() {
     return runOnce(
         () -> {
           setAlgae();

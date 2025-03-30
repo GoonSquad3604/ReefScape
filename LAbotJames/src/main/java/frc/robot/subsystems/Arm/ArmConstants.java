@@ -46,6 +46,9 @@ public final class ArmConstants {
   public static final double sourceWrist = 0.655;
   public static final double sourceElbow = 0.310;
 
+  public static final double longSourceWrist = 0.623;
+  public static final double longSourceElbow = 0.348;
+
   public static final double bargeWrist = 0.341;
   public static final double bargeElbow = 0.294;
 

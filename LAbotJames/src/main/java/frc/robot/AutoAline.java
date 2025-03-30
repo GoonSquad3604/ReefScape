@@ -119,6 +119,15 @@ public class AutoAline {
         Commands.defer(() -> robot.drive.pathfindToFieldPose(targetPose), Set.of(robot.drive)));
   }
 
+  public static Command autoAlineToPose(RobotContainer robot, Pose2d source) {
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> {
+              targetPose = source;
+            }),
+        Commands.defer(() -> robot.drive.pathfindToFieldPose(targetPose), Set.of(robot.drive)));
+  }
+
   private static Command driveToTargetCommand(Drive drive, ProfiledPIDController angleController) {
     // Run the command
     return Commands.runEnd(

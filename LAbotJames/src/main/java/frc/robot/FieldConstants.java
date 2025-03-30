@@ -48,9 +48,9 @@ public class FieldConstants {
             Units.inchesToMeters(25.824),
             Rotation2d.fromDegrees(144.011 - 90));
     public static final Pose2d rightCenterIntakePos =
-        new Pose2d(1.605, 0.759, Rotation2d.fromDegrees(144.011 - 90));
+        new Pose2d(1.470, 0.760, Rotation2d.fromDegrees(55));
     public static final Pose2d leftCenterIntakePos =
-        new Pose2d(1.605, 7.291, Rotation2d.fromDegrees(-51.633));
+        new Pose2d(1.470, 7.291, Rotation2d.fromDegrees(-55));
   }
 
   public static class Reef {

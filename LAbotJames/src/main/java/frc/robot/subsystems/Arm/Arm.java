@@ -224,6 +224,14 @@ public class Arm extends SubsystemBase {
         });
   }
 
+  public Command looooongIntake() {
+    return runOnce(
+        () -> {
+          io.setWristPosition(ArmConstants.longSourceWrist);
+          io.setElbowPosition(ArmConstants.longSourceElbow);
+        });
+  }
+
   public Command elbowUp() {
     return run(() -> io.setElbowPower(0.21));
     // io.setWristMotorVoltage(1);
