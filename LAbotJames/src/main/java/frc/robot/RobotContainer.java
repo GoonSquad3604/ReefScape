@@ -940,7 +940,12 @@ public class RobotContainer {
     // when intake + coral, begin to intake
     intakeMode
         .and(coralMode)
-        .onTrue(superStructure.goToSource().alongWith(new ElevatorToSetpoint(elevator, 1.5)));
+        .onTrue(
+            superStructure
+                .goToSource()
+                .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
+                .until(() -> !elevator.mahoming)
+                .andThen(elevator.runOnce(() -> elevator.stop())));
 
     intakeMode.and(algaeMode).onTrue(superStructure.intakeFromGround());
     intakeMode.and(algaeMode).onFalse(superStructure.goToProcessor());
