@@ -17,9 +17,110 @@
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Right3PiecePt1"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "race",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "goTo_Elevator_State"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.25
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "fire"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Right3PiecePt2"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Home"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intake2"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "waitUntilGamePiece"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Home"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SetL4"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "MiddleToBackLeft"
+            "pathName": "Right3PiecePt3 noconstraint"
           }
         },
         {
@@ -35,7 +136,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.333
+                  "waitTime": 1.25
                 }
               }
             ]
@@ -48,37 +149,13 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Home"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SetAlgae"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AlgaeL2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BackLeftToBackCenterFace"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BackCenterFaceToProcessor"
+                  "pathName": "Right3PiecePt4"
                 }
               },
               {
@@ -86,117 +163,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
-                      "type": "parallel",
-                      "data": {
-                        "commands": [
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Processor"
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "AlgaeHome"
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "fire"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.36
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "ProcessorToBackRightAlgae"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.604
+                        "name": "Home"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "AlgaeL3"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "BackRightAlgaeToProcessor"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
-                      "type": "parallel",
-                      "data": {
-                        "commands": [
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Processor"
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "AlgaeHome"
-                            }
-                          }
-                        ]
+                        "name": "intake2"
                       }
                     }
                   ]
@@ -208,37 +183,112 @@
         {
           "type": "named",
           "data": {
-            "name": "fire"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.36
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ProcessorToRightSource"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SetCoral"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Home"
+            "name": "waitUntilGamePiece"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "stopIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Home"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SetL4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Right3PiecePt5"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.183
+                      }
+                    },
+                    {
+                      "type": "race",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "goTo_Elevator_State"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.25
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "fire"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Home"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right3PiecePt6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "waitUntilGamePiece"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Home"
           }
         }
       ]

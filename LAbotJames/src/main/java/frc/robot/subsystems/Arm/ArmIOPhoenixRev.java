@@ -94,7 +94,7 @@ public class ArmIOPhoenixRev implements ArmIO {
             .withKP(ArmConstants.elbowP)
             .withKI(ArmConstants.elbowI)
             .withKD(ArmConstants.elbowD);
-    elbowConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.395;
+    elbowConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.201; // 0.395
     PhoenixUtil.tryUntilOk(5, () -> elbow.getConfigurator().apply(elbowConfig));
 
     position = elbow.getPosition();

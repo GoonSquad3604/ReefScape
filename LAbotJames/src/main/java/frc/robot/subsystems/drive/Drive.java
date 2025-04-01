@@ -18,11 +18,13 @@ import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
@@ -282,6 +284,25 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
 
+  public void runVelocity2(ChassisSpeeds speeds, DriveFeedforwards ffs) {
+    // Calculate module setpoints
+    ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+    SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
+
+    // Log unoptimized setpoints and setpoint speeds
+    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+    Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+
+    // Send setpoints to modules
+    for (int i = 0; i < 4; i++) {
+      modules[i].runSetpoint(setpointStates[i]);
+    }
+
+    // Log optimized setpoints (runSetpoint mutates each state)
+    Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+  }
+
   /** Runs the drive in a straight line with the specified drive output. */
   // public void runCharacterization(double output) {
   //   for (int i = 0; i < 4; i++) {
@@ -433,6 +454,27 @@ public class Drive extends SubsystemBase {
             Units.degreesToRadians(PATH_MAX_ANGULAR_ACCEL));
 
     return AutoBuilder.pathfindToPose(targetPose, constraints, 0);
+  }
+
+  public Command pathfindToFieldPose2(Pose2d targetPose) {
+    PathConstraints constraints =
+        new PathConstraints(
+            PF_MAX_SPEED_OR_SOMETHING,
+            PF_MAX_ACCEL,
+            Units.degreesToRadians(PATH_MAX_ANGULAR_VELO),
+            Units.degreesToRadians(PATH_MAX_ANGULAR_ACCEL));
+
+    return new PathfindingCommand(
+        targetPose,
+        constraints,
+        0,
+        this::getPose,
+        this::getChassisSpeeds,
+        this::runVelocity2,
+        PF_DRIVE_CONTROLLER,
+        PP_CONFIG,
+        this);
+    // return AutoBuilder.pathfindToPose(targetPose, constraints, 0);
   }
 
   public Command pathfindToPath(PathPlannerPath path) {

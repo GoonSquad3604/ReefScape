@@ -17,4 +17,8 @@ public final class DriveConstants {
   public static final PPHolonomicDriveController PP_DRIVE_CONTROLLER =
       new PPHolonomicDriveController(
           new PIDConstants(5.0 * (6.0 / 5), 0.0, 0.0), new PIDConstants(5.0 * (6.0 / 5), 0.0, 0.0));
+  public static final PPHolonomicDriveController PF_DRIVE_CONTROLLER =
+      new PPHolonomicDriveController(
+          new PIDConstants(5.0 * (6.0 / 5), 0.0, 0.111),
+          new PIDConstants(5.0 * (6.0 / 5), 0.0, 0.0));
 }

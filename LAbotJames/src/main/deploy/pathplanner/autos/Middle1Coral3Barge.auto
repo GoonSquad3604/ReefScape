@@ -67,15 +67,46 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "AlgaeL2"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlgaeL2"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.25
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "Algae1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "waitUntilGamePiece"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "KeepAlgaeIn"
           }
         },
         {
@@ -112,19 +143,50 @@
         {
           "type": "named",
           "data": {
-            "name": "Home"
+            "name": "AlgaeHome"
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "AlgaeL3"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlgaeL3"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "Algae2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "waitUntilGamePiece"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "KeepAlgaeIn"
           }
         },
         {
@@ -161,19 +223,50 @@
         {
           "type": "named",
           "data": {
-            "name": "Home"
+            "name": "AlgaeHome"
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "AlgaeL3"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlgaeL3"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "Algae3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "waitUntilGamePiece"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "KeepAlgaeIn"
           }
         },
         {
@@ -210,7 +303,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Home"
+            "name": "AlgaeHome"
           }
         },
         {
