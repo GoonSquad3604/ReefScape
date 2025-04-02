@@ -49,10 +49,10 @@ public class VisionConstants {
   // Intake Cammera
   public static Transform3d robotToCamera2 =
       new Transform3d(
-          Units.inchesToMeters(-9.125), // was -8.875
+          Units.inchesToMeters(-9.0), // was -8.875
           Units.inchesToMeters(7.0625), // was 7.0625
-          Units.inchesToMeters(31.5), // was 32.1875
-          new Rotation3d(0.0, -25 * (Math.PI / 180), Math.PI)); // was -12
+          Units.inchesToMeters(31.75), // was 32.1875
+          new Rotation3d(0.0, -35 * (Math.PI / 180), Math.PI)); // was -12
   // Front Right Camerra
   public static Transform3d robotToCamera3 =
       new Transform3d(
