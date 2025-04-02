@@ -41,9 +41,9 @@
                             }
                           },
                           {
-                            "type": "wait",
+                            "type": "named",
                             "data": {
-                              "waitTime": 1.25
+                              "name": "waitUntillL4"
                             }
                           }
                         ]
@@ -148,9 +148,9 @@
                             }
                           },
                           {
-                            "type": "wait",
+                            "type": "named",
                             "data": {
-                              "waitTime": 1.25
+                              "name": "waitUntillL4"
                             }
                           }
                         ]
@@ -255,9 +255,9 @@
                             }
                           },
                           {
-                            "type": "wait",
+                            "type": "named",
                             "data": {
-                              "waitTime": 1.25
+                              "name": "waitUntillL4"
                             }
                           }
                         ]

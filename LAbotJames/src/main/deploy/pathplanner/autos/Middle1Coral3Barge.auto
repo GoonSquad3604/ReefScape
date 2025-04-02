@@ -37,15 +37,21 @@
                       }
                     },
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 1.333
+                        "name": "waitUntillL4"
                       }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.375
           }
         },
         {
@@ -67,28 +73,35 @@
           }
         },
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "AlgaeL2"
+                  "pathName": "Algae1"
                 }
               },
               {
-                "type": "wait",
+                "type": "race",
                 "data": {
-                  "waitTime": 0.25
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlgaeL2"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.35
+                      }
+                    }
+                  ]
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Algae1"
           }
         },
         {
@@ -128,7 +141,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.333
+                  "waitTime": 1.0
                 }
               }
             ]
@@ -138,12 +151,6 @@
           "type": "named",
           "data": {
             "name": "AlgaeFire"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AlgaeHome"
           }
         },
         {
@@ -208,7 +215,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.333
+                  "waitTime": 1.0
                 }
               }
             ]
@@ -218,12 +225,6 @@
           "type": "named",
           "data": {
             "name": "AlgaeFire"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AlgaeHome"
           }
         },
         {
@@ -288,7 +289,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.333
+                  "waitTime": 1.0
                 }
               }
             ]

@@ -223,8 +223,8 @@ public class RobotContainer {
                 Map.entry(
                     LevelState.L4, // L4 State
                     // Command at state l4
-                    arm.coralL4()
-                        .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)))),
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
+                        .alongWith(Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
             stateController::getLevel));
     NamedCommands.registerCommand("SetCoral", stateController.setCoralMode());
     NamedCommands.registerCommand("SetAlgae", stateController.setAlgaeMode());
@@ -265,6 +265,17 @@ public class RobotContainer {
             .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos)));
     NamedCommands.registerCommand("Processor", superStructure.goToProcessor());
     NamedCommands.registerCommand("KeepAlgaeIn", manipulator.keepAlgaeIn());
+    NamedCommands.registerCommand(
+        "waitUntillL4",
+        Commands.waitUntil(() -> Math.abs(elevator.getPos() - ElevatorConstants.l4Pos) < 0.50001));
+    NamedCommands.registerCommand(
+        "waitUntillAL3",
+        Commands.waitUntil(
+            () -> Math.abs(elevator.getPos() - ElevatorConstants.algaeL3Pos) < 0.50001));
+    NamedCommands.registerCommand(
+        "waitUntillAL2",
+        Commands.waitUntil(
+            () -> Math.abs(elevator.getPos() - ElevatorConstants.algaeL2Pos) < 0.50001));
 
     configureButtonBindings();
 
@@ -1021,7 +1032,14 @@ public class RobotContainer {
                 .until(() -> !elevator.mahoming)
                 .andThen(elevator.runOnce(() -> elevator.stop())));
 
-    operatorButtonBox.button(12).and(algaeMode).onTrue(manipulator.shootAlgaeFaster());
+    operatorButtonBox
+        .button(12)
+        .and(algaeMode)
+        .onTrue(
+            Commands.either(
+                manipulator.shootAlgaeFaster(),
+                manipulator.shootAlgaeSlower(),
+                stateController::isL4));
 
     operatorButtonBox
         .button(12)
