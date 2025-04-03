@@ -191,7 +191,9 @@ public class RobotContainer {
             .andThen(manipulator.stopIntake()));
     NamedCommands.registerCommand(
         "AlgaeFire",
-        Commands.runOnce(() -> manipulator.runWheels(ManipulatorConstants.bargeShoot)));
+        Commands.runOnce(() -> manipulator.runWheels(ManipulatorConstants.bargeShoot + 0.1))
+            .repeatedly()
+            .withTimeout(0.265));
     NamedCommands.registerCommand(
         "goTo_Elevator_State",
         Commands.select(
@@ -562,6 +564,11 @@ public class RobotContainer {
         .and(coralMode)
         .and(hasNoGamePiece)
         .whileTrue(
+            // Commands.either(
+            //         stateController.setIntakeMode().andThen(Commands.waitSeconds(0.499)),
+            //         stateController.setIntakeMode(),
+            //         () -> stateController.isL4())
+            //     .alongWith(
             Commands.defer(
                     () ->
                         AutoAline.autoAlineToPose(
@@ -575,6 +582,11 @@ public class RobotContainer {
         .and(coralMode)
         .and(hasNoGamePiece)
         .whileTrue(
+            // Commands.either(
+            //         stateController.setIntakeMode().andThen(Commands.waitSeconds(0.499)),
+            //         stateController.setIntakeMode(),
+            //         () -> stateController.isL4())
+            // .andThen(
             Commands.defer(
                     () ->
                         AutoAline.autoAlineToPose(

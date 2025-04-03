@@ -9,8 +9,9 @@
     "Left2Piece",
     "Middle1Coral2Processor",
     "Middle1Coral3Barge",
-    "Right3Piece",
+    "LeftThreePiece",
     "Right2Piece",
+    "Right3Piece",
     "Right4Piece"
   ],
   "autoFolders": [],

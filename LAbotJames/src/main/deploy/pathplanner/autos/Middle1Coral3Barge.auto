@@ -63,12 +63,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Home"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "SetAlgae"
           }
         },
@@ -93,9 +87,9 @@
                       }
                     },
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 0.35
+                        "name": "waitUntillAL2"
                       }
                     }
                   ]
@@ -164,9 +158,9 @@
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 0.5
+                  "name": "waitUntillAL3"
                 }
               }
             ]
@@ -228,28 +222,28 @@
           }
         },
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "AlgaeL3"
+                  "pathName": "Algae3"
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 0.5
+                  "name": "SetCoral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Home"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Algae3"
           }
         },
         {
@@ -305,12 +299,6 @@
           "type": "named",
           "data": {
             "name": "AlgaeHome"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "goDownElevator"
           }
         }
       ]
