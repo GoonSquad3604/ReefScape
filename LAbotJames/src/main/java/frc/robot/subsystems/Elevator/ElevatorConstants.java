@@ -30,7 +30,7 @@ public final class ElevatorConstants {
   public static final double ka = 0.00024162;
 
   // default home position
-  public static final double homePos = 3;
+  public static final double homePos = 2;
 
   // each coral branch height
   public static final double l1Pos = 6.0 - 0.0;
@@ -53,7 +53,7 @@ public final class ElevatorConstants {
   public static final double groundAlgaeIntake = 0; // placeholder?
   public static final double treeAlgaeIntake = 0; // placeholder
 
-  public static final double mahomingThreshold = 4;
+  public static final double mahomingThreshold = 2.75;
 
   // the offset
   public static final double homeOffset = 0; // placeholder
