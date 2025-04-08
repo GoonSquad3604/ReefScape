@@ -89,7 +89,7 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandJoystick operatorButtonBox = new CommandJoystick(1);
   private final CommandJoystick operatorReefBox = new CommandJoystick(2);
-  private final CommandXboxController testController = new CommandXboxController(3);
+  // private final CommandXboxController testController = new CommandXboxController(3);
   private final Supplier<Translation2d> joystickSupplier =
       () -> new Translation2d(driverController.getLeftY(), driverController.getLeftX());
 
@@ -1109,23 +1109,22 @@ public class RobotContainer {
     //             .repeatedly()
     //             .until(hasGamePiece)
     //             .andThen(manipulator.stopIntaking()));
-    testController.povLeft().onTrue(arm.elbowUp());
-    testController.povLeft().onFalse(arm.stopElbow());
+    // testController.povLeft().onTrue(arm.elbowUp());
+    // testController.povLeft().onFalse(arm.stopElbow());
 
-    testController.povRight().onTrue(arm.elbowDown());
-    testController.povRight().onFalse(arm.stopElbow());
+    // testController.povRight().onTrue(arm.elbowDown());
+    // testController.povRight().onFalse(arm.stopElbow());
 
-    testController.y().whileTrue(arm.wristUp());
-    testController.y().onFalse(arm.stopWrist());
+    // testController.y().whileTrue(arm.wristUp());
+    // testController.y().onFalse(arm.stopWrist());
 
-    testController.a().whileTrue(arm.wristDown());
-    testController.a().onFalse(arm.stopWrist());
+    // testController.a().whileTrue(arm.wristDown());
+    // testController.a().onFalse(arm.s
+    // testController.start().onTrue(new ElevatorToSetpoint(elevator, 1.5));
 
-    testController.start().onTrue(new ElevatorToSetpoint(elevator, 1.5));
-
-    testController
-        .back()
-        .onTrue(Commands.defer(() -> new ElevatorToSetpoint(elevator, 2), Set.of(elevator)));
+    // testController
+    //     .back()
+    //     .onTrue(Commands.defer(() -> new ElevatorToSetpoint(elevator, 2), Set.of(elevator)));
   }
 
   /**
