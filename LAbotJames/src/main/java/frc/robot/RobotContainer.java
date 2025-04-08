@@ -468,16 +468,6 @@ public class RobotContainer {
         .and(climbMode)
         .onFalse(climber.stop());
 
-    driverController
-        .back()
-        .and(coralMode)
-        .onTrue(
-            arm.home()
-                .alongWith(
-                    new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                        .until(() -> !elevator.mahoming)
-                        .andThen(elevator.runOnce(() -> elevator.stop())))
-                .andThen(stateController.setIntakeMode()));
 
     driverController
         .back()
@@ -495,66 +485,6 @@ public class RobotContainer {
 
     /* MANUAL CORAL PATHFINDS */
 
-    // driverController
-    //     .povRight()
-    //     .onTrue(
-    //         Commands.select(
-    //             Map.ofEntries(
-    //                 // L1 Entry
-    //                 Map.entry(
-    //                     LevelState.L1, // L1 State
-    //                     // Command at state l1
-    //                     arm.coralL1()
-    //                         .andThen(
-    //                             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-    //                                 .until(() -> !elevator.mahoming)
-    //                                 .andThen(elevator.runOnce(() -> elevator.stop())))),
-    //                 // L2 Entry
-    //                 Map.entry(
-    //                     LevelState.L2, // L2 State
-    //                     // Command at state l2
-    //                     arm.coralL2()
-    //                         .andThen(
-    //                             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-    //                                 .until(() -> !elevator.mahoming)
-    //                                 .andThen(elevator.runOnce(() -> elevator.stop())))),
-    //                 // L3 Entry
-    //                 Map.entry(
-    //                     LevelState.L3, // L3 State
-    //                     // Command at sate L3
-    //                     arm.coralL3()
-    //                         .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos))),
-    //                 Map.entry(
-    //                     LevelState.L4, // L4 State
-    //                     // Command at state l4
-    //                     arm.coralL4()
-    //                         .andThen(new ElevatorToSetpoint(elevator,
-    // ElevatorConstants.l4Pos)))),
-    //             stateController::getLevel));
-
-    // OVERRIDE, Left bumper, coral mode, has piece -> closest left pole
-    // driverController
-    //     .leftBumper()
-    //     .and(coralMode)
-    //     .and(hasGamePiece)
-    //     .and(driverPathOverride)
-    //     .whileTrue(
-    //         Commands.defer(
-    //                 () -> AutoAline.autoAlineTo(Target.LEFT_POLE, this, joystickSupplier),
-    //                 Set.of(drive))
-    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
-
-    // OVERRIDE, Right bumper, coral mode, has piece -> closest right pole
-    // driverController
-    //     .rightBumper()
-    //     .and(coralMode)
-    //     .and(hasGamePiece)
-    //     .and(driverPathOverride)
-    //     .whileTrue(
-    //         Commands.defer(
-    //                 () -> AutoAline.autoAlineTo(Target.RIGHT_POLE, this, joystickSupplier),
-    //                 Set.of(drive))
-    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     /* SOURCE PATHFINDS */
 
@@ -599,7 +529,6 @@ public class RobotContainer {
         .rightBumper()
         .and(coralMode)
         .and(hasGamePiece)
-        // .and(driverPathOverride.negate())
         .whileTrue(
             Commands.defer(
                 () ->
@@ -611,7 +540,6 @@ public class RobotContainer {
         .leftBumper()
         .and(coralMode)
         .and(hasGamePiece)
-        // .and(driverPathOverride.negate())
         .whileTrue(
             Commands.defer(
                 () ->
@@ -621,18 +549,26 @@ public class RobotContainer {
 
     /* ALGAE PATHFINDS */
 
-    // Left bumper, algae mode, has piece -> barge (probably wont want, idk)
-    // driverController
-    //     .leftBumper()
-    //     .and(algaeMode)
-    //     .and(hasGamePiece)
-    //     .whileTrue(
-    //         drive.defer(
-    //             () ->
-    //                 drive
-    //                     .pathfindToFieldPose(
-    //                         AllianceFlipUtil.apply(FieldConstants.Processor.centerFace))
-    //                     .andThen(lED.strobeCommand(Color.kDarkOrange, .333))));
+    // Left bumper, algae mode, has piece -> barge
+    driverController
+        .leftBumper()
+        .and(algaeMode)
+        .and(hasGamePiece)
+        .whileTrue(
+            Commands.defer(
+                () ->
+                    AutoAline
+                        .driveToBarge(this),
+                            Set.of(drive))
+                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))
+                        .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos)
+                            .until(() -> Math.abs(elevator.getPos() - ElevatorConstants.bargePos) < 0.5)
+                                .andThen(manipulator.shootAlgaeFaster())
+                                    .andThen(Commands.waitSeconds(0.333))
+                                        .andThen(new ElevatorToSetpoint(
+                                            elevator, ElevatorConstants.homePos, true)))
+                            .until(() -> !elevator.mahoming)
+                            .andThen(elevator.runOnce(() -> elevator.stop())));
 
     // Right bumper, algae mode, has piece -> processor
     driverController
@@ -641,8 +577,11 @@ public class RobotContainer {
         .and(hasGamePiece)
         .whileTrue(
             Commands.defer(
-                    () -> drive.pathfindToPath(stateController.getAlgaePath(true)), Set.of(drive))
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+                    () -> 
+                    drive
+                        .pathfindToPath(AutoAline.getProcessorPath()),
+                            Set.of(drive))
+                    .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     // Left bumper, algae mode, no piece -> closest reef center face (same as right bumper)
     // doesnt work rn
@@ -689,7 +628,7 @@ public class RobotContainer {
                                 .andThen(
                                     drive
                                         .pathfindToPath(climber.getClimbPath())
-                                        .andThen(climber.setClimberUp()))),
+                                        /* .andThen(climber.setClimberUp())*/)),
                 Set.of(drive, climber)));
 
     /* OPERATOR BUTTONS */

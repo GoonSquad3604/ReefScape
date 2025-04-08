@@ -26,7 +26,6 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private Intaking m_Intake;
   @AutoLogOutput private GoGoGadgetIntakeMode m_goGoGadgetIntake;
   @AutoLogOutput private ReefSide m_Side;
-  @AutoLogOutput private LeftOrRight m_LeftOrRight;
   @AutoLogOutput private Branch m_Branch;
 
   // private Manipulator manipulator;
@@ -44,7 +43,6 @@ public class StateController extends SubsystemBase {
     m_Mode = RobotMode.IDLE;
     m_Intake = Intaking.NOINTAKE;
     m_Side = ReefSide.ONE;
-    m_LeftOrRight = LeftOrRight.LEFT;
     m_Branch = Branch.FRONT_RIGHTBRANCH;
     m_goGoGadgetIntake = GoGoGadgetIntakeMode.SHORT;
   }
@@ -144,13 +142,6 @@ public class StateController extends SubsystemBase {
     return m_Side == ReefSide.SIX;
   }
 
-  public boolean isLeft() {
-    return m_LeftOrRight == LeftOrRight.LEFT;
-  }
-
-  public boolean isRight() {
-    return m_LeftOrRight == LeftOrRight.RIGHt;
-  }
 
   public Command setSide5() {
     return runOnce(() -> m_Side = ReefSide.FIVE);
@@ -216,9 +207,6 @@ public class StateController extends SubsystemBase {
     return m_Side;
   }
 
-  public LeftOrRight getLeftOrRight() {
-    return m_LeftOrRight;
-  }
 
   public Branch getBranch() {
     return m_Branch;
@@ -335,32 +323,6 @@ public class StateController extends SubsystemBase {
     return autoReadyFireIsTrue;
   }
 
-  public PathPlannerPath getSourcePath(boolean isLeft) {
-
-    try {
-      if (isLeft) {
-        return PathPlannerPath.fromPathFile("LeftSource");
-      } else {
-        return PathPlannerPath.fromPathFile("RightSource");
-      }
-    } catch (Exception e) {
-      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-      return null;
-    }
-  }
-
-  public PathPlannerPath getAlgaePath(boolean processor) {
-    try {
-      if (processor) {
-        return PathPlannerPath.fromPathFile("Processor");
-      } else {
-        return null;
-      }
-    } catch (Exception e) {
-      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-      return null;
-    }
-  }
 
   public void periodic() {
     Logger.recordOutput(
@@ -393,11 +355,6 @@ public class StateController extends SubsystemBase {
     FOUR,
     FIVE,
     SIX
-  }
-
-  public enum LeftOrRight {
-    LEFT,
-    RIGHt
   }
 
   public enum Branch {
