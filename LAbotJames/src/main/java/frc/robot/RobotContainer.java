@@ -177,7 +177,10 @@ public class RobotContainer {
     superStructure = new SuperStructure(manipulator, arm, elevator, stateController);
 
     lED.setDefaultCommand(
-        lED.defaultLeds(() -> stateController.getMode(), () -> stateController.isIntakeMode()));
+        lED.defaultLeds(
+            () -> stateController.getMode(),
+            () -> stateController.isIntakeMode(),
+            () -> stateController.autoReadyFire(arm, elevator, manipulator)));
 
     // Named Commands
     NamedCommands.registerCommand("lEDTest", lED.solidCommand(Color.kBlanchedAlmond));
@@ -604,7 +607,47 @@ public class RobotContainer {
             Commands.defer(
                 () ->
                     AutoAline.autoAlineToPose(this, stateController.getBranch())
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
+                        .andThen(
+                            Commands.select(
+                                Map.ofEntries(
+                                    // L1 Entry
+                                    Map.entry(
+                                        LevelState.L1, // L1 State
+                                        // Command at state l1
+                                        arm.coralL1()
+                                            .andThen(
+                                                new ElevatorToSetpoint(
+                                                        elevator, ElevatorConstants.homePos, true)
+                                                    .until(() -> !elevator.mahoming)
+                                                    .andThen(
+                                                        elevator.runOnce(() -> elevator.stop())))),
+                                    // L2 Entry
+                                    Map.entry(
+                                        LevelState.L2, // L2 State
+                                        // Command at state l2
+                                        arm.coralL2()
+                                            .andThen(
+                                                new ElevatorToSetpoint(
+                                                        elevator, ElevatorConstants.homePos, true)
+                                                    .until(() -> !elevator.mahoming)
+                                                    .andThen(
+                                                        elevator.runOnce(() -> elevator.stop())))),
+                                    // L3 Entry
+                                    Map.entry(
+                                        LevelState.L3, // L3 State
+                                        // Command at sate L3
+                                        arm.coralL3()
+                                            .andThen(
+                                                new ElevatorToSetpoint(
+                                                    elevator, ElevatorConstants.l3Pos))),
+                                    Map.entry(
+                                        LevelState.L4, // L4 State
+                                        // Command at state l4
+                                        new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
+                                            .alongWith(
+                                                Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
+                                stateController::getLevel))
+                        .alongWith(lED.strobeCommand(Color.kDarkOrange, .333)),
                 Set.of(drive)));
 
     driverController
@@ -616,7 +659,47 @@ public class RobotContainer {
             Commands.defer(
                 () ->
                     AutoAline.autoAlineToPose(this, stateController.getBranch())
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333)),
+                        .andThen(
+                            Commands.select(
+                                Map.ofEntries(
+                                    // L1 Entry
+                                    Map.entry(
+                                        LevelState.L1, // L1 State
+                                        // Command at state l1
+                                        arm.coralL1()
+                                            .andThen(
+                                                new ElevatorToSetpoint(
+                                                        elevator, ElevatorConstants.homePos, true)
+                                                    .until(() -> !elevator.mahoming)
+                                                    .andThen(
+                                                        elevator.runOnce(() -> elevator.stop())))),
+                                    // L2 Entry
+                                    Map.entry(
+                                        LevelState.L2, // L2 State
+                                        // Command at state l2
+                                        arm.coralL2()
+                                            .andThen(
+                                                new ElevatorToSetpoint(
+                                                        elevator, ElevatorConstants.homePos, true)
+                                                    .until(() -> !elevator.mahoming)
+                                                    .andThen(
+                                                        elevator.runOnce(() -> elevator.stop())))),
+                                    // L3 Entry
+                                    Map.entry(
+                                        LevelState.L3, // L3 State
+                                        // Command at sate L3
+                                        arm.coralL3()
+                                            .andThen(
+                                                new ElevatorToSetpoint(
+                                                    elevator, ElevatorConstants.l3Pos))),
+                                    Map.entry(
+                                        LevelState.L4, // L4 State
+                                        // Command at state l4
+                                        new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
+                                            .alongWith(
+                                                Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
+                                stateController::getLevel))
+                        .alongWith(lED.strobeCommand(Color.kDarkOrange, .333)),
                 Set.of(drive)));
 
     /* ALGAE PATHFINDS */
@@ -715,22 +798,18 @@ public class RobotContainer {
         .onTrue(stateController.setClimbMode(manipulator));
 
     // L4 Coral (queue)
+    operatorButtonBox.button(3).and(coralMode).onTrue(stateController.setL4());
+
+    // L4 Coral (manual)
     // operatorButtonBox
     //     .button(3)
     //     .and(coralMode)
-    //     .and(operatorManualOverride.negate())
-    //     .onTrue(stateController.setL4());
-
-    // L4 Coral (manual)
-    operatorButtonBox
-        .button(3)
-        .and(coralMode)
-        .onTrue(
-            stateController
-                .setL4()
-                .alongWith(
-                    new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
-                        .alongWith(Commands.waitSeconds(0.5).andThen(arm.coralL4()))));
+    //     .onTrue(
+    //         stateController
+    //             .setL4()
+    //             .alongWith(
+    //                 new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
+    //                     .alongWith(Commands.waitSeconds(0.5).andThen(arm.coralL4()))));
 
     // Go to barge positions
     operatorButtonBox
@@ -745,22 +824,18 @@ public class RobotContainer {
                         .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos))));
 
     // L3 Coral (queue)
+    operatorButtonBox.button(4).and(coralMode).onTrue(stateController.setL3());
+
+    // L3 Coral (manual)
     // operatorButtonBox
     //     .button(4)
     //     .and(coralMode)
-    //     .and(operatorManualOverride.negate())
-    //     .onTrue(stateController.setL3());
-
-    // L3 Coral (manual)
-    operatorButtonBox
-        .button(4)
-        .and(coralMode)
-        // .and(operatorManualOverride)
-        .onTrue(
-            arm.coralL3()
-                .alongWith(
-                    new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
-                        .alongWith(stateController.setL3())));
+    //     // .and(operatorManualOverride)
+    //     .onTrue(
+    //         arm.coralL3()
+    //             .alongWith(
+    //                 new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos)
+    //                     .alongWith(stateController.setL3())));
 
     // Intake L3 algae
     operatorButtonBox
@@ -790,23 +865,19 @@ public class RobotContainer {
     //                     .andThen(elevator.runOnce(() -> elevator.stop())))));
 
     // L2 Coral (queue)
+    operatorButtonBox.button(5).and(coralMode).onTrue(stateController.setL2());
+
+    // L2 Coral (manual)
     // operatorButtonBox
     //     .button(5)
     //     .and(coralMode)
-    //     .and(operatorManualOverride.negate())
-    //     .onTrue(stateController.setL2());
-
-    // L2 Coral (manual)
-    operatorButtonBox
-        .button(5)
-        .and(coralMode)
-        .onTrue(
-            arm.coralL2()
-                .alongWith(stateController.setL2())
-                .alongWith(
-                    new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                        .until(() -> !elevator.mahoming)
-                        .andThen(elevator.runOnce(() -> elevator.stop()))));
+    //     .onTrue(
+    //         arm.coralL2()
+    //             .alongWith(stateController.setL2())
+    //             .alongWith(
+    //                 new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+    //                     .until(() -> !elevator.mahoming)
+    //                     .andThen(elevator.runOnce(() -> elevator.stop()))));
 
     // Intake L2 algae
     operatorButtonBox
@@ -1023,11 +1094,39 @@ public class RobotContainer {
     // Vomit
     operatorButtonBox
         .button(11)
-        .whileTrue(manipulator.vomit().alongWith(new ElevatorToSetpoint(elevator, 7.3604)));
-
-    operatorButtonBox
-        .button(11)
-        .onFalse(elevator.runOnce(() -> elevator.stop()).alongWith(manipulator.stopIntake()));
+        .onTrue(
+            Commands.select(
+                Map.ofEntries(
+                    // L1 Entry
+                    Map.entry(
+                        LevelState.L1, // L1 State
+                        // Command at state l1
+                        arm.coralL1()
+                            .andThen(
+                                new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                                    .until(() -> !elevator.mahoming)
+                                    .andThen(elevator.runOnce(() -> elevator.stop())))),
+                    // L2 Entry
+                    Map.entry(
+                        LevelState.L2, // L2 State
+                        // Command at state l2
+                        arm.coralL2()
+                            .andThen(
+                                new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                                    .until(() -> !elevator.mahoming)
+                                    .andThen(elevator.runOnce(() -> elevator.stop())))),
+                    // L3 Entry
+                    Map.entry(
+                        LevelState.L3, // L3 State
+                        // Command at sate L3
+                        arm.coralL3()
+                            .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos))),
+                    Map.entry(
+                        LevelState.L4, // L4 State
+                        // Command at state l4
+                        new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
+                            .alongWith(Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
+                stateController::getLevel));
 
     // Fire
 
