@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,6 +14,7 @@ import frc.robot.util.LevelState;
 import frc.robot.util.RobotMode;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class StateController extends SubsystemBase {
   public static StateController _instance;
@@ -26,7 +26,6 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private Intaking m_Intake;
   @AutoLogOutput private GoGoGadgetIntakeMode m_goGoGadgetIntake;
   @AutoLogOutput private ReefSide m_Side;
-  @AutoLogOutput private LeftOrRight m_LeftOrRight;
   @AutoLogOutput private Branch m_Branch;
 
   // private Manipulator manipulator;
@@ -39,14 +38,19 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private boolean elevatorIsReady = false;
   @AutoLogOutput private boolean manipulatorIsReady = false;
 
+  private final LoggedDashboardChooser<Boolean> sourceChooser;
+
   public StateController() {
     m_Level = LevelState.MAHOME;
     m_Mode = RobotMode.IDLE;
     m_Intake = Intaking.NOINTAKE;
     m_Side = ReefSide.ONE;
-    m_LeftOrRight = LeftOrRight.LEFT;
     m_Branch = Branch.FRONT_RIGHTBRANCH;
     m_goGoGadgetIntake = GoGoGadgetIntakeMode.SHORT;
+
+    sourceChooser = new LoggedDashboardChooser<>("Near/Far Source");
+    sourceChooser.addOption("Near", true);
+    sourceChooser.addOption("Far", false);
   }
 
   public static StateController getInstance() {
@@ -144,14 +148,6 @@ public class StateController extends SubsystemBase {
     return m_Side == ReefSide.SIX;
   }
 
-  public boolean isLeft() {
-    return m_LeftOrRight == LeftOrRight.LEFT;
-  }
-
-  public boolean isRight() {
-    return m_LeftOrRight == LeftOrRight.RIGHt;
-  }
-
   public Command setSide5() {
     return runOnce(() -> m_Side = ReefSide.FIVE);
   }
@@ -214,10 +210,6 @@ public class StateController extends SubsystemBase {
 
   public ReefSide getSide() {
     return m_Side;
-  }
-
-  public LeftOrRight getLeftOrRight() {
-    return m_LeftOrRight;
   }
 
   public Branch getBranch() {
@@ -335,30 +327,21 @@ public class StateController extends SubsystemBase {
     return autoReadyFireIsTrue;
   }
 
-  public PathPlannerPath getSourcePath(boolean isLeft) {
+  public Pose2d getSourcePose(boolean isLeft) {
+    boolean isNear = sourceChooser.get();
 
-    try {
+    if (isNear) {
       if (isLeft) {
-        return PathPlannerPath.fromPathFile("LeftSource");
+        return FieldConstants.CoralStation.leftNearIntakePos;
       } else {
-        return PathPlannerPath.fromPathFile("RightSource");
+        return FieldConstants.CoralStation.rightNearIntakePos;
       }
-    } catch (Exception e) {
-      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-      return null;
-    }
-  }
-
-  public PathPlannerPath getAlgaePath(boolean processor) {
-    try {
-      if (processor) {
-        return PathPlannerPath.fromPathFile("Processor");
+    } else {
+      if (isLeft) {
+        return FieldConstants.CoralStation.leftFarIntakePos;
       } else {
-        return null;
+        return FieldConstants.CoralStation.rightFarIntakePos;
       }
-    } catch (Exception e) {
-      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-      return null;
     }
   }
 
@@ -393,11 +376,6 @@ public class StateController extends SubsystemBase {
     FOUR,
     FIVE,
     SIX
-  }
-
-  public enum LeftOrRight {
-    LEFT,
-    RIGHt
   }
 
   public enum Branch {

@@ -34,6 +34,12 @@ public class FieldConstants {
     // Measured from floor to bottom of cage
     public static final double deepHeight = Units.inchesToMeters(3.125);
     public static final double shallowHeight = Units.inchesToMeters(30.125);
+
+    public static final double bargeShootPosX = 7.5;
+    public static final double bargeShootTheta = 0;
+
+    public static final double bargeShootPosXOpposite = 10;
+    public static final double bargeShootThetaOpposite = 180;
   }
 
   public static class CoralStation {
@@ -47,10 +53,16 @@ public class FieldConstants {
             Units.inchesToMeters(33.526),
             Units.inchesToMeters(25.824),
             Rotation2d.fromDegrees(144.011 - 90));
-    public static final Pose2d rightCenterIntakePos =
+
+    public static final Pose2d rightFarIntakePos =
         new Pose2d(1.470, 0.760, Rotation2d.fromDegrees(55));
-    public static final Pose2d leftCenterIntakePos =
+    public static final Pose2d rightNearIntakePos =
+        new Pose2d(0.725, 1.321, Rotation2d.fromDegrees(55));
+
+    public static final Pose2d leftFarIntakePos =
         new Pose2d(1.470, 7.291, Rotation2d.fromDegrees(-55));
+    public static final Pose2d leftNearIntakePos =
+        new Pose2d(0.694, 6.667, Rotation2d.fromDegrees(-55));
   }
 
   public static class Reef {
