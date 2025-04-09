@@ -468,7 +468,6 @@ public class RobotContainer {
         .and(climbMode)
         .onFalse(climber.stop());
 
-
     driverController
         .back()
         .and(coralMode)
@@ -485,7 +484,6 @@ public class RobotContainer {
 
     /* MANUAL CORAL PATHFINDS */
 
-
     /* SOURCE PATHFINDS */
 
     // Left bumper, coral mode, no piece -> left source
@@ -494,15 +492,8 @@ public class RobotContainer {
         .and(coralMode)
         .and(hasNoGamePiece)
         .whileTrue(
-            // Commands.either(
-            //         stateController.setIntakeMode().andThen(Commands.waitSeconds(0.499)),
-            //         stateController.setIntakeMode(),
-            //         () -> stateController.isL4())
-            //     .alongWith(
             Commands.defer(
-                    () ->
-                        AutoAline.autoAlineToPose(
-                            this, FieldConstants.CoralStation.leftCenterIntakePos),
+                    () -> AutoAline.autoAlineToPose(this, stateController.getSourcePose(true)),
                     Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
@@ -512,15 +503,8 @@ public class RobotContainer {
         .and(coralMode)
         .and(hasNoGamePiece)
         .whileTrue(
-            // Commands.either(
-            //         stateController.setIntakeMode().andThen(Commands.waitSeconds(0.499)),
-            //         stateController.setIntakeMode(),
-            //         () -> stateController.isL4())
-            // .andThen(
             Commands.defer(
-                    () ->
-                        AutoAline.autoAlineToPose(
-                            this, FieldConstants.CoralStation.rightCenterIntakePos),
+                    () -> AutoAline.autoAlineToPose(this, stateController.getSourcePose(false)),
                     Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
@@ -555,33 +539,26 @@ public class RobotContainer {
         .and(algaeMode)
         .and(hasGamePiece)
         .whileTrue(
-            Commands.defer(
-                () ->
-                    AutoAline
-                        .driveToBarge(this),
-                            Set.of(drive))
-                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))
-                        .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos)
-                            .until(() -> Math.abs(elevator.getPos() - ElevatorConstants.bargePos) < 0.5)
-                                .andThen(manipulator.shootAlgaeFaster())
-                                    .andThen(Commands.waitSeconds(0.333))
-                                        .andThen(new ElevatorToSetpoint(
-                                            elevator, ElevatorConstants.homePos, true)))
-                            .until(() -> !elevator.mahoming)
-                            .andThen(elevator.runOnce(() -> elevator.stop())));
+            Commands.defer(() -> AutoAline.driveToBarge(this)
+                .andThen(lED.strobeCommand(Color.kDarkOrange, .333))
+                .alongWith(
+                new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos)
+                    .until(() -> Math.abs(elevator.getPos() - ElevatorConstants.bargePos) < 0.5)
+                    .andThen(manipulator.shootAlgaeFaster())
+                    .andThen(Commands.waitSeconds(0.333))
+                    .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)))
+                    .until(() -> !elevator.mahoming)
+            .andThen(elevator.runOnce(() -> elevator.stop())), Set.of(drive)));
 
     // Right bumper, algae mode, has piece -> processor
-    driverController
-        .rightBumper()
-        .and(algaeMode)
-        .and(hasGamePiece)
-        .whileTrue(
-            Commands.defer(
-                    () -> 
-                    drive
-                        .pathfindToPath(AutoAline.getProcessorPath()),
-                            Set.of(drive))
-                    .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+    // driverController
+    //     .rightBumper()
+    //     .and(algaeMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         Commands.defer(() -> drive.pathfindToPath(AutoAline.getProcessorPath()),
+    // Set.of(drive))
+    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     // Left bumper, algae mode, no piece -> closest reef center face (same as right bumper)
     // doesnt work rn
@@ -626,9 +603,8 @@ public class RobotContainer {
                         .alongWith(
                             arm.climb()
                                 .andThen(
-                                    drive
-                                        .pathfindToPath(climber.getClimbPath())
-                                        /* .andThen(climber.setClimberUp())*/)),
+                                    drive.pathfindToPath(climber.getClimbPath())
+                                    /* .andThen(climber.setClimberUp())*/ )),
                 Set.of(drive, climber)));
 
     /* OPERATOR BUTTONS */

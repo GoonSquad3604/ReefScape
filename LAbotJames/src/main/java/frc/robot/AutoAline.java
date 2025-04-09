@@ -132,40 +132,46 @@ public class AutoAline {
             Set.of(robot.drive)));
   }
 
-  public static Command driveToBarge(RobotContainer robot){
+  public static Command driveToBarge(RobotContainer robot) {
     double currY = robot.drive.getPose().getY();
     double currX = robot.drive.getPose().getX();
     double newY = 0;
     double newX = 0;
     Rotation2d rot = new Rotation2d();
-    
-    if(AllianceFlipUtil.shouldFlip() && currY > 3){ //is red alliance and robot is on blue barge half
+
+    if (AllianceFlipUtil.shouldFlip()
+        && currY > 3) { // is red alliance and robot is on blue barge half
       newY = 3.0;
-    } 
-    else if (!AllianceFlipUtil.shouldFlip() && currY < 5){ //is blue alliance and robot is on red barge half
+    } else if (!AllianceFlipUtil.shouldFlip()
+        && currY < 5) { // is blue alliance and robot is on red barge half
       newY = 5.0;
-      } 
-    else {
+    } else {
       newY = currY;
     }
 
-    //Check to see if we are on the opposite side of the field an attempt to score from other side of barge
-    if(AllianceFlipUtil.shouldFlip() && currX < 8.5){ //if red and we are past half way of field use opposite barge x and rotation
+    // Check to see if we are on the opposite side of the field an attempt to score from other side
+    // of barge
+    if (AllianceFlipUtil.shouldFlip()
+        && currX
+            < 8.5) { // if red and we are past half way of field use opposite barge x and rotation
       newX = AllianceFlipUtil.applyX(FieldConstants.Barge.bargeShootPosXOpposite);
-      rot = AllianceFlipUtil.apply(Rotation2d.fromDegrees(FieldConstants.Barge.bargeShootThetaOpposite));
-    } 
-    else if(!AllianceFlipUtil.shouldFlip() && currX > 9.5){ //if blue and we are past half way of field, use opposite barge x and rotation. 
+      rot =
+          AllianceFlipUtil.apply(
+              Rotation2d.fromDegrees(FieldConstants.Barge.bargeShootThetaOpposite));
+    } else if (!AllianceFlipUtil.shouldFlip()
+        && currX > 9.5) { // if blue and we are past half way of field, use opposite barge x and
+      // rotation.
       newX = AllianceFlipUtil.applyX(FieldConstants.Barge.bargeShootPosXOpposite);
-      rot = AllianceFlipUtil.apply(Rotation2d.fromDegrees(FieldConstants.Barge.bargeShootThetaOpposite));
-    } 
-    else {
+      rot =
+          AllianceFlipUtil.apply(
+              Rotation2d.fromDegrees(FieldConstants.Barge.bargeShootThetaOpposite));
+    } else {
       newX = AllianceFlipUtil.applyX(FieldConstants.Barge.bargeShootPosX);
       rot = AllianceFlipUtil.apply(Rotation2d.fromDegrees(FieldConstants.Barge.bargeShootTheta));
     }
-    
+
     return robot.drive.pathfindToFieldPose(new Pose2d(new Translation2d(newX, newY), rot));
   }
-
 
   private static Command driveToTargetCommand(Drive drive, ProfiledPIDController angleController) {
     // Run the command
@@ -434,7 +440,7 @@ public class AutoAline {
     }
   }
 
-  public static PathPlannerPath getProcessorPath(){
+  public static PathPlannerPath getProcessorPath() {
     try {
       return PathPlannerPath.fromPathFile("Processor.path");
     } catch (Exception e) {
@@ -442,5 +448,4 @@ public class AutoAline {
       return null;
     }
   }
-
 }

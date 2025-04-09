@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,6 +14,7 @@ import frc.robot.util.LevelState;
 import frc.robot.util.RobotMode;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class StateController extends SubsystemBase {
   public static StateController _instance;
@@ -38,6 +38,8 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private boolean elevatorIsReady = false;
   @AutoLogOutput private boolean manipulatorIsReady = false;
 
+  private final LoggedDashboardChooser<Boolean> sourceChooser;
+
   public StateController() {
     m_Level = LevelState.MAHOME;
     m_Mode = RobotMode.IDLE;
@@ -45,6 +47,10 @@ public class StateController extends SubsystemBase {
     m_Side = ReefSide.ONE;
     m_Branch = Branch.FRONT_RIGHTBRANCH;
     m_goGoGadgetIntake = GoGoGadgetIntakeMode.SHORT;
+
+    sourceChooser = new LoggedDashboardChooser<>("Near/Far Source");
+    sourceChooser.addOption("Near", true);
+    sourceChooser.addOption("Far", false);
   }
 
   public static StateController getInstance() {
@@ -142,7 +148,6 @@ public class StateController extends SubsystemBase {
     return m_Side == ReefSide.SIX;
   }
 
-
   public Command setSide5() {
     return runOnce(() -> m_Side = ReefSide.FIVE);
   }
@@ -206,7 +211,6 @@ public class StateController extends SubsystemBase {
   public ReefSide getSide() {
     return m_Side;
   }
-
 
   public Branch getBranch() {
     return m_Branch;
@@ -323,6 +327,23 @@ public class StateController extends SubsystemBase {
     return autoReadyFireIsTrue;
   }
 
+  public Pose2d getSourcePose(boolean isLeft) {
+    boolean isNear = sourceChooser.get();
+
+    if (isNear) {
+      if (isLeft) {
+        return FieldConstants.CoralStation.leftNearIntakePos;
+      } else {
+        return FieldConstants.CoralStation.rightNearIntakePos;
+      }
+    } else {
+      if (isLeft) {
+        return FieldConstants.CoralStation.leftFarIntakePos;
+      } else {
+        return FieldConstants.CoralStation.rightFarIntakePos;
+      }
+    }
+  }
 
   public void periodic() {
     Logger.recordOutput(
