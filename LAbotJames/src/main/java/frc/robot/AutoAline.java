@@ -132,7 +132,7 @@ public class AutoAline {
             Set.of(robot.drive)));
   }
 
-  public static Command driveToBarge(RobotContainer robot) {
+  public static Pose2d driveToBarge(RobotContainer robot) {
     double currY = robot.drive.getPose().getY();
     double currX = robot.drive.getPose().getX();
     double newY = 0;
@@ -169,8 +169,9 @@ public class AutoAline {
       newX = AllianceFlipUtil.applyX(FieldConstants.Barge.bargeShootPosX);
       rot = AllianceFlipUtil.apply(Rotation2d.fromDegrees(FieldConstants.Barge.bargeShootTheta));
     }
-
-    return robot.drive.pathfindToFieldPose(new Pose2d(new Translation2d(newX, newY), rot));
+    Pose2d targetBarge = new Pose2d(new Translation2d(newX, newY), rot);
+    Logger.recordOutput("bargePose", targetBarge);
+    return targetBarge;
   }
 
   private static Command driveToTargetCommand(Drive drive, ProfiledPIDController angleController) {

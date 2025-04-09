@@ -622,16 +622,25 @@ public class RobotContainer {
         .and(algaeMode)
         .and(hasGamePiece)
         .whileTrue(
-            Commands.defer(() -> AutoAline.driveToBarge(this)
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333))
-                .alongWith(
-                new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos)
-                    .until(() -> Math.abs(elevator.getPos() - ElevatorConstants.bargePos) < 0.5)
-                    .andThen(manipulator.shootAlgaeFaster())
-                    .andThen(Commands.waitSeconds(0.333))
-                    .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)))
-                    .until(() -> !elevator.mahoming)
-            .andThen(elevator.runOnce(() -> elevator.stop())), Set.of(drive)));
+            Commands.defer(
+                () ->
+                    drive
+                        .pathfindToFieldPose2(AutoAline.driveToBarge(this))
+                        .andThen(lED.strobeCommand(Color.kDarkOrange, .333))
+                        .alongWith(
+                            new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos)
+                                .until(
+                                    () ->
+                                        Math.abs(elevator.getPos() - ElevatorConstants.bargePos)
+                                            < 0.5)
+                                .andThen(manipulator.shootAlgaeFaster())
+                                .andThen(Commands.waitSeconds(0.333))
+                                .andThen(
+                                    new ElevatorToSetpoint(
+                                        elevator, ElevatorConstants.homePos, true)))
+                        .until(() -> !elevator.mahoming)
+                        .andThen(elevator.runOnce(() -> elevator.stop())),
+                Set.of(drive)));
 
     // Right bumper, algae mode, has piece -> processor
     // driverController
