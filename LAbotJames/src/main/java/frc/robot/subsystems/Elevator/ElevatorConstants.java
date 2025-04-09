@@ -20,7 +20,7 @@ public final class ElevatorConstants {
   // PIDs
   public static final double elevatorP = 0.155001; // 0.13386;
   public static final double elevatorI = 0; // placeholder
-  public static final double elevatorD = 0.0012983;
+  public static final double elevatorD = 0.0012983; // /0.0012983
   public static final double elvatorff = 0; // placeholder
 
   // FeedForwards
