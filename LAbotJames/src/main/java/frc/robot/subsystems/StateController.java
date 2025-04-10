@@ -37,6 +37,7 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private boolean armIsReady = false;
   @AutoLogOutput private boolean elevatorIsReady = false;
   @AutoLogOutput private boolean manipulatorIsReady = false;
+  @AutoLogOutput private boolean autoAlineHathConcluded = false;
 
   private final LoggedDashboardChooser<Boolean> sourceChooser;
 
@@ -70,6 +71,18 @@ public class StateController extends SubsystemBase {
 
   public void setClimb() {
     m_Mode = RobotMode.CLIMB;
+  }
+
+  public void setHathConcluded() {
+    autoAlineHathConcluded = true;
+  }
+
+  public void setHathntConcluded() {
+    autoAlineHathConcluded = false;
+  }
+
+  public boolean hathConcluded() {
+    return autoAlineHathConcluded;
   }
 
   public void setIntake() {
