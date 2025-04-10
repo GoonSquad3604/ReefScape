@@ -333,6 +333,7 @@ public class RobotContainer {
     Trigger L2 = new Trigger(() -> stateController.isL2());
     Trigger L1 = new Trigger(() -> stateController.isL1());
     Trigger LMahome = new Trigger(() -> stateController.isMahome());
+    Trigger autoAlineModeHathConcluded = new Trigger(() -> stateController.hathConcluded());
 
     // Trigger operatorManualOverride = operatorButtonBox.button(11);
     // Trigger driverPathOverride = new Trigger(() -> driverController.getLeftTriggerAxis() > 0.01);
@@ -356,10 +357,47 @@ public class RobotContainer {
                                 superStructure
                                     .goHome()
                                     .andThen(
+                                        Commands.runOnce(
+                                            () -> stateController.setHathntConcluded()))
+                                    .andThen(
                                         new ElevatorToSetpoint(
                                                 elevator, ElevatorConstants.homePos, true)
                                             .until(() -> !elevator.mahoming)
                                             .andThen(elevator.runOnce(() -> elevator.stop())))))));
+
+    autoAlineModeHathConcluded.onTrue(
+        Commands.select(
+            Map.ofEntries(
+                // L1 Entry
+                Map.entry(
+                    LevelState.L1, // L1 State
+                    // Command at state l1
+                    arm.coralL1()
+                        .andThen(
+                            new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                                .until(() -> !elevator.mahoming)
+                                .andThen(elevator.runOnce(() -> elevator.stop())))),
+                // L2 Entry
+                Map.entry(
+                    LevelState.L2, // L2 State
+                    // Command at state l2
+                    arm.coralL2()
+                        .andThen(
+                            new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                                .until(() -> !elevator.mahoming)
+                                .andThen(elevator.runOnce(() -> elevator.stop())))),
+                // L3 Entry
+                Map.entry(
+                    LevelState.L3, // L3 State
+                    // Command at sate L3
+                    arm.coralL3()
+                        .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos))),
+                Map.entry(
+                    LevelState.L4, // L4 State
+                    // Command at state l4
+                    new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
+                        .alongWith(Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
+            stateController::getLevel));
 
     // Default drive command, normal field-relative drive
     drive.setDefaultCommand(
@@ -512,56 +550,61 @@ public class RobotContainer {
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
     /* DEFAULT CORAL PATHFINDS */
-    driverController
-        .rightBumper()
-        .and(coralMode)
-        .and(hasGamePiece)
-        .whileTrue(
-            Commands.defer(
-                () ->
-                    AutoAline.autoAlineToPose(this, stateController.getBranch())
-                        .andThen(
-                            Commands.select(
-                                Map.ofEntries(
-                                    // L1 Entry
-                                    Map.entry(
-                                        LevelState.L1, // L1 State
-                                        // Command at state l1
-                                        arm.coralL1()
-                                            .andThen(
-                                                new ElevatorToSetpoint(
-                                                        elevator, ElevatorConstants.homePos, true)
-                                                    .until(() -> !elevator.mahoming)
-                                                    .andThen(
-                                                        elevator.runOnce(() -> elevator.stop())))),
-                                    // L2 Entry
-                                    Map.entry(
-                                        LevelState.L2, // L2 State
-                                        // Command at state l2
-                                        arm.coralL2()
-                                            .andThen(
-                                                new ElevatorToSetpoint(
-                                                        elevator, ElevatorConstants.homePos, true)
-                                                    .until(() -> !elevator.mahoming)
-                                                    .andThen(
-                                                        elevator.runOnce(() -> elevator.stop())))),
-                                    // L3 Entry
-                                    Map.entry(
-                                        LevelState.L3, // L3 State
-                                        // Command at sate L3
-                                        arm.coralL3()
-                                            .andThen(
-                                                new ElevatorToSetpoint(
-                                                    elevator, ElevatorConstants.l3Pos))),
-                                    Map.entry(
-                                        LevelState.L4, // L4 State
-                                        // Command at state l4
-                                        new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
-                                            .alongWith(
-                                                Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
-                                stateController::getLevel))
-                        .alongWith(lED.strobeCommand(Color.kDarkOrange, .333)),
-                Set.of(drive)));
+    // driverController
+    //     .rightBumper()
+    //     .and(coralMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         Commands.defer(
+    //             () ->
+    //                 AutoAline.autoAlineToPose(this, stateController.getBranch())
+    //                     .andThen(
+    //                         Commands.select(
+    //                             Map.ofEntries(
+    //                                 // L1 Entry
+    //                                 Map.entry(
+    //                                     LevelState.L1, // L1 State
+    //                                     // Command at state l1
+    //                                     arm.coralL1()
+    //                                         .andThen(
+    //                                             new ElevatorToSetpoint(
+    //                                                     elevator, ElevatorConstants.homePos,
+    // true)
+    //                                                 .until(() -> !elevator.mahoming)
+    //                                                 .andThen(
+    //                                                     elevator.runOnce(() ->
+    // elevator.stop())))),
+    //                                 // L2 Entry
+    //                                 Map.entry(
+    //                                     LevelState.L2, // L2 State
+    //                                     // Command at state l2
+    //                                     arm.coralL2()
+    //                                         .andThen(
+    //                                             new ElevatorToSetpoint(
+    //                                                     elevator, ElevatorConstants.homePos,
+    // true)
+    //                                                 .until(() -> !elevator.mahoming)
+    //                                                 .andThen(
+    //                                                     elevator.runOnce(() ->
+    // elevator.stop())))),
+    //                                 // L3 Entry
+    //                                 Map.entry(
+    //                                     LevelState.L3, // L3 State
+    //                                     // Command at sate L3
+    //                                     arm.coralL3()
+    //                                         .andThen(
+    //                                             new ElevatorToSetpoint(
+    //                                                 elevator, ElevatorConstants.l3Pos))),
+    //                                 Map.entry(
+    //                                     LevelState.L4, // L4 State
+    //                                     // Command at state l4
+    //                                     new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
+    //                                         .alongWith(
+    //
+    // Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
+    //                             stateController::getLevel))
+    //                     .alongWith(lED.strobeCommand(Color.kDarkOrange, .333)),
+    //             Set.of(drive)));
 
     driverController
         .leftBumper()
@@ -571,48 +614,75 @@ public class RobotContainer {
             Commands.defer(
                 () ->
                     AutoAline.autoAlineToPose(this, stateController.getBranch())
-                        .andThen(
-                            Commands.select(
-                                Map.ofEntries(
-                                    // L1 Entry
-                                    Map.entry(
-                                        LevelState.L1, // L1 State
-                                        // Command at state l1
-                                        arm.coralL1()
-                                            .andThen(
-                                                new ElevatorToSetpoint(
-                                                        elevator, ElevatorConstants.homePos, true)
-                                                    .until(() -> !elevator.mahoming)
-                                                    .andThen(
-                                                        elevator.runOnce(() -> elevator.stop())))),
-                                    // L2 Entry
-                                    Map.entry(
-                                        LevelState.L2, // L2 State
-                                        // Command at state l2
-                                        arm.coralL2()
-                                            .andThen(
-                                                new ElevatorToSetpoint(
-                                                        elevator, ElevatorConstants.homePos, true)
-                                                    .until(() -> !elevator.mahoming)
-                                                    .andThen(
-                                                        elevator.runOnce(() -> elevator.stop())))),
-                                    // L3 Entry
-                                    Map.entry(
-                                        LevelState.L3, // L3 State
-                                        // Command at sate L3
-                                        arm.coralL3()
-                                            .andThen(
-                                                new ElevatorToSetpoint(
-                                                    elevator, ElevatorConstants.l3Pos))),
-                                    Map.entry(
-                                        LevelState.L4, // L4 State
-                                        // Command at state l4
-                                        new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
-                                            .alongWith(
-                                                Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
-                                stateController::getLevel))
-                        .alongWith(lED.strobeCommand(Color.kDarkOrange, .333)),
+                        .andThen(Commands.runOnce(() -> stateController.hathConcluded())),
                 Set.of(drive)));
+
+    driverController
+        .rightBumper()
+        .and(coralMode)
+        .and(hasGamePiece)
+        .whileTrue(
+            Commands.defer(
+                () ->
+                    AutoAline.autoAlineToPose(this, stateController.getBranch())
+                        .andThen(Commands.runOnce(() -> stateController.hathConcluded())),
+                Set.of(drive)));
+
+    // driverController
+    //     .leftBumper()
+    //     .and(coralMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         Commands.defer(
+    //             () ->
+    //                 AutoAline.autoAlineToPose(this, stateController.getBranch())
+    //                     .andThen(
+    //                         Commands.select(
+    //                             Map.ofEntries(
+    //                                 // L1 Entry
+    //                                 Map.entry(
+    //                                     LevelState.L1, // L1 State
+    //                                     // Command at state l1
+    //                                     arm.coralL1()
+    //                                         .andThen(
+    //                                             new ElevatorToSetpoint(
+    //                                                     elevator, ElevatorConstants.homePos,
+    // true)
+    //                                                 .until(() -> !elevator.mahoming)
+    //                                                 .andThen(
+    //                                                     elevator.runOnce(() ->
+    // elevator.stop())))),
+    //                                 // L2 Entry
+    //                                 Map.entry(
+    //                                     LevelState.L2, // L2 State
+    //                                     // Command at state l2
+    //                                     arm.coralL2()
+    //                                         .andThen(
+    //                                             new ElevatorToSetpoint(
+    //                                                     elevator, ElevatorConstants.homePos,
+    // true)
+    //                                                 .until(() -> !elevator.mahoming)
+    //                                                 .andThen(
+    //                                                     elevator.runOnce(() ->
+    // elevator.stop())))),
+    //                                 // L3 Entry
+    //                                 Map.entry(
+    //                                     LevelState.L3, // L3 State
+    //                                     // Command at sate L3
+    //                                     arm.coralL3()
+    //                                         .andThen(
+    //                                             new ElevatorToSetpoint(
+    //                                                 elevator, ElevatorConstants.l3Pos))),
+    //                                 Map.entry(
+    //                                     LevelState.L4, // L4 State
+    //                                     // Command at state l4
+    //                                     new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
+    //                                         .alongWith(
+    //
+    // Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
+    //                             stateController::getLevel))
+    //                     .alongWith(lED.strobeCommand(Color.kDarkOrange, .333)),
+    //             Set.of(drive)));
 
     /* ALGAE PATHFINDS */
 
@@ -624,8 +694,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.defer(
                 () ->
-                    drive
-                        .pathfindToFieldPose2(AutoAline.driveToBarge(this))
+                    AutoAline.autoAlineToBarge(this)
                         .andThen(lED.strobeCommand(Color.kDarkOrange, .333))
                         .alongWith(
                             new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos)

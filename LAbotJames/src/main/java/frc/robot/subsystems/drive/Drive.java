@@ -258,6 +258,11 @@ public class Drive extends SubsystemBase {
         "rightRobotBranchPoses", FieldConstants.Reef.rightRobotBranchPoses.toArray(new Pose2d[0]));
     Logger.recordOutput(
         "leftRobotBranchPoses", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
+
+    Logger.recordOutput("theLeftFarSourcePose", FieldConstants.CoralStation.leftFarIntakePos);
+    Logger.recordOutput("theRightFarSourcePose", FieldConstants.CoralStation.rightFarIntakePos);
+    Logger.recordOutput("theLeftNearSourcePose", FieldConstants.CoralStation.leftNearIntakePos);
+    Logger.recordOutput("theRightNearSourcePose", FieldConstants.CoralStation.rightNearIntakePos);
   }
 
   /**
