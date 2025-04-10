@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.69,
-        "y": 5.01
+        "x": 5.74,
+        "y": 4.23
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0238175675675674,
-        "y": 5.863006756756756
+        "x": 6.235388513513514,
+        "y": 4.281925675675675
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.234,
-        "y": 7.13
+        "x": 5.74,
+        "y": 4.065
       },
       "prevControl": {
-        "x": 2.321192567567568,
-        "y": 6.378966216216216
+        "x": 6.452787162162162,
+        "y": 4.064527027027027
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -55.0
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "LeftThreePiece",
+  "folder": "Middle1Coral3Barge",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -55.0
+    "rotation": 180.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

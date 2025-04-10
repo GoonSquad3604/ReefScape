@@ -132,6 +132,17 @@ public class AutoAline {
             Set.of(robot.drive)));
   }
 
+  public static Command autoAlineToBarge(RobotContainer robot) {
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> {
+              targetPose = driveToBarge(robot);
+            }),
+        Commands.defer(
+            () -> robot.drive.pathfindToFieldPose2(AllianceFlipUtil.apply(targetPose)),
+            Set.of(robot.drive)));
+  }
+
   public static Pose2d driveToBarge(RobotContainer robot) {
     double currY = robot.drive.getPose().getY();
     double currX = robot.drive.getPose().getX();

@@ -624,8 +624,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.defer(
                 () ->
-                    drive
-                        .pathfindToFieldPose2(AutoAline.driveToBarge(this))
+                    AutoAline.autoAlineToBarge(this)
                         .andThen(lED.strobeCommand(Color.kDarkOrange, .333))
                         .alongWith(
                             new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos)
