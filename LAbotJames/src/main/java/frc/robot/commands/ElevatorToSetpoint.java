@@ -34,6 +34,7 @@ public class ElevatorToSetpoint extends Command {
   private boolean mahoming;
   private boolean goesToState;
   private StateController state;
+  private boolean isAlgee;
   // code
   // code
   // more code
@@ -45,6 +46,25 @@ public class ElevatorToSetpoint extends Command {
     this.elevator = elevator;
     this.userGoal = userGoal;
     this.mahoming = mahoming;
+    isAlgee = false;
+    goesToState = false; // muy falso
+    feedforward =
+        new ElevatorFeedforward(
+            ElevatorConstants.ks, ElevatorConstants.kg, ElevatorConstants.kv, ElevatorConstants.ka);
+
+    addRequirements(elevator);
+  }
+
+  public ElevatorToSetpoint(
+      Elevator elevator,
+      double userGoal,
+      boolean mahoming,
+      boolean algee) { // booleon, booleoff -drew
+
+    this.elevator = elevator;
+    this.userGoal = userGoal;
+    this.mahoming = mahoming;
+    isAlgee = algee;
     goesToState = false; // muy falso
     feedforward =
         new ElevatorFeedforward(
@@ -58,6 +78,7 @@ public class ElevatorToSetpoint extends Command {
     this.elevator = elevator;
     this.userGoal = userGoal;
     this.mahoming = false;
+    isAlgee = false;
     goesToState = false; // muy falso
     feedforward =
         new ElevatorFeedforward(
@@ -72,6 +93,7 @@ public class ElevatorToSetpoint extends Command {
     this.elevator = elevator;
     this.userGoal = userGoal;
     this.mahoming = false;
+    isAlgee = false;
     goesToState = true;
     this.state = state;
 
@@ -85,7 +107,8 @@ public class ElevatorToSetpoint extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(5, 2)); // 5, 1
+    if (!isAlgee) profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(5, 2)); // 5, 1
+    else profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(5, 1));
     if (goesToState) {
       switch (state.getLevel()) {
         case L1:

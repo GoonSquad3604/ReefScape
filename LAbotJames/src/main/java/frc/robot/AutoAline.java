@@ -132,15 +132,14 @@ public class AutoAline {
             Set.of(robot.drive)));
   }
 
-  public static Command autoAlineToBarge(RobotContainer robot) {
+  public static Command /*Command */ autoAlineToBarge(RobotContainer robot) {
     return Commands.sequence(
         Commands.runOnce(
             () -> {
               targetPose = driveToBarge(robot);
             }),
-        Commands.defer(
-            () -> robot.drive.pathfindToFieldPose2(AllianceFlipUtil.apply(targetPose)),
-            Set.of(robot.drive)));
+        Commands.defer(() -> robot.drive.pathfindToFieldPose2(targetPose), Set.of(robot.drive)));
+    // return driveToBarge(robot);
   }
 
   public static Pose2d driveToBarge(RobotContainer robot) {
@@ -180,6 +179,18 @@ public class AutoAline {
       newX = AllianceFlipUtil.applyX(FieldConstants.Barge.bargeShootPosX);
       rot = AllianceFlipUtil.apply(Rotation2d.fromDegrees(FieldConstants.Barge.bargeShootTheta));
     }
+    Pose2d targetBarge = new Pose2d(new Translation2d(newX, newY), rot);
+    Logger.recordOutput("bargePose", targetBarge);
+    return targetBarge;
+  }
+
+  public static Pose2d driveToBarge2(RobotContainer robot) {
+    double currY = robot.drive.getPose().getY();
+    double currX = robot.drive.getPose().getX();
+    double newY = currY;
+    double newX = 7.290;
+    Rotation2d rot = new Rotation2d();
+
     Pose2d targetBarge = new Pose2d(new Translation2d(newX, newY), rot);
     Logger.recordOutput("bargePose", targetBarge);
     return targetBarge;
@@ -454,7 +465,7 @@ public class AutoAline {
 
   public static PathPlannerPath getProcessorPath() {
     try {
-      return PathPlannerPath.fromPathFile("Processor.path");
+      return PathPlannerPath.fromPathFile("Processor");
     } catch (Exception e) {
       DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
       return null;
