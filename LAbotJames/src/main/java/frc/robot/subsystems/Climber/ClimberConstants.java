@@ -14,9 +14,9 @@ public final class ClimberConstants {
   public static final double positionHome = 0.103759765625;
 
   // PID values
-  public static final double p = 50.0; // 55555555555;
+  public static final double p = 60.0; // 55555555555;
   public static final double i = 0.0;
-  public static final double d = 0.25;
+  public static final double d = 0.0;
   public static final double ff = 0.0;
 
   // Climbing positions

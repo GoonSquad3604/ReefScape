@@ -205,13 +205,13 @@ public class LEDs extends SubsystemBase {
   }
 
   public Command defaultLeds(
-      Supplier<RobotMode> mode, BooleanSupplier intakng, BooleanSupplier fireReadyAuto) {
+      Supplier<RobotMode> mode, BooleanSupplier intakng, BooleanSupplier autoAlineDone) {
     return runOnce(
             () -> {
               if (intakng.getAsBoolean()) {
                 strobe(Color.kRed, 0.333);
-              } else if (fireReadyAuto.getAsBoolean()) {
-                strobe(Color.kDarkOliveGreen, 0.333);
+              } else if (autoAlineDone.getAsBoolean()) {
+                strobe(Color.kDarkOrange, 0.333);
               } else if (mode.get().equals(RobotMode.CORAL)) {
                 solid(Color.kGhostWhite);
               } else if (mode.get().equals(RobotMode.ALGAE)) {

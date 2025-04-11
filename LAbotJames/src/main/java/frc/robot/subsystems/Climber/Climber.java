@@ -49,6 +49,7 @@ public class Climber extends SubsystemBase {
     cageChooser.addOption("Left Cage", "LeftClimber");
     cageChooser.addOption("Middle Cage", "MiddleClimber");
     cageChooser.addOption("Right Cage", "RightClimber");
+    cageChooser.addDefaultOption("Right Cage", "RightClimber");
   }
 
   /* Raises the climber. */

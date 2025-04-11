@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
@@ -39,7 +40,8 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private boolean manipulatorIsReady = false;
   @AutoLogOutput private boolean autoAlineHathConcluded = false;
 
-  private final LoggedDashboardChooser<Boolean> sourceChooser;
+  private final LoggedDashboardChooser<Boolean> rightSourceChooser;
+  private final LoggedDashboardChooser<Boolean> leftSourceChooser;
 
   public StateController() {
     m_Level = LevelState.MAHOME;
@@ -49,9 +51,15 @@ public class StateController extends SubsystemBase {
     m_Branch = Branch.FRONT_RIGHTBRANCH;
     m_goGoGadgetIntake = GoGoGadgetIntakeMode.SHORT;
 
-    sourceChooser = new LoggedDashboardChooser<>("Near/Far Source");
-    sourceChooser.addOption("Near", true);
-    sourceChooser.addOption("Far", false);
+    rightSourceChooser = new LoggedDashboardChooser<>("Right Source NearOrFar");
+    rightSourceChooser.addOption("Near", true);
+    rightSourceChooser.addOption("Far", false);
+    rightSourceChooser.addDefaultOption("Near", true);
+
+    leftSourceChooser = new LoggedDashboardChooser<>("Left Source NearOrFar");
+    leftSourceChooser.addOption("Near", true);
+    leftSourceChooser.addOption("Far", false);
+    leftSourceChooser.addDefaultOption("Near", true);
   }
 
   public static StateController getInstance() {
@@ -309,12 +317,12 @@ public class StateController extends SubsystemBase {
 
     } else if (isL2()) {
       armIsReady =
-          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.075
+          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.125
               && Math.abs(arm.getWristPos() - ArmConstants.coralWristL2) < 0.075;
       elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l2Pos) < 0.500015;
     } else if (isL3()) {
       armIsReady =
-          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL3) < 0.075
+          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL3) < 0.125
               && Math.abs(arm.getWristPos() - ArmConstants.coralWristL3) < 0.075;
       elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l3Pos) < 0.50001;
     } else if (isL4()) {
@@ -341,17 +349,18 @@ public class StateController extends SubsystemBase {
   }
 
   public Pose2d getSourcePose(boolean isLeft) {
-    boolean isNear = sourceChooser.get();
+    boolean isRightNear = rightSourceChooser.get();
+    boolean isLeftNear = leftSourceChooser.get();
 
-    if (isNear) {
-      if (isLeft) {
+    if (isLeft) {
+      if (isLeftNear) {
         return FieldConstants.CoralStation.leftNearIntakePos;
       } else {
-        return FieldConstants.CoralStation.rightNearIntakePos;
+        return FieldConstants.CoralStation.leftFarIntakePos;
       }
     } else {
-      if (isLeft) {
-        return FieldConstants.CoralStation.leftFarIntakePos;
+      if (isRightNear) {
+        return FieldConstants.CoralStation.rightNearIntakePos;
       } else {
         return FieldConstants.CoralStation.rightFarIntakePos;
       }
@@ -364,6 +373,9 @@ public class StateController extends SubsystemBase {
         FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
     Logger.recordOutput(
         "RightBranchPositons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
+    SmartDashboard.putBoolean("L4", isL4());
+    SmartDashboard.putBoolean("L3", isL3());
+    SmartDashboard.putBoolean("L2", isL2());
   }
 
   public enum RobotTarget {
