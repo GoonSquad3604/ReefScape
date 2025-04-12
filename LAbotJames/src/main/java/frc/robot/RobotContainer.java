@@ -246,7 +246,7 @@ public class RobotContainer {
             .andThen(elevator.runOnce(() -> elevator.stop())));
     NamedCommands.registerCommand(
         "AlgaeHome",
-        new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+        new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true, true)
             .until(() -> !elevator.mahoming)
             .andThen(elevator.runOnce(() -> elevator.stop())));
 
@@ -257,12 +257,12 @@ public class RobotContainer {
         "AlgaeL2",
         superStructure
             .goToL2Algae()
-            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL2Pos)));
+            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL2Pos, false, true)));
     NamedCommands.registerCommand(
         "AlgaeL3",
         superStructure
             .goToL3Algae()
-            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL3Pos)));
+            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL3Pos, false, true)));
     NamedCommands.registerCommand(
         "Barge",
         superStructure
@@ -768,12 +768,19 @@ public class RobotContainer {
             stateController
                 .setCoralMode()
                 .andThen(manipulator.stopIntake())
-                .andThen(Commands.runOnce(() -> stateController.setShortIntake())));
+                .andThen(Commands.runOnce(() -> stateController.setShortIntake()))
+                .andThen(Commands.runOnce(() -> stateController.setHathntConcluded())));
 
     // Set mode to algae
     operatorButtonBox
         .button(2 - 1)
-        .onTrue(stateController.setAlgaeMode().andThen(stateController.setNoIntakeMode()));
+        .onTrue(
+            stateController
+                .setAlgaeMode()
+                .andThen(
+                    stateController
+                        .setNoIntakeMode()
+                        .andThen(Commands.runOnce(() -> stateController.setHathntConcluded()))));
 
     // Set mode to climb when button coral and algae are pressed
     operatorButtonBox
@@ -1110,7 +1117,13 @@ public class RobotContainer {
 
     // Fire
 
-    operatorButtonBox.button(12).and(coralMode).onTrue(manipulator.shootCoral());
+    operatorButtonBox
+        .button(12)
+        .and(coralMode)
+        .onTrue(
+            manipulator
+                .shootCoral()
+                .alongWith(Commands.runOnce(() -> stateController.setHathntConcluded())));
 
     operatorButtonBox
         .button(12)
