@@ -276,21 +276,35 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Home"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Right3PiecePt6"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intake2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Right3PiecePt6"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Home"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intake2"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {

@@ -57,12 +57,12 @@ public class FieldConstants {
     public static final Pose2d rightFarIntakePos =
         new Pose2d(1.470, 0.760, Rotation2d.fromDegrees(55));
     public static final Pose2d rightNearIntakePos =
-        new Pose2d(0.725, 1.321, Rotation2d.fromDegrees(55));
+        new Pose2d(0.700, 1.315, Rotation2d.fromDegrees(55));
 
     public static final Pose2d leftFarIntakePos =
         new Pose2d(1.470, 7.291, Rotation2d.fromDegrees(-55));
     public static final Pose2d leftNearIntakePos =
-        new Pose2d(0.694, 6.667, Rotation2d.fromDegrees(-55));
+        new Pose2d(0.700, 6.720, Rotation2d.fromDegrees(-55));
   }
 
   public static class Reef {

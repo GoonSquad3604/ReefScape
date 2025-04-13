@@ -9,7 +9,7 @@ public final class DriveConstants {
   public static final double ROBOT_MOI = 6.883;
   public static final double WHEEL_COF = 1.2;
   public static final double PATH_MAX_ACCEL = 3;
-  public static final double PF_MAX_ACCEL = 2.0;
+  public static final double PF_MAX_ACCEL = 2.5; // 2.0;
   public static final double PATH_MAX_ANGULAR_VELO = 540;
   public static final double PATH_MAX_ANGULAR_ACCEL = 720 / 2;
   public static final double PF_MAX_SPEED_OR_SOMETHING = 4.5050;

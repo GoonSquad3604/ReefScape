@@ -41,9 +41,9 @@
                             }
                           },
                           {
-                            "type": "wait",
+                            "type": "named",
                             "data": {
-                              "waitTime": 1.25
+                              "name": "waitUntillL4"
                             }
                           }
                         ]
@@ -118,25 +118,45 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Right3PiecePt3 noconstraint"
-          }
-        },
-        {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "goTo_Elevator_State"
+                  "pathName": "Right3PiecePt3"
                 }
               },
               {
-                "type": "wait",
+                "type": "sequential",
                 "data": {
-                  "waitTime": 1.25
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.3
+                      }
+                    },
+                    {
+                      "type": "race",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "goTo_Elevator_State"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "waitUntillL4"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -235,9 +255,9 @@
                             }
                           },
                           {
-                            "type": "wait",
+                            "type": "named",
                             "data": {
-                              "waitTime": 1.25
+                              "name": "waitUntillL4"
                             }
                           }
                         ]
