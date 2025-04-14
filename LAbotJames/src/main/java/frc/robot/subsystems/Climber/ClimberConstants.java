@@ -10,7 +10,7 @@ public final class ClimberConstants {
   public static final int encoderID = 24;
 
   // Positions
-  public static final double positionUp = 0.430;
+  public static final double positionUp = 0.470;
   public static final double positionHome = 0.103759765625;
 
   // PID values

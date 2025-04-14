@@ -257,12 +257,14 @@ public class RobotContainer {
         "AlgaeL2",
         superStructure
             .goToL2Algae()
-            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL2Pos, false, true)));
+            .alongWith(
+                new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL2Pos, false, true)));
     NamedCommands.registerCommand(
         "AlgaeL3",
         superStructure
             .goToL3Algae()
-            .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL3Pos, false, true)));
+            .alongWith(
+                new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL3Pos, false, true)));
     NamedCommands.registerCommand(
         "Barge",
         superStructure

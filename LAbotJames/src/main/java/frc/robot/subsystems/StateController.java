@@ -317,13 +317,13 @@ public class StateController extends SubsystemBase {
 
     } else if (isL2()) {
       armIsReady =
-          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.125
-              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL2) < 0.075;
+          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.075
+              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL2) < 0.02;
       elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l2Pos) < 0.500015;
     } else if (isL3()) {
       armIsReady =
-          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL3) < 0.125
-              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL3) < 0.075;
+          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL3) < 0.075
+              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL3) < 0.02;
       elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l3Pos) < 0.50001;
     } else if (isL4()) {
       armIsReady =
