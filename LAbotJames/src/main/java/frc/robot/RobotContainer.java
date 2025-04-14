@@ -515,9 +515,6 @@ public class RobotContainer {
         .and(climbMode)
         .onFalse(climber.stop());
 
-    driverController.povLeft().and(climbMode).onTrue(climber.setClimberHome());
-    driverController.povRight().and(climbMode).onTrue(climber.setClimberUp());
-
     driverController.povDown().and(climbMode).onTrue(climber.moveClimberDown());
     driverController.povDown().and(climbMode).onFalse(climber.stop());
 
@@ -742,30 +739,30 @@ public class RobotContainer {
     //             Set.of(drive)));
 
     /* CLIMB PATHFIND */
-
-    driverController
-        .leftBumper()
-        .or(driverController.rightBumper())
-        .and(climbMode)
-        .whileTrue(
-            Commands.defer(
-                () ->
-                    new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                        .until(() -> !elevator.mahoming)
-                        .andThen(elevator.runOnce(() -> elevator.stop()))
-                        .alongWith(
-                            arm.climb()
-                                .andThen(
-                                    drive
-                                        .pathfindToPath(climber.getClimbPath())
-                                        .andThen(climber.setClimberUp()))),
-                Set.of(drive, climber)));
+    // sadness :(
+    // driverController
+    //     .leftBumper()
+    //     .or(driverController.rightBumper())
+    //     .and(climbMode)
+    //     .whileTrue(
+    //         Commands.defer(
+    //             () ->
+    //                 new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+    //                     .until(() -> !elevator.mahoming)
+    //                     .andThen(elevator.runOnce(() -> elevator.stop()))
+    //                     .alongWith(
+    //                         arm.climb()
+    //                             .andThen(
+    //                                 drive
+    //                                     .pathfindToPath(climber.getClimbPath())
+    //                                     .andThen(climber.setClimberUp()))),
+    //             Set.of(drive, climber)));
 
     /* OPERATOR BUTTONS */
 
     // Set mode to coral
     operatorButtonBox
-        .button(1 + 1)
+        .button(2)
         .onTrue(
             stateController
                 .setCoralMode()
@@ -775,7 +772,7 @@ public class RobotContainer {
 
     // Set mode to algae
     operatorButtonBox
-        .button(2 - 1)
+        .button(1)
         .onTrue(
             stateController
                 .setAlgaeMode()

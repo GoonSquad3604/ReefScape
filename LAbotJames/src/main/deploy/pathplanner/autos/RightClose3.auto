@@ -324,6 +324,12 @@
           "data": {
             "name": "Home"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right3PiecePt7"
+          }
         }
       ]
     }
