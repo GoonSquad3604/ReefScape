@@ -81,7 +81,7 @@ public class RobotContainer {
   private final SuperStructure superStructure;
   private final Arm arm;
   private final Manipulator manipulator;
-  private final Climber climber;
+  public final Climber climber;
   public final Elevator elevator;
   private final LEDs lED;
 
