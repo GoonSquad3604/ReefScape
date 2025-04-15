@@ -6,12 +6,10 @@ package frc.robot.subsystems.Climber;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class Climber extends SubsystemBase {
 
@@ -24,7 +22,7 @@ public class Climber extends SubsystemBase {
   private final LoggedTunableNumber kI;
   private final LoggedTunableNumber kD;
 
-  private final LoggedDashboardChooser<String> cageChooser;
+  // private final LoggedDashboardChooser<String> cageChooser;
 
   /** Creates a new Climber. */
   public Climber(ClimberIO io) {
@@ -41,15 +39,15 @@ public class Climber extends SubsystemBase {
 
     disconnected = new Alert("Climber motor disconnected!", Alert.AlertType.kWarning);
 
-    cageChooser = new LoggedDashboardChooser<>("Cage Choices");
-    // cageChooser.addOption("Left Cage", ClimberConstants.leftCagePos);
-    // cageChooser.addOption("Middle Cage", ClimberConstants.middleCagePos);
-    // cageChooser.addOption("Right Cage", ClimberConstants.rightCagePos);
+    // cageChooser = new LoggedDashboardChooser<>("Cage Choices");
+    // // cageChooser.addOption("Left Cage", ClimberConstants.leftCagePos);
+    // // cageChooser.addOption("Middle Cage", ClimberConstants.middleCagePos);
+    // // cageChooser.addOption("Right Cage", ClimberConstants.rightCagePos);
 
-    cageChooser.addOption("Left Cage", "LeftClimber");
-    cageChooser.addOption("Middle Cage", "MiddleClimber");
-    cageChooser.addOption("Right Cage", "RightClimber");
-    cageChooser.addDefaultOption("Right Cage", "RightClimber");
+    // cageChooser.addOption("Left Cage", "LeftClimber");
+    // cageChooser.addOption("Middle Cage", "MiddleClimber");
+    // cageChooser.addOption("Right Cage", "RightClimber");
+    // cageChooser.addDefaultOption("Right Cage", "RightClimber");
   }
 
   /* Raises the climber. */
@@ -83,12 +81,13 @@ public class Climber extends SubsystemBase {
 
   /* Returns the climb position based on smart dashboard option */
   public PathPlannerPath getClimbPath() {
-    try {
-      return PathPlannerPath.fromPathFile(cageChooser.get());
-    } catch (Exception e) {
-      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-      return null;
-    }
+    // try {
+    //   return PathPlannerPath.fromPathFile(cageChooser.get());
+    // } catch (Exception e) {
+    //   DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+    //   return null;
+    // }
+    return null;
   }
 
   @Override
