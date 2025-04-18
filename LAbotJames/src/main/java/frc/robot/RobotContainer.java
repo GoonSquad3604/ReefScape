@@ -194,7 +194,7 @@ public class RobotContainer {
             .andThen(manipulator.stopIntake()));
     NamedCommands.registerCommand(
         "AlgaeFire",
-        Commands.runOnce(() -> manipulator.runWheels(ManipulatorConstants.bargeShoot + 0.1))
+        Commands.runOnce(() -> manipulator.runWheels(ManipulatorConstants.bargeShoot))
             .repeatedly()
             .withTimeout(0.265));
     NamedCommands.registerCommand(
