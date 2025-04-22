@@ -278,11 +278,11 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "waitUntillAL3",
         Commands.waitUntil(
-            () -> Math.abs(elevator.getPos() - ElevatorConstants.algaeL3Pos) < 0.50001));
+            () -> Math.abs(elevator.getPos() - ElevatorConstants.algaeL3Pos) < 0.25));
     NamedCommands.registerCommand(
         "waitUntillAL2",
         Commands.waitUntil(
-            () -> Math.abs(elevator.getPos() - ElevatorConstants.algaeL2Pos) < 0.50001));
+            () -> Math.abs(elevator.getPos() - ElevatorConstants.algaeL2Pos) < 0.25));
 
     configureButtonBindings();
 
