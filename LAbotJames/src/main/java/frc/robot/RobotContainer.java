@@ -194,7 +194,7 @@ public class RobotContainer {
             .andThen(manipulator.stopIntake()));
     NamedCommands.registerCommand(
         "AlgaeFire",
-        Commands.runOnce(() -> manipulator.runWheels(ManipulatorConstants.bargeShoot + 0.1))
+        Commands.runOnce(() -> manipulator.runWheels(ManipulatorConstants.bargeShoot))
             .repeatedly()
             .withTimeout(0.265));
     NamedCommands.registerCommand(
@@ -1100,18 +1100,21 @@ public class RobotContainer {
                             .andThen(
                                 new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
                                     .until(() -> !elevator.mahoming)
-                                    .andThen(elevator.runOnce(() -> elevator.stop())))),
+                                    .andThen(elevator.runOnce(() -> elevator.stop())))
+                            .until(() -> !stateController.isL2())),
                     // L3 Entry
                     Map.entry(
                         LevelState.L3, // L3 State
                         // Command at sate L3
                         arm.coralL3()
-                            .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos))),
+                            .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos))
+                            .until(() -> !stateController.isL3())),
                     Map.entry(
                         LevelState.L4, // L4 State
                         // Command at state l4
                         new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
-                            .alongWith(Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
+                            .alongWith(Commands.waitSeconds(0.5).andThen(arm.coralL4()))
+                            .until(() -> !stateController.isL4()))),
                 stateController::getLevel));
 
     // Fire
