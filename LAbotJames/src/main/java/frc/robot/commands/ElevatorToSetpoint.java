@@ -152,12 +152,16 @@ public class ElevatorToSetpoint extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    // elevator.stop();
+    elevator.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    //if elevator is more than .3 less than usergoal and less than .03 more than usergoal
+    if((userGoal - .03 <= elevator.getPos()) && (elevator.getPos() <= userGoal + .03)){
+      return true;
+    }
     return false;
   }
 }
