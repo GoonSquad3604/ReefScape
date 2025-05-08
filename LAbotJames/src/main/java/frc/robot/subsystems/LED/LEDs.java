@@ -218,7 +218,6 @@ public class LEDs extends SubsystemBase {
                 solid(Color.kBlue);
               } else if (mode.get().equals(RobotMode.CLIMB)) {
                 stripes(LEDConstants.stripes, LEDConstants.STRIP_LENGTH, 1.5);
-                // rainbow(1, 2);
               } else {
                 wave(Color.kDarkViolet, Color.kBlack, 1, 1);
               }

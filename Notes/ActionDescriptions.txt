@@ -1,4 +1,30 @@
-Set Coral Mode
- - Set Leds to Coral Color
- - Set Arm to coral position
+Set Coral Mode:
+Sets LEDs white
+Sets robot mode to “Coral” in order to enable coral functions
+Set Algae Mode:
+Sets LEDs blue
+Sets robot mode to “Algae” in order to enable algae functions
 
+Intake Mode On True:
+Blink LEDs Red
+(Coral) → Set the arm to the source position along with run manipulator wheels at intake speed. When a game piece is detected, set intake mode to false.
+(Algae) → Set the arm to the ground algae position along with run manipulator wheels at intake speed. When a game piece is detected, set intake mode to false.
+The Intake button can be pressed again during intake mode to disable intake mode.
+Pressing the “HOME”, “CORAL”, or “ALGAE” buttons also disables intake mode.
+
+Intake Mode On False:
+Returns LEDs to the Coral or Algae color
+(Coral) → Stops manipulator wheels and returns arm to home position
+(Algae) → Run manipulator wheels at algae holding speed and returns arm to processor position
+
+Auto Align To Branch:
+Uses the “Branch” state chosen from the ReefBox to on-the-fly pathfind to the scoring position for that branch
+Raises elevator to “LevelState” decided by the operator
+Auto Fire triggers when the robot sees a branch close enough to score on, which then outtakes the coral onto the branch
+Elevator is homed
+
+Auto Align to Barge:
+Drives to barge scoring position using a set Y, and the robot’s current X (if X is greater than what would be able to score, a default X is used). If the robot’s current Y is in the opposing alliance’s side, the set Y will flip to drive to the barge from the opposing alliance’s side
+Raises elevator to barge position
+When elevator reaches barge position, run manipulator wheels outwards to fire
+Elevator is homed

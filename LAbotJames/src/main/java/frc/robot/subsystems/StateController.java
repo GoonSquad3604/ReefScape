@@ -22,17 +22,11 @@ public class StateController extends SubsystemBase {
 
   @AutoLogOutput private RobotMode m_Mode;
   @AutoLogOutput private LevelState m_Level;
-  @AutoLogOutput private RobotTarget m_Target;
   @AutoLogOutput private Pose2d m_TragetPose;
   @AutoLogOutput private Intaking m_Intake;
   @AutoLogOutput private GoGoGadgetIntakeMode m_goGoGadgetIntake;
   @AutoLogOutput private ReefSide m_Side;
   @AutoLogOutput private Branch m_Branch;
-
-  // private Manipulator manipulator;
-  // private Elevator elevator;
-  // private Arm arm;
-  // public Drive drive;
 
   @AutoLogOutput private boolean autoReadyFireIsTrue = false;
   @AutoLogOutput private boolean armIsReady = false;
@@ -47,7 +41,6 @@ public class StateController extends SubsystemBase {
     m_Level = LevelState.MAHOME;
     m_Mode = RobotMode.IDLE;
     m_Intake = Intaking.NOINTAKE;
-    m_Side = ReefSide.ONE;
     m_Branch = Branch.FRONT_RIGHTBRANCH;
     m_goGoGadgetIntake = GoGoGadgetIntakeMode.SHORT;
 
@@ -129,53 +122,6 @@ public class StateController extends SubsystemBase {
     return runOnce(() -> m_Level = LevelState.MAHOME);
   }
 
-  public Command setSide1() {
-    return runOnce(() -> m_Side = ReefSide.ONE);
-  }
-
-  public Command setSide2() {
-    return runOnce(() -> m_Side = ReefSide.TWO);
-  }
-
-  public Command setSide3() {
-    return runOnce(() -> m_Side = ReefSide.THREE);
-  }
-
-  public Command setSide4() {
-    return runOnce(() -> m_Side = ReefSide.FOUR);
-  }
-
-  public boolean isSide1() {
-    return m_Side == ReefSide.ONE;
-  }
-
-  public boolean isSide2() {
-    return m_Side == ReefSide.TWO;
-  }
-
-  public boolean isSide3() {
-    return m_Side == ReefSide.THREE;
-  }
-
-  public boolean isSide4() {
-    return m_Side == ReefSide.FOUR;
-  }
-
-  public boolean isSide5() {
-    return m_Side == ReefSide.FIVE;
-  }
-
-  public boolean isSide6() {
-    return m_Side == ReefSide.SIX;
-  }
-
-  public Command setSide5() {
-    return runOnce(() -> m_Side = ReefSide.FIVE);
-  }
-
-  public Command setSide6() {
-    return runOnce(() -> m_Side = ReefSide.SIX);
-  }
 
   public boolean isL1() {
     return m_Level == LevelState.L1;
@@ -251,7 +197,7 @@ public class StateController extends SubsystemBase {
         });
   }
 
-  public Command setClimbMode(Manipulator manipulator) {
+  public Command setClimbMode() {
     return runOnce(
         () -> {
           setClimb();
@@ -272,38 +218,11 @@ public class StateController extends SubsystemBase {
         });
   }
 
-  public boolean stupid(Pose2d position1, Pose2d position2) {
-    if (Math.abs(position1.getX() - position2.getX()) < 0.1
-        && Math.abs(position1.getY() - position2.getY()) < 0.1
-        && Math.abs(position1.getRotation().getRadians() - position2.getRotation().getRadians())
-            < 5 * (Math.PI / 180)) {
-      return true;
-    }
-
-    return false;
-  }
-
   public Command setBranch(Branch theBranch) {
     return runOnce(() -> m_Branch = theBranch);
   }
 
   public boolean autoReadyFire(Arm arm, Elevator elevator, Manipulator manipulator) {
-    // Pose2d currentPosition = drive.getPose();
-    // boolean isInPosition = false;
-    // for (int i = 0; i < FieldConstants.Reef.leftRobotBranchPoses.size(); i++) {
-    //   if (stupid(currentPosition, FieldConstants.Reef.leftRobotBranchPoses.get(i))) {
-    //     isInPosition = true;
-    //     break;
-    //   }
-    // }
-    // if (!isInPosition) {
-    //   for (int i = 0; i < FieldConstants.Reef.rightRobotBranchPoses.size(); i++) {
-    //     if (stupid(currentPosition, FieldConstants.Reef.rightRobotBranchPoses.get(i))) {
-    //       isInPosition = true;
-    //       break;
-    //     }
-    //   }
-    // }
 
     armIsReady = false;
     elevatorIsReady = false;
@@ -313,23 +232,23 @@ public class StateController extends SubsystemBase {
       armIsReady =
           Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL1) < 0.075
               && Math.abs(arm.getWristPos() - ArmConstants.coralWristL1) < 0.075;
-      elevatorIsReady = false; // or !true
+      elevatorIsReady = false;
 
     } else if (isL2()) {
       armIsReady =
           Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.075
               && Math.abs(arm.getWristPos() - ArmConstants.coralWristL2) < 0.02;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l2Pos) < 0.500015;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l2Pos) < 0.5;
     } else if (isL3()) {
       armIsReady =
           Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL3) < 0.075
               && Math.abs(arm.getWristPos() - ArmConstants.coralWristL3) < 0.02;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l3Pos) < 0.50001;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l3Pos) < 0.5;
     } else if (isL4()) {
       armIsReady =
           Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL4) < 0.075
-              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL4) < 0.075000001;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l4Pos) < 0.50001;
+              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL4) < 0.075;
+      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l4Pos) < 0.5;
     }
 
     autoReadyFireIsTrue =
@@ -340,10 +259,6 @@ public class StateController extends SubsystemBase {
             && armIsReady
             && elevatorIsReady
             && !DriverStation.isAutonomous();
-
-    // Logger.recordOutput("laserCanSees", manipulator);
-    // Logger.recordOutput("ArmIsInPosition", armIsReady);
-    // Logger.recordOutput("ElevatorIsInPosition", elevatorIsReady);
 
     return autoReadyFireIsTrue;
   }
@@ -376,12 +291,6 @@ public class StateController extends SubsystemBase {
     SmartDashboard.putBoolean("L4", isL4());
     SmartDashboard.putBoolean("L3", isL3());
     SmartDashboard.putBoolean("L2", isL2());
-  }
-
-  public enum RobotTarget {
-    REEF,
-    PROCESSOR,
-    SOURCE
   }
 
   public enum Intaking {

@@ -1,28 +1,29 @@
 Driver Controlled Actions:
-- Field Relative Drive
+- Field Relative Drive (Default)
 - Robot Relative Drive
 - Set angle of robot to target
 - Pathfind to left or right source
-- Pathfind to closest reef side left branch
-- Pathfind to closest reef side right branch
+- Pathfind to reef branch (Based on “Branch” state)
 - Reset Gyro
-- Cancel Pathfind
+- Raise climber
+- Lower climber
 
 Operator Controlled Actions:
 - Set Coral Mode
 - Set Algae Mode
 - Set target score height
   -L1: L1 Coral, Processor Algae
-  -L2: L2 Coral, L2.5 Algae
-  -L3: L3 Coral, L3.5 Algae
+  -L2: L2 Coral, L2 Algae
+  -L3: L3 Coral, L3 Algae
   -L4: L4 Coral, Barge Algae
 - Intake based on current mode
-  -Coral: Set robot to position needed to intake and start intake
-  -Algae: Intakes at current height
-- Set Home: Returns elevator to home position
-- Fire: Scores piece after correct position is achieved. Outtakes
-- Vomit: Outakes intakes regardless of positions and modes. A failsafe.
-- Deploy Climber (depends on final climber design)
-- Climb (depends on final climber design)
+  -Coral: Set robot to position needed to intake and start intake from source
+  -Algae: Set robot to Intake ground algae
+- Set Home: Returns elevator to home position dependent on Coral or Algae mode
+- Fire: Outtakes at different speeds dependent on robot states
+- Set arm to climb position when about to climb
 
-
+Auto Fire Actions:
+ - Raise elevator to LevelState and set arm to LevelState when pathfind to reef branch is complete
+ - Outtakes manipulator wheels when all conditions for scoring are met and sensor can detect a branch
+ - Returns elevator and arm to home when complete
