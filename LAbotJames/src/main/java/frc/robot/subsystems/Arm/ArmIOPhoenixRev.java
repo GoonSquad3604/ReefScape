@@ -5,9 +5,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -38,8 +36,6 @@ public class ArmIOPhoenixRev implements ArmIO {
   private final CANcoder elbowEncoder;
 
   private final PositionVoltage elbowRequest;
-  private final TorqueCurrentFOC torqueCurrentRequest;
-  private final PositionTorqueCurrentFOC positionTorqueCurrentRequest;
 
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
@@ -55,8 +51,6 @@ public class ArmIOPhoenixRev implements ArmIO {
     elbow = new TalonFX(ArmConstants.elbowID);
     wristEncoder = wrist.getAbsoluteEncoder();
     elbowRequest = new PositionVoltage(0);
-    torqueCurrentRequest = new TorqueCurrentFOC(0).withUpdateFreqHz(0);
-    positionTorqueCurrentRequest = new PositionTorqueCurrentFOC(0).withUpdateFreqHz(0);
 
     elbowEncoder = new CANcoder(ArmConstants.elbowEncoderID);
 
@@ -67,14 +61,10 @@ public class ArmIOPhoenixRev implements ArmIO {
 
     SparkFlexConfig wristConfig = new SparkFlexConfig();
     wristConfig.inverted(true).idleMode(IdleMode.kBrake);
-    // wristConfig.encoder.positionConversionFactor(1000).velocityConversionFactor(1000);
     wristConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
         .pid(ArmConstants.wristP, ArmConstants.wristI, ArmConstants.wristD);
-    // wristConfig.closedLoopRampRate(0.5);
-    // wristConfig.softLimit.forwardSoftLimit(0);
-    // wristConfig.softLimit.reverseSoftLimit(0);
 
     wrist.configure(wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -82,19 +72,17 @@ public class ArmIOPhoenixRev implements ArmIO {
 
     elbowConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     elbowConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    elbowConfig.CurrentLimits.SupplyCurrentLimit = ArmConstants.elbowCurrentLimit;
-    // elbowConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    elbowConfig.CurrentLimits.SupplyCurrentLimit = 40;
     elbowConfig.Feedback.FeedbackRemoteSensorID = ArmConstants.elbowEncoderID;
     elbowConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     elbowConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     elbowConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.5;
-    // elbowConfig.Feedback.withRemoteCANcoder(elbowEncoder);
     elbowConfig.Slot0 =
         new Slot0Configs()
             .withKP(ArmConstants.elbowP)
             .withKI(ArmConstants.elbowI)
             .withKD(ArmConstants.elbowD);
-    elbowConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0; // 0.0499
+    elbowConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
     PhoenixUtil.tryUntilOk(5, () -> elbow.getConfigurator().apply(elbowConfig));
 
     position = elbow.getPosition();
@@ -136,12 +124,7 @@ public class ArmIOPhoenixRev implements ArmIO {
                 elbow.getDeviceTemp(),
                 elbow.getVelocity())
             .isOK();
-    // inputs.wristMotorConnected = BaseStatusSignal.refreshAll(
-    //                 wrist.getMotorVoltage(),
-    //                 wrist.getSupplyCurrent(),
-    //                 wrist.getDeviceTemp(),
-    //                 wrist.getVelocity())
-    //         .isOK();
+
     inputs.wristEncoderConnected = wrist.getBusVoltage() < 5000 && wrist.getBusVoltage() > -5000;
     inputs.elbowMotorVoltage = elbow.getMotorVoltage().getValueAsDouble();
     inputs.elbowMotorCurrent = elbow.getSupplyCurrent().getValueAsDouble();
@@ -156,24 +139,12 @@ public class ArmIOPhoenixRev implements ArmIO {
   }
 
   @Override
-  public void setWristMotorVoltage(double voltage) {
-    wrist.setVoltage(voltage);
-  }
-
-  @Override
-  public void setElbowMotorVoltage(double voltage) {
-    elbow.setVoltage(voltage);
-  }
-
-  @Override
   public void setElbowPosition(double position) {
     elbow.setControl(elbowRequest.withPosition(position));
-    // elbow.setControl(positionTorqueCurrentRequest.withPosition(position));
   }
 
   @Override
   public void setWristPosition(double position) {
-    // wrist.getClosedLoopController().setReference(position, SparkFlex.ControlType.kPosition);
     wrist
         .getClosedLoopController()
         .setReference(
@@ -198,13 +169,5 @@ public class ArmIOPhoenixRev implements ArmIO {
   @Override
   public double getElbowPosition() {
     return elbowEncoder.getPosition().getValueAsDouble();
-  }
-
-  @Override
-  public void setPID(double kP, double kI, double kD) {
-    elbowConfig.Slot0.kP = kP;
-    elbowConfig.Slot0.kI = kI;
-    elbowConfig.Slot0.kD = kD;
-    PhoenixUtil.tryUntilOk(5, () -> elbow.getConfigurator().apply(elbowConfig));
   }
 }

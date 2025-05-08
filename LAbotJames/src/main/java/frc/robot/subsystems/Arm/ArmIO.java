@@ -18,7 +18,6 @@ public interface ArmIO {
     public double elbowMotorCurrent;
     public double elbowVelocity;
     public double wristVelocity;
-    public boolean wristMotorConnected = false;
     public double wristMotorVoltage;
     public double wristMotorCurrent;
     public double elbowPosition;
@@ -27,10 +26,6 @@ public interface ArmIO {
     public boolean wristEncoderConnected = false;
   }
 
-  default void setElbowMotorVoltage(double voltage) {}
-
-  default void setWristMotorVoltage(double voltage) {}
-
   default void setElbowPosition(double position) {}
 
   default void setWristPosition(double position) {}
@@ -38,8 +33,6 @@ public interface ArmIO {
   default void setElbowPower(double power) {}
 
   default void setWristPower(double power) {}
-
-  default void setPID(double kP, double kI, double kD) {}
 
   default double getElbowPosition() {
     return 0;

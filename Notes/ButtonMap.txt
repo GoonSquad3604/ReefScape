@@ -1,31 +1,49 @@
 Driver:
-  LeftStick - Drive Translation
+  Left Stick - Drive Translation
   Right Stick - Drive Rotation
-  A (Hold)- Lock to target Rotation While Driving (Target is set by state)
-  B (Hold)- Robot Relative Drive
+  A (Hold) - Rotate to “Target” (Target is set by state)
+  B (Hold) - Robot Relative Drive
+  Y - Unused
+  X - Lock drivetrain (X-formation)
   Start - Reset Gyro
-  Left Trigger - Pathfind to Left Branch of Closet Reef Tag (Center of closest tag in Algae Mode)
-  Right Trigger - Pathfind to Right Branch of Closet Reef Tag (Center of closest tag in Algae Mode)
-  Left Bumper - Pathfind to Left spot on closest Source
-  Right Bumper - Pathfind to Right spot on closest Source
-  X - Brake Mode
-  Y - Slow Mode
-  POV Up - drive to barge
-  POV Left - drive to cage
-  POV Right/Down - drive to processor
+  Back - Unused
+  Left Bumper / Right Bumper (Hold):
+If we have a game piece, pathfind to the reef based on the “Branch” state (bumper independant)
+If we do not have a game piece, pathfind to the left or right source (bumper dependant). Will pathfind to “Near” or “Far” source position based on dashboard selection
+  Left Trigger - Unused
+  Right Trigger (Hold) - Slow Mode
 
-Operator: (Button number to be determined)
-  1. Coral - Sets state to Coral. Changes LEDs, Target Angles and L1-L4 positions
-  2. Algae - Sets state to Algae. Changes LEDs, Target Angles and L1-L4 positions
-  6. L1 - Sets elevator to L1 height for Coral and processor for Algae
-  5. L2 - Sets elevator to L2 height for Coral and Lower Reef Algae position for Algae
-  4. L3 - Sets elevator to L3 height for Coral and Higher Reef algae position for Algae
-  3. L4 - Sets elevator to L4 height for Coral and Barge position for Alage
-  10. Intake - Sets arm in take position and runs intake. If ground intake for Algae, run that if L1
-  7. Home - Returns Elevator to 0 position and resets to 0 when sensor pressed
-  11. Vomit - Outakes Intakes regardless of position
-  12. Fire - Outakes in scoring position
-  8. Deploy Climb - Sets Climber to ready to climb position
-  9. Climb - Activates climber
+  POV Up/UpLeft/UpRight (and “Climb” mode active) - Raise climber
+  POV Down (and “Climb” mode active) - Lower climber
 
 
+Main Operator Button Box:
+  Button 1 (CORAL) → Sets state to Coral. Changes LEDs to white.
+  Button 2 (ALGAE) → Sets state to Algae. Changes LEDs to blue.
+  Button 1 + Button 2 → Sets state to Climb. Changes LEDs to rainbow.
+  Button 6 (L1):
+(Coral) → Use the “HOME” button’s logic to home elevator, set arm to L1 position.
+(Algae) → Use the “HOME” button’s logic to home elevator, and then…
+If we do not have a game piece: Sets arm to lollipop position, and runs manipulator wheels at algae intake speed until robot senses a game piece, then sets arm to Processor position.
+If we have a game piece: Set arm to Processor position.
+  Button 5 (L2):
+(Coral) → Sets LevelState to L2.
+(Algae) → Raise elevator and set arm position to Algae L2. Run manipulator wheels at algae intake speed until the robot senses a game piece, then run manipulator wheels at hold algae speed.
+  Button 4 (L3):
+(Coral) → Sets LevelState to L3.
+(Algae) → Raise elevator and set arm position to Algae L3. Run manipulator wheels at algae intake speed until the robot senses a game piece, then run manipulator wheels at hold algae speed.
+  Button 3 (L4):
+(Coral) → Sets LevelState to L4.
+(Algae) → Raise elevator and set arm position to Barge.
+  Button 7 (HOME):
+(Coral) →  Set elevator to 2, but stop power when elevator reaches , allowing elevator to drift to the real 0. Encoder resets to 0 when the limit switch is pressed.
+(Algae) → Set elevator to 2, but stop power when elevator reaches , allowing elevator to drift to the real 0. Encoder resets to 0 when the limit switch is pressed.
+  Button 8 (Deploy Climb, Requires “Climb” Mode) → Sets Arm to ready to climb position
+  Button 9 (GoGoGadget Intake, Requires “Intake” Mode) → Angles arm to intake from farther away
+  Button 10 (INTAKE) → Toggles “Intake” Mode. See “ActionDescriptions”.
+  Button 11 (Manual Elevator) → Raises the elevator to the set state for when auto align is not used.
+  Button 12 (FIRE):
+(Coral) → Outtakes manipulator wheels to score (or eject) a game piece
+(Algae) →
+(elevator is at L4) → Fires game piece at Barge power
+(elevator is not L4) → Fires game piece at Processor power
