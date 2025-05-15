@@ -11,8 +11,6 @@ public interface ElevatorIO {
 
     // silly little code -lucas
 
-    public boolean MotorLeftConnected = false;
-    public boolean MotorRightConnected = false;
     public boolean limitSwitchLeft = false;
     public boolean limitSwitchRight = false;
 
@@ -26,9 +24,6 @@ public interface ElevatorIO {
     public double MotorLeftPos;
     public double MotorRightPos;
     public double HeightInInches;
-
-    public double lCanDist;
-    public boolean lCanConnected = false;
   }
 
   default boolean checkLimitSwitch() {

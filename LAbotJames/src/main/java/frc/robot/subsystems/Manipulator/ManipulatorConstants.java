@@ -4,7 +4,6 @@ public final class ManipulatorConstants {
 
   public static final int leftWheelMotorID = 10;
   public static final int rightWheelMotorID = 11;
-  public static final int openingMotorID = 12;
   public static final int manipulatorSensorID = 49;
   public static final int manipulatorDistanceSensorID = 42;
 
@@ -23,23 +22,6 @@ public final class ManipulatorConstants {
   public static final double wheelD = 0; // Not true value
   public static final double wheelFF = 0; // Not true value
 
-  public static final double openingMotorP = 1.2; // Not true value
-  public static final double openingMotorI = 0.0001; // Not true value
-  public static final double openingMotorD = 1.526; // Not true value
-  public static final double openingMotorFF = 0; // Not true value
-
-  public static final double wheelL1Power = 0.18050;
-  public static final double wheelL2Power = 0.21;
-  public static final double wheelAL2Power = -0.4000;
-  public static final double wheelL3Power = 0.21;
-  public static final double wheelAL3Power = -0.4000;
-  public static final double wheelL4Power = 0.18;
-
-  public static final double wheelL1RPM = 60;
-  public static final double wheelL2RPM = 60;
-  public static final double wheelL3RPM = 60;
-  public static final double wheelL4RPM = 59;
-
   public static final double bargeShoot = .9;
   public static final double processorShoot = 0.3;
   public static final double algaeIntake = -0.5;
@@ -48,7 +30,7 @@ public final class ManipulatorConstants {
   public static final double coralShoot = -0.3604;
   public static final double coralIntake = 0.5;
 
-  public static final double reefThreshold = 500; // 500;
+  public static final double reefThreshold = 500;
   public static final double l4Threshold = 455;
   public static final double hasGamePieceThreshold = 125;
 

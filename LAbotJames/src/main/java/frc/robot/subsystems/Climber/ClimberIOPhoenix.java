@@ -17,7 +17,6 @@ public class ClimberIOPhoenix implements ClimberIO {
     // declare motor and config
     climberMotor = new TalonFX(ClimberConstants.motorID);
     config = new TalonFXConfiguration();
- 
 
     // motor config setup
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -33,7 +32,6 @@ public class ClimberIOPhoenix implements ClimberIO {
 
     // apply configs
     PhoenixUtil.tryUntilOk(5, () -> climberMotor.getConfigurator().apply(config));
-
   }
 
   @Override

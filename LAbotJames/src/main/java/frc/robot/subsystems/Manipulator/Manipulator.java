@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems.Manipulator;
 
-import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,7 +16,6 @@ public class Manipulator extends SubsystemBase {
 
   private ManipulatorIO io;
   protected final ManipulatorIOInputsAutoLogged inputs = new ManipulatorIOInputsAutoLogged();
-  private final Alert openingDisconnected;
   private final Alert leftWheelDisconnected;
   private final Alert rightWheelDisconnected;
   private final LoggedTunableNumber kP;
@@ -28,18 +25,6 @@ public class Manipulator extends SubsystemBase {
   /** Creates a new Manipulator. */
   public Manipulator(ManipulatorIO manipulatorIO) {
     io = manipulatorIO;
-
-    openSysID =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                null,
-                null,
-                null, // Use default config
-                (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-            new SysIdRoutine.Mechanism(
-                (voltage) -> this.openingVoltage(voltage.in(Volts)),
-                null, // No log consumer, since data is recorded by AdvantageKit
-                this));
 
     kP = new LoggedTunableNumber("Manipulator/kP");
     kI = new LoggedTunableNumber("Manipulator/kI");
@@ -53,20 +38,10 @@ public class Manipulator extends SubsystemBase {
         new Alert("Left wheel manipulator motor disconnected", Alert.AlertType.kWarning);
     rightWheelDisconnected =
         new Alert("Right wheel manipulator motor disconnected", Alert.AlertType.kWarning);
-    openingDisconnected =
-        new Alert("Opening manipulator motor disconnected", Alert.AlertType.kWarning);
   }
 
   public boolean hasGamePiece() {
     return inputs.manipulatorOtherDistance <= ManipulatorConstants.hasGamePieceThreshold;
-  }
-
-  public void setOpeningToCoral() {
-    io.setOpeningPos(ManipulatorConstants.coralPos);
-  }
-
-  public void setOpeningToAlgae() {
-    io.setOpeningPos(ManipulatorConstants.algaePos);
   }
 
   public void intakeGamePiece() {
@@ -89,21 +64,6 @@ public class Manipulator extends SubsystemBase {
     io.setWheelPower(ManipulatorConstants.zeroPower);
   }
 
-  public void openUp() {
-    // io.setOpeningVoltage(1);
-    io.setOpeningPower(.1);
-  }
-
-  public void close() {
-    // io.setOpeningVoltage(-1);
-    io.setOpeningPower(-.1);
-  }
-
-  public void stop() {
-    // io.setOpeningVoltage(0);
-    io.setOpeningPower(0);
-  }
-
   public void runWheels() {
     io.setWheelPower(ManipulatorConstants.wheelPower);
   }
@@ -116,12 +76,7 @@ public class Manipulator extends SubsystemBase {
     io.setWheelPower(power);
   }
 
-  public void openingVoltage(double volts) {
-    io.setOpeningVoltage(volts);
-  }
-
   public Command keepCoralIn() {
-    // return runOnce(() -> io.setWheelPower(0.05));
     return runOnce(() -> io.setVoltage(3));
   }
 
@@ -203,11 +158,6 @@ public class Manipulator extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Manipulator", inputs);
     leftWheelDisconnected.set(!inputs.manipulatorLeftWheelMotorConnected);
-    openingDisconnected.set(!inputs.manipulatorOpeningMotorConnected);
     rightWheelDisconnected.set(!inputs.manipulatorRightWheelMotorConnected);
-
-    // if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
-    //   io.setPID(kP.get(), kI.get(), kD.get());
-    // }
   }
 }

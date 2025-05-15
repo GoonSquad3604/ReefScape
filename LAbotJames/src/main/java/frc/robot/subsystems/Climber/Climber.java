@@ -16,17 +16,13 @@ public class Climber extends SubsystemBase {
   protected final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
   private final Alert disconnected;
 
-
-
   /** Creates a new Climber. */
   public Climber(ClimberIO io) {
 
     this.io = io;
 
     disconnected = new Alert("Climber motor disconnected!", Alert.AlertType.kWarning);
-
   }
-
 
   /* Moves climber up with power (raise) */
   public Command moveClimberUp() {
@@ -47,7 +43,6 @@ public class Climber extends SubsystemBase {
   public Command stop() {
     return run(() -> io.setPower(0));
   }
-
 
   @Override
   public void periodic() {
