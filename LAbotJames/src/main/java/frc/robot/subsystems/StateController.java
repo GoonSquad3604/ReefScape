@@ -34,6 +34,8 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private boolean manipulatorIsReady = false;
   @AutoLogOutput private boolean autoAlineHathConcluded = false;
 
+  @AutoLogOutput private boolean autoFireAutoOverride = false;
+
   private final LoggedDashboardChooser<Boolean> rightSourceChooser;
   private final LoggedDashboardChooser<Boolean> leftSourceChooser;
 
@@ -221,6 +223,10 @@ public class StateController extends SubsystemBase {
     return runOnce(() -> m_Branch = theBranch);
   }
 
+  public Command setOverride(boolean overrideSet) {
+    return runOnce(() -> autoFireAutoOverride = overrideSet);
+  }
+
   public boolean autoReadyFire(Arm arm, Elevator elevator, Manipulator manipulator) {
 
     armIsReady = false;
@@ -257,7 +263,7 @@ public class StateController extends SubsystemBase {
             && manipulatorIsReady
             && armIsReady
             && elevatorIsReady
-            && !DriverStation.isAutonomous();
+            && (!DriverStation.isAutonomous() || autoFireAutoOverride);
 
     return autoReadyFireIsTrue;
   }

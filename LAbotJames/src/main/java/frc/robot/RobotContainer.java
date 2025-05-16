@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.Autos.ThreePieceRight;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
@@ -285,6 +286,10 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser.addOption(
+        "Right3PieceAutoAlineOnly",
+        new ThreePieceRight(
+            stateController, elevator, manipulator, arm, drive, this, superStructure));
   }
 
   /**
@@ -421,17 +426,13 @@ public class RobotContainer {
     intakeMode
         .and(coralMode)
         .onFalse(
-            arm.home()
-                .alongWith(manipulator.intakeCoral().withTimeout(.5))
-                .andThen(manipulator.stopIntake())
-                .alongWith(
-                    superStructure
-                        .goHome()
-                        .alongWith(Commands.runOnce(() -> stateController.setShortIntake())))
-                .andThen(
-                    new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                        .until(() -> !elevator.mahoming)
-                        .andThen(elevator.runOnce(() -> elevator.stop()))));
+            superStructure
+                .goHome()
+                .alongWith(Commands.runOnce(() -> stateController.setShortIntake()))
+            /*  .andThen(
+            new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+                .until(() -> !elevator.mahoming)
+                .andThen(elevator.runOnce(() -> elevator.stop())))*/ );
 
     // Climb mode stops intake wheels
     climbMode.onTrue(manipulator.stopIntake());
