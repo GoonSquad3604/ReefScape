@@ -170,10 +170,6 @@ public class Elevator extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
 
-    // checks for disconnected motors
-    leftDisconnected.set(!inputs.MotorLeftConnected);
-    rightDisconnected.set(!inputs.MotorRightConnected);
-
     // if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
     //   io.setPID(kP.get(), kI.get(), kD.get());
     // }

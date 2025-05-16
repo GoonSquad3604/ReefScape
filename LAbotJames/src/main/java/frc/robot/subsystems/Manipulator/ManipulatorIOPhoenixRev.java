@@ -195,10 +195,10 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     leftWheel.setControl(leftWheelRequest.withOutput(MathUtil.clamp(voltage, -12, 12)));
   }
 
-  @Override
-  public void setOpeningVoltage(double voltage) {
-    opening.setVoltage(voltage);
-  }
+  // @Override
+  // public void setOpeningVoltage(double voltage) {
+  //   opening.setVoltage(voltage);
+  // }
 
   @Override
   public void setRPM(double RPM) {
@@ -215,10 +215,10 @@ public class ManipulatorIOPhoenixRev implements ManipulatorIO {
     leftWheel.setControl(torqueControlRequest.withOutput(current));
   }
 
-  @Override
-  public void setOpeningPos(double position) {
-    opening.getClosedLoopController().setReference(position, SparkFlex.ControlType.kPosition);
-  }
+  // @Override
+  // public void setOpeningPos(double position) {
+  //   opening.getClosedLoopController().setReference(position, SparkFlex.ControlType.kPosition);
+  // }
 
   // @Override
   // public boolean getManipulatorSensor() {

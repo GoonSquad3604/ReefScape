@@ -17,8 +17,7 @@ public class SuperStructure extends SubsystemBase {
   private Elevator elevator;
 
   /** Creates a new SuperStructure. */
-  public SuperStructure(
-      Manipulator manipulator, Arm arm, Elevator elevator) {
+  public SuperStructure(Manipulator manipulator, Arm arm, Elevator elevator) {
     this.manipulator = manipulator;
     this.arm = arm;
     this.elevator = elevator;
@@ -89,7 +88,6 @@ public class SuperStructure extends SubsystemBase {
           manipulator.runWheels(ManipulatorConstants.algaeIntakeSlow);
         });
   }
-
 
   @Override
   public void periodic() {
