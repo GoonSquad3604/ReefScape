@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.573416689978512,
-        "y": 6.011893402832817
+        "x": 5.584624772504828,
+        "y": 5.97309687726862
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,24 @@
         "y": 5.2
       },
       "prevControl": {
-        "x": 5.013579679031644,
-        "y": 4.990501799466223
+        "x": 5.029412704808527,
+        "y": 4.981005241527555
+      },
+      "nextControl": {
+        "x": 5.320134306695581,
+        "y": 5.508975513079674
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.4,
+        "y": 5.7
+      },
+      "prevControl": {
+        "x": 4.9938483842516135,
+        "y": 4.889228582104778
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +50,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +58,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": -119.99999999999999
   },
   "reversed": false,
   "folder": "AlgaeAutoAlinePaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": -119.99999999999999
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

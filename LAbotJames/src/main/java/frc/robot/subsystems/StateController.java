@@ -28,6 +28,7 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private ReefSide m_Side;
   @AutoLogOutput private Branch m_Branch;
 
+  @AutoLogOutput private boolean gotGamePieceAutoAlgae = false;
   @AutoLogOutput private boolean autoReadyFireIsTrue = false;
   @AutoLogOutput private boolean armIsReady = false;
   @AutoLogOutput private boolean elevatorIsReady = false;
@@ -166,6 +167,18 @@ public class StateController extends SubsystemBase {
 
   public boolean hasGamePiece(Manipulator manipulator) {
     return manipulator.hasGamePiece();
+  }
+
+  public boolean gotGamePieceAutoAlgae() {
+    return gotGamePieceAutoAlgae;
+  }
+
+  public void setGotPieceAutoAlgae() {
+    gotGamePieceAutoAlgae = true;
+  }
+
+  public void setNotGotPieceAutoAlgae() {
+    gotGamePieceAutoAlgae = false;
   }
 
   public RobotMode getMode() {

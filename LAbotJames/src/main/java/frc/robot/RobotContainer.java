@@ -314,6 +314,7 @@ public class RobotContainer {
 
     Trigger hasGamePiece = new Trigger(() -> stateController.hasGamePiece(manipulator));
     Trigger hasNoGamePiece = new Trigger(() -> !stateController.hasGamePiece(manipulator));
+    Trigger gotGamePieceAutoAlgae = new Trigger(() -> stateController.gotGamePieceAutoAlgae());
 
     Trigger autoAlineModeHathConcluded = new Trigger(() -> stateController.hathConcluded());
 
@@ -595,10 +596,41 @@ public class RobotContainer {
         .leftBumper()
         .and(algaeMode)
         .and(hasGamePiece)
+        .and(gotGamePieceAutoAlgae.negate())
         .whileTrue(
             Commands.sequence(
                 Commands.defer(() -> AutoAline.autoAlineToBarge(this), Set.of(drive)),
                 Commands.runOnce(() -> stateController.setHathConcluded())));
+
+    // Right bumper, algae mode, has piece -> processor
+    driverController
+        .rightBumper()
+        .and(algaeMode)
+        .and(hasGamePiece)
+        .and(gotGamePieceAutoAlgae.negate())
+        .whileTrue(
+            Commands.sequence(
+                /*Commands.defer(() -> AutoAline.autoAlineToProcessorPath(this), Set.of(drive)),*/
+                Commands.defer(() -> AutoAline.autoAlineToProcessorPose(this), Set.of(drive)),
+                manipulator.shootAlgae(stateController.isL4())));
+
+    // Right or Left bumper, algae mode, no game piece -> closest reef panel
+    driverController
+        .rightBumper()
+        .or(driverController.leftBumper())
+        .and(algaeMode)
+        .and(hasNoGamePiece)
+        .whileTrue(
+            Commands.sequence(
+                Commands.runOnce(() -> stateController.setGotPieceAutoAlgae()),
+                Commands.defer(
+                    () -> AutoAline.autoAlineToAlgaeReefPose(this, superStructure),
+                    Set.of(drive))));
+
+    driverController
+        .rightBumper()
+        .or(driverController.leftBumper())
+        .onFalse(Commands.runOnce(() -> stateController.setNotGotPieceAutoAlgae()));
 
     /* OPERATOR BUTTONS */
 
