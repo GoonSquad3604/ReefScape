@@ -449,6 +449,17 @@ public class RobotContainer {
             () -> -driverController.getRightX(),
             slowMode));
 
+    // Angle towards algae
+    // driverController
+    //     .y()
+    //     .whileTrue(
+    //     DriveCommands.angleTowardsAlgae(
+    //         drive,
+    //         () -> -driverController.getLeftY(),
+    //         () -> -driverController.getLeftX(),
+    //         () ->
+    //             LimelightHelpers.getTV("") ? LimelightHelpers.getTX("") * (Math.PI / 180) : 0));
+
     // Coral mode + has piece -> angle towards reef panel
     driverController
         .b()
@@ -610,7 +621,6 @@ public class RobotContainer {
         .and(gotGamePieceAutoAlgae.negate())
         .whileTrue(
             Commands.sequence(
-                /*Commands.defer(() -> AutoAline.autoAlineToProcessorPath(this), Set.of(drive)),*/
                 Commands.defer(() -> AutoAline.autoAlineToProcessorPose(this), Set.of(drive)),
                 manipulator.shootAlgae(stateController.isL4())));
 
@@ -685,13 +695,17 @@ public class RobotContainer {
         .and(algaeMode)
         .onTrue(
             stateController
-                .setL3()
-                .alongWith(
-                    superStructure
-                        .goToL3Algae()
-                        .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL3Pos))
-                        .until(hasGamePiece)
-                        .andThen(manipulator.keepAlgaeIn())));
+                .setNoIntakeMode()
+                .andThen(
+                    stateController
+                        .setL3()
+                        .alongWith(
+                            superStructure
+                                .goToL3Algae()
+                                .alongWith(
+                                    new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL3Pos))
+                                .until(hasGamePiece)
+                                .andThen(manipulator.keepAlgaeIn()))));
 
     // Set L2 Coral
     operatorButtonBox.button(5).and(coralMode).onTrue(stateController.setL2());
@@ -702,13 +716,17 @@ public class RobotContainer {
         .and(algaeMode)
         .onTrue(
             stateController
-                .setL2()
-                .alongWith(
-                    superStructure
-                        .goToL2Algae()
-                        .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL2Pos))
-                        .until(hasGamePiece)
-                        .andThen(manipulator.keepAlgaeIn())));
+                .setNoIntakeMode()
+                .andThen(
+                    stateController
+                        .setL2()
+                        .alongWith(
+                            superStructure
+                                .goToL2Algae()
+                                .alongWith(
+                                    new ElevatorToSetpoint(elevator, ElevatorConstants.algaeL2Pos))
+                                .until(hasGamePiece)
+                                .andThen(manipulator.keepAlgaeIn()))));
 
     // Set L1 Coral
     operatorButtonBox
