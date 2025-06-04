@@ -21,6 +21,8 @@ public class FieldConstants {
   public static class Processor {
     public static final Pose2d centerFace =
         new Pose2d(Units.inchesToMeters(235.726), 0, Rotation2d.fromDegrees(90));
+    public static final Pose2d robotProcessor =
+        new Pose2d(6.110, 0.430, Rotation2d.fromDegrees(-90));
   }
 
   public static class Barge {
@@ -79,6 +81,8 @@ public class FieldConstants {
 
     public static final ArrayList<Pose2d> rightRobotBranchPoses = new ArrayList<>(6);
     public static final ArrayList<Pose2d> leftRobotBranchPoses = new ArrayList<>(6);
+    public static final ArrayList<Pose2d> algaeReefPoses = new ArrayList<>(6);
+    public static final ArrayList<Pose2d> algaeReefPoses2 = new ArrayList<>(6);
 
     static {
       centerFaces.add(
@@ -118,6 +122,8 @@ public class FieldConstants {
         Map<ReefHeight, Pose3d> fillLeft = new HashMap<>();
         Pose2d robotRight;
         Pose2d robotLeft;
+        Pose2d robotAlgae;
+        Pose2d robotAlgae2;
         Pose2d poseDirection = new Pose2d(center, Rotation2d.fromDegrees(180 - (60 * face)));
         Pose2d poseDirectionRobot =
             new Pose2d(
@@ -131,10 +137,7 @@ public class FieldConstants {
                 22.50
                     * (18.5
                         / 22.5)); // placeholder - represents distance of robot center from branch
-        // 30.75
-        // 20 + 3.0
-        // / 4 + 12
-        // - 2
+        // 18.5
         double robotWhyAdjust = Units.inchesToMeters(1.5);
         for (var level : ReefHeight.values()) {
 
@@ -206,10 +209,52 @@ public class FieldConstants {
                         .getY()),
                 poseDirectionRobot.getRotation().rotateBy(Rotation2d.k180deg));
 
+        robotAlgae =
+            new Pose2d(
+                new Translation2d(
+                    poseDirectionRobot
+                        .transformBy(
+                            new Transform2d(
+                                adjustX + robotCenterDistanceFromBranch,
+                                robotWhyAdjust,
+                                new Rotation2d()))
+                        .getX(),
+                    poseDirectionRobot
+                        .transformBy(
+                            new Transform2d(
+                                adjustX + robotCenterDistanceFromBranch,
+                                robotWhyAdjust,
+                                new Rotation2d()))
+                        .getY()),
+                poseDirectionRobot.getRotation().rotateBy(Rotation2d.k180deg));
+
+        robotAlgae2 =
+            new Pose2d(
+                new Translation2d(
+                    poseDirectionRobot
+                        .transformBy(
+                            new Transform2d(
+                                adjustX + robotCenterDistanceFromBranch + 1,
+                                robotWhyAdjust,
+                                new Rotation2d()))
+                        .getX(),
+                    poseDirectionRobot
+                        .transformBy(
+                            new Transform2d(
+                                adjustX + robotCenterDistanceFromBranch + 1,
+                                robotWhyAdjust,
+                                new Rotation2d()))
+                        .getY()),
+                poseDirectionRobot.getRotation().rotateBy(Rotation2d.k180deg));
+
         branchPositions.add(fillLeft);
         branchPositions.add(fillRight);
+
         rightRobotBranchPoses.add(robotRight);
         leftRobotBranchPoses.add(robotLeft);
+
+        algaeReefPoses.add(robotAlgae);
+        algaeReefPoses2.add(robotAlgae2);
       }
     }
   }

@@ -17,7 +17,10 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ElevatorToSetpoint;
+import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.StateController.Branch;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.util.AllianceFlipUtil;
@@ -139,7 +142,51 @@ public class AutoAline {
               targetPose = driveToBarge(robot);
             }),
         Commands.defer(() -> robot.drive.pathfindToFieldPose2(targetPose), Set.of(robot.drive)));
-    // return driveToBarge(robot);
+  }
+
+  public static Command autoAlineToProcessorPose(RobotContainer robot) {
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> {
+              targetPose = FieldConstants.Processor.robotProcessor;
+            }),
+        Commands.defer(() -> robot.drive.pathfindToFieldPose2(targetPose), Set.of(robot.drive)));
+  }
+
+  public static Command autoAlineToProcessorPath(RobotContainer robot) {
+    return Commands.defer(
+        () -> robot.drive.pathfindToPath(robot.drive.getProcessorPath()), Set.of(robot.drive));
+  }
+
+  public static Command autoAlineToAlgaeReef(RobotContainer robot) {
+    return Commands.defer(
+        () -> robot.drive.pathfindToPath(robot.drive.getClosestReefPath()), Set.of(robot.drive));
+  }
+
+  public static Command autoAlineToAlgaeReefPose(
+      RobotContainer robot, SuperStructure superStructure) {
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> {
+              targetPose =
+                  FieldConstants.Reef.algaeReefPoses.get(robot.drive.getClosestReefPanelInt());
+            }),
+        Commands.defer(() -> robot.drive.pathfindToFieldPose2(targetPose), Set.of(robot.drive)),
+        Commands.runOnce(
+            () -> {
+              targetPose =
+                  FieldConstants.Reef.algaeReefPoses2.get(robot.drive.getClosestReefPanelInt());
+            }),
+        Commands.defer(() -> robot.drive.pathfindToFieldPose2(targetPose), Set.of(robot.drive)),
+        Commands.runOnce(
+            () ->
+                superStructure
+                    .goToProcessor()
+                    .alongWith(
+                        new ElevatorToSetpoint(
+                            robot.elevator, ElevatorConstants.homePos, true, true))
+                    .until(() -> !robot.elevator.mahoming)
+                    .andThen(robot.elevator.runOnce(() -> robot.elevator.stop()))));
   }
 
   public static Pose2d driveToBarge(RobotContainer robot) {
@@ -457,15 +504,6 @@ public class AutoAline {
 
     try {
       return thePose;
-    } catch (Exception e) {
-      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-      return null;
-    }
-  }
-
-  public static PathPlannerPath getProcessorPath() {
-    try {
-      return PathPlannerPath.fromPathFile("Processor");
     } catch (Exception e) {
       DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
       return null;
