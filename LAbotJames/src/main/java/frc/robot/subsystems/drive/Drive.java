@@ -556,22 +556,22 @@ public class Drive extends SubsystemBase {
     String pathName = "";
 
     switch (closestPanelInt) {
-      case 1:
+      case 0:
         pathName = "AlgaeFront";
         break;
-      case 2:
+      case 1:
         pathName = "AlgaeFrontLeft";
         break;
-      case 3:
+      case 2:
         pathName = "AlgaeBackLeft";
         break;
-      case 4:
+      case 3:
         pathName = "AlgaeBack";
         break;
-      case 5:
+      case 4:
         pathName = "AlgaeBackRight";
         break;
-      case 6:
+      case 5:
         pathName = "AlgaeFrontRight";
         break;
       default:
@@ -587,48 +587,19 @@ public class Drive extends SubsystemBase {
   }
 
   public Pose2d getClosestReefBranch(boolean isLeft) {
-    // double smallestDistance = 9999999;
-    // int closestPanel = 0;
-    // if (isLeft) {
-    //   for (int i = 0; i < 6; i++) {
-    //     if (FieldConstants.Reef.leftRobotBranchPoses
-    //             .get(i)
-    //             .getTranslation()
-    //             .getDistance(getPose().getTranslation())
-    //         <= smallestDistance) {
-    //       smallestDistance =
-    //           FieldConstants.Reef.leftRobotBranchPoses
-    //               .get(i)
-    //               .getTranslation()
-    //               .getDistance(getPose().getTranslation());
-    //       closestPanel = i;
-    //     }
-    //   }
-
-    //   return FieldConstants.Reef.leftRobotBranchPoses.get(closestPanel);
-    // } else {
-    //   for (int i = 0; i < 6; i++) {
-    //     if (FieldConstants.Reef.rightRobotBranchPoses
-    //             .get(i)
-    //             .getTranslation()
-    //             .getDistance(getPose().getTranslation())
-    //         <= smallestDistance) {
-    //       smallestDistance =
-    //           FieldConstants.Reef.rightRobotBranchPoses
-    //               .get(i)
-    //               .getTranslation()
-    //               .getDistance(getPose().getTranslation());
-    //       closestPanel = i;
-    //     }
-    //   }
-
-    //   return FieldConstants.Reef.rightRobotBranchPoses.get(closestPanel);
-    // }
-
     if (isLeft) {
       return FieldConstants.Reef.leftRobotBranchPoses.get(closestLeftPanel);
     } else {
       return FieldConstants.Reef.rightRobotBranchPoses.get(closestRightPanel);
+    }
+  }
+
+  public PathPlannerPath getProcessorPath() {
+    try {
+      return PathPlannerPath.fromPathFile("Processor");
+    } catch (Exception e) {
+      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+      return null;
     }
   }
 

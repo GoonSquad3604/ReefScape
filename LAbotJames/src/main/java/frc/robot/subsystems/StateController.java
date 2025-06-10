@@ -28,11 +28,14 @@ public class StateController extends SubsystemBase {
   @AutoLogOutput private ReefSide m_Side;
   @AutoLogOutput private Branch m_Branch;
 
+  @AutoLogOutput private boolean gotGamePieceAutoAlgae = false;
   @AutoLogOutput private boolean autoReadyFireIsTrue = false;
   @AutoLogOutput private boolean armIsReady = false;
   @AutoLogOutput private boolean elevatorIsReady = false;
   @AutoLogOutput private boolean manipulatorIsReady = false;
   @AutoLogOutput private boolean autoAlineHathConcluded = false;
+
+  @AutoLogOutput private boolean autoFireAutoOverride = false;
 
   private final LoggedDashboardChooser<Boolean> rightSourceChooser;
   private final LoggedDashboardChooser<Boolean> leftSourceChooser;
@@ -166,6 +169,18 @@ public class StateController extends SubsystemBase {
     return manipulator.hasGamePiece();
   }
 
+  public boolean gotGamePieceAutoAlgae() {
+    return gotGamePieceAutoAlgae;
+  }
+
+  public void setGotPieceAutoAlgae() {
+    gotGamePieceAutoAlgae = true;
+  }
+
+  public void setNotGotPieceAutoAlgae() {
+    gotGamePieceAutoAlgae = false;
+  }
+
   public RobotMode getMode() {
     return m_Mode;
   }
@@ -221,6 +236,10 @@ public class StateController extends SubsystemBase {
     return runOnce(() -> m_Branch = theBranch);
   }
 
+  public Command setOverride(boolean overrideSet) {
+    return runOnce(() -> autoFireAutoOverride = overrideSet);
+  }
+
   public boolean autoReadyFire(Arm arm, Elevator elevator, Manipulator manipulator) {
 
     armIsReady = false;
@@ -257,7 +276,7 @@ public class StateController extends SubsystemBase {
             && manipulatorIsReady
             && armIsReady
             && elevatorIsReady
-            && !DriverStation.isAutonomous();
+            && (!DriverStation.isAutonomous() || autoFireAutoOverride);
 
     return autoReadyFireIsTrue;
   }
