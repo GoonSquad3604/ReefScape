@@ -122,7 +122,6 @@ public class StateController extends SubsystemBase {
     return runOnce(() -> m_Level = LevelState.MAHOME);
   }
 
-
   public boolean isL1() {
     return m_Level == LevelState.L1;
   }

@@ -14,5 +14,4 @@ public interface ClimberIO {
   }
 
   default void setPower(double power) {}
-
 }
