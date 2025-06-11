@@ -30,6 +30,7 @@ public class ThreePieceRight extends SequentialCommandGroup {
       Drive drive,
       RobotContainer robotContainer,
       SuperStructure superStructure) {
+
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -61,7 +62,8 @@ public class ThreePieceRight extends SequentialCommandGroup {
                 Set.of(drive)),
             Commands.defer(
                 () ->
-                    AutoAline.autoAlineToPose(robotContainer, stateController.getSourcePose(false)),
+                    AutoAline.autoAlineToSource(
+                        robotContainer, stateController.getSourcePose(false)),
                 Set.of(drive)),
             () -> manipulator.hasGamePiece()),
         stateController.setIntakeMode(),

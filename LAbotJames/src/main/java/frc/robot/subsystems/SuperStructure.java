@@ -7,27 +7,23 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Arm.Arm;
-import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.subsystems.Manipulator.ManipulatorConstants;
 
 public class SuperStructure extends SubsystemBase {
   private Manipulator manipulator;
   private Arm arm;
-  private Elevator elevator;
 
   /** Creates a new SuperStructure. */
-  public SuperStructure(Manipulator manipulator, Arm arm, Elevator elevator) {
+  public SuperStructure(Manipulator manipulator, Arm arm) {
     this.manipulator = manipulator;
     this.arm = arm;
-    this.elevator = elevator;
   }
 
   public Command goToL2Algae() {
     return runOnce(
         () -> {
-          arm.elbowAlgaeL25();
-          arm.wristAlgaeL25();
+          arm.algaeL2();
           manipulator.runWheels(ManipulatorConstants.algaeIntake);
         });
   }
@@ -35,8 +31,7 @@ public class SuperStructure extends SubsystemBase {
   public Command goToL3Algae() {
     return runOnce(
         () -> {
-          arm.elbowAlgaeL35();
-          arm.wristAlgaeL35();
+          arm.algaeL3();
           manipulator.runWheels(ManipulatorConstants.algaeIntake);
         });
   }

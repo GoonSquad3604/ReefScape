@@ -97,17 +97,6 @@ public class ElevatorIONeo implements ElevatorIO {
 
     inputs.MotorLeftPos = leftMotor.getEncoder().getPosition();
     inputs.MotorRightPos = rightMotor.getEncoder().getPosition();
-    inputs.HeightInInches =
-        ElevatorConstants.homeOffset
-            + leftMotor.getEncoder().getPosition()
-                * ElevatorConstants.gearRatio
-                * ElevatorConstants.pulleyCircumference;
-
-    // try {
-    //   inputs.lCanDist = laserCan.getMeasurement().distance_mm;
-    // } catch (Exception e) {
-    //   inputs.lCanDist = 99999;
-    // }
   }
 
   @Override
@@ -115,15 +104,6 @@ public class ElevatorIONeo implements ElevatorIO {
 
     // set l & r motor to a set position
     leftMotor.getClosedLoopController().setReference(position, ControlType.kPosition);
-  }
-
-  @Override
-  public void setPosInches(double position) {
-
-    // calculates the position the motors should go to, then goes to position
-    leftMotor
-        .getClosedLoopController()
-        .setReference(findPosInInches(position), ControlType.kPosition);
   }
 
   @Override
@@ -138,22 +118,6 @@ public class ElevatorIONeo implements ElevatorIO {
 
     // sets the motor to zero
     leftMotor.getEncoder().setPosition(0);
-  }
-
-  @Override
-  public double findPosInInches(double pos) {
-
-    // gets encoder pos from inches
-    return ElevatorConstants.homeOffset
-        + pos * ElevatorConstants.gearRatio * ElevatorConstants.pulleyCircumference;
-  }
-
-  @Override
-  public double findPosFromInches(double posInInches) {
-
-    // gets the pos from a given pos in inches
-    return posInInches / ElevatorConstants.gearRatio / ElevatorConstants.pulleyCircumference
-        - ElevatorConstants.homeOffset;
   }
 
   @Override
@@ -193,11 +157,4 @@ public class ElevatorIONeo implements ElevatorIO {
 
     return leftMotor.getEncoder().getPosition();
   }
-
-  // @Override
-  // public double getLCanDist() {
-  //   return laserCan.getMeasurement().distance_mm;
-  // }
 }
-
-// why are you looking for this?

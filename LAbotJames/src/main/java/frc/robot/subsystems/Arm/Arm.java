@@ -35,54 +35,6 @@ public class Arm extends SubsystemBase {
     elbowDisconnected = new Alert("ELBOW DISCONNECTED", Alert.AlertType.kWarning);
   }
 
-  public void elbowAlgaeL25() {
-    io.setElbowPosition(ArmConstants.algaeElbowL2);
-  }
-
-  public void elbowAlgaeL35() {
-    io.setElbowPosition(ArmConstants.algaeElbowL3);
-  }
-
-  public void wristAlgaeL25() {
-    io.setWristPosition(ArmConstants.algaeWristL2);
-  }
-
-  public void wristAlgaeL35() {
-    io.setWristPosition(ArmConstants.algaeWristL3);
-  }
-
-  public void elbowCoralL1() {
-    io.setElbowPosition(ArmConstants.coralElbowL1);
-  }
-
-  public void elbowCoralL2() {
-    io.setElbowPosition(ArmConstants.coralElbowL2);
-  }
-
-  public void elbowCoralL3() {
-    io.setElbowPosition(ArmConstants.coralElbowL3);
-  }
-
-  public void elbowCoralL4() {
-    io.setElbowPosition(ArmConstants.coralElbowL4);
-  }
-
-  public void wristCoralL1() {
-    io.setWristPosition(ArmConstants.coralWristL1);
-  }
-
-  public void wristCoralL2() {
-    io.setWristPosition(ArmConstants.coralWristL2);
-  }
-
-  public void wristCoralL3() {
-    io.setWristPosition(ArmConstants.coralWristL3);
-  }
-
-  public void wristCoralL4() {
-    io.setWristPosition(ArmConstants.coralWristL4);
-  }
-
   public void source() {
     io.setWristPosition(ArmConstants.sourceWrist);
     io.setElbowPosition(ArmConstants.sourceElbow);
@@ -131,6 +83,16 @@ public class Arm extends SubsystemBase {
           io.setWristPosition(ArmConstants.coralWristL1);
           io.setElbowPosition(ArmConstants.coralElbowL1);
         });
+  }
+
+  public void algaeL2() {
+    io.setWristPosition(ArmConstants.algaeWristL2);
+    io.setElbowPosition(ArmConstants.algaeWristL2);
+  }
+
+  public void algaeL3() {
+    io.setWristPosition(ArmConstants.algaeWristL3);
+    io.setElbowPosition(ArmConstants.algaeWristL3);
   }
 
   public void barge() {
@@ -191,14 +153,6 @@ public class Arm extends SubsystemBase {
 
   public Command wristDown() {
     return run(() -> io.setWristPower(-0.2));
-  }
-
-  public Command wristToPosition(double position) {
-    return runOnce(() -> io.setWristPosition(position));
-  }
-
-  public Command elbowToPosition(double position) {
-    return runOnce(() -> io.setElbowPosition(position));
   }
 
   public Command stopElbow() {

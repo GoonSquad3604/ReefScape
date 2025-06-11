@@ -308,13 +308,6 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
 
-  /** Runs the drive in a straight line with the specified drive output. */
-  // public void runCharacterization(double output) {
-  //   for (int i = 0; i < 4; i++) {
-  //     modules[i].runCharacterization(output);
-  //   }
-  // }
-
   public void runCharacterization(double output) {
     for (int i = 0; i < 4; i++) {
       modules[i].runCharacterization(output);
@@ -548,59 +541,6 @@ public class Drive extends SubsystemBase {
       }
     }
     return closestPanel;
-  }
-
-  public PathPlannerPath getClosestReefPath() {
-
-    int closestPanelInt = getClosestReefPanelInt();
-    String pathName = "";
-
-    switch (closestPanelInt) {
-      case 0:
-        pathName = "AlgaeFront";
-        break;
-      case 1:
-        pathName = "AlgaeFrontLeft";
-        break;
-      case 2:
-        pathName = "AlgaeBackLeft";
-        break;
-      case 3:
-        pathName = "AlgaeBack";
-        break;
-      case 4:
-        pathName = "AlgaeBackRight";
-        break;
-      case 5:
-        pathName = "AlgaeFrontRight";
-        break;
-      default:
-        pathName = null;
-    }
-
-    try {
-      return PathPlannerPath.fromPathFile(pathName);
-    } catch (Exception e) {
-      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-      return null;
-    }
-  }
-
-  public Pose2d getClosestReefBranch(boolean isLeft) {
-    if (isLeft) {
-      return FieldConstants.Reef.leftRobotBranchPoses.get(closestLeftPanel);
-    } else {
-      return FieldConstants.Reef.rightRobotBranchPoses.get(closestRightPanel);
-    }
-  }
-
-  public PathPlannerPath getProcessorPath() {
-    try {
-      return PathPlannerPath.fromPathFile("Processor");
-    } catch (Exception e) {
-      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-      return null;
-    }
   }
 
   public Translation2d getLinearSpeedsVector() {

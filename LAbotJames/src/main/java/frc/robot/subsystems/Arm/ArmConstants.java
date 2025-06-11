@@ -55,6 +55,7 @@ public final class ArmConstants {
   public static final double groundWrist = 0.241;
   public static final double groundElbow = 0.110;
 
+  /* Home */
   public static final double homeWrist = 0.393;
   public static final double homeElbow = 0.294;
 

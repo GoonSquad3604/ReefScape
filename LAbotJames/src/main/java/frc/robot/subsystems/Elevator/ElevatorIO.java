@@ -9,8 +9,6 @@ public interface ElevatorIO {
   @AutoLog
   class ElevatorIOInputs {
 
-    // silly little code -lucas
-
     public boolean limitSwitchLeft = false;
     public boolean limitSwitchRight = false;
 
@@ -23,7 +21,6 @@ public interface ElevatorIO {
 
     public double MotorLeftPos;
     public double MotorRightPos;
-    public double HeightInInches;
   }
 
   default boolean checkLimitSwitch() {
@@ -33,25 +30,13 @@ public interface ElevatorIO {
 
   default void setPos(double position) {}
 
-  default void setPosInches(double position) {}
-
   default void setVoltage(double voltage) {}
 
   default void setToZero() {}
 
-  default double findPosInInches(double pos) {
-
-    return pos;
-  }
-
   default double getPos() {
 
     return 0;
-  }
-
-  default double findPosFromInches(double posInInches) {
-
-    return posInInches;
   }
 
   default void setPower(double power) {}
@@ -59,9 +44,4 @@ public interface ElevatorIO {
   default void setPID(double kP, double kI, double kD) {}
 
   default void setPositionClosedLoopWithFF(double position, double arbFF) {}
-
-  default double getLCanDist() {
-    return 0;
-  }
 }
-// mandatory end comment

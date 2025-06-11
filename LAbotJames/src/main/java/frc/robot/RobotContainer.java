@@ -19,7 +19,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -56,6 +55,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.MitoCANdriaIO;
+import frc.robot.subsystems.vision.ObjectDetectionVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -65,7 +65,6 @@ import frc.robot.util.LevelState;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -75,6 +74,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
   // Subsystems
   public final Drive drive;
   private final Vision vision;
@@ -86,13 +86,10 @@ public class RobotContainer {
   public final Elevator elevator;
   private final LEDs lED;
 
-  // Controller
+  // Controllers
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandJoystick operatorButtonBox = new CommandJoystick(1);
   private final CommandJoystick operatorReefBox = new CommandJoystick(2);
-  // private final CommandXboxController testController = new CommandXboxController(3);
-  private final Supplier<Translation2d> joystickSupplier =
-      () -> new Translation2d(driverController.getLeftY(), driverController.getLeftX());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -172,7 +169,7 @@ public class RobotContainer {
         break;
     }
     stateController = StateController.getInstance();
-    superStructure = new SuperStructure(manipulator, arm, elevator);
+    superStructure = new SuperStructure(manipulator, arm);
 
     lED.setDefaultCommand(
         lED.defaultLeds(
@@ -202,7 +199,7 @@ public class RobotContainer {
                 // L1 Entry
                 Map.entry(
                     LevelState.L1, // L1 State
-                    // Command at state l1
+                    // Command at state L1:
                     arm.coralL1()
                         .andThen(
                             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
@@ -211,7 +208,7 @@ public class RobotContainer {
                 // L2 Entry
                 Map.entry(
                     LevelState.L2, // L2 State
-                    // Command at state l2
+                    // Command at state L2:
                     arm.coralL2()
                         .andThen(
                             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
@@ -225,10 +222,11 @@ public class RobotContainer {
                         .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos))),
                 Map.entry(
                     LevelState.L4, // L4 State
-                    // Command at state l4
+                    // Command at state L4:
                     new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
                         .alongWith(Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
             stateController::getLevel));
+
     NamedCommands.registerCommand("SetCoral", stateController.setCoralMode());
     NamedCommands.registerCommand("SetAlgae", stateController.setAlgaeMode());
     NamedCommands.registerCommand("SetL4", stateController.setL4());
@@ -416,6 +414,7 @@ public class RobotContainer {
                 .until(() -> !elevator.mahoming)
                 .andThen(elevator.runOnce(() -> elevator.stop())));
 
+    // Ground algae
     intakeMode.and(algaeMode).onTrue(superStructure.intakeFromGround());
     intakeMode.and(algaeMode).and(hasGamePiece).onTrue(stateController.setNoIntakeMode());
     intakeMode.and(algaeMode).onFalse(superStructure.goToProcessor());
@@ -429,11 +428,7 @@ public class RobotContainer {
         .onFalse(
             superStructure
                 .goHome()
-                .alongWith(Commands.runOnce(() -> stateController.setShortIntake()))
-            /*  .andThen(
-            new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                .until(() -> !elevator.mahoming)
-                .andThen(elevator.runOnce(() -> elevator.stop())))*/ );
+                .alongWith(Commands.runOnce(() -> stateController.setShortIntake())));
 
     // Climb mode stops intake wheels
     climbMode.onTrue(manipulator.stopIntake());
@@ -450,15 +445,17 @@ public class RobotContainer {
             slowMode));
 
     // Angle towards algae
-    // driverController
-    //     .y()
-    //     .whileTrue(
-    //     DriveCommands.angleTowardsAlgae(
-    //         drive,
-    //         () -> -driverController.getLeftY(),
-    //         () -> -driverController.getLeftX(),
-    //         () ->
-    //             LimelightHelpers.getTV("") ? LimelightHelpers.getTX("") * (Math.PI / 180) : 0));
+    driverController
+        .y()
+        .whileTrue(
+            DriveCommands.angleTowardsAlgae2(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () ->
+                    ObjectDetectionVision.hasTarget()
+                        ? ObjectDetectionVision.getTargetX().getRadians()
+                        : 0));
 
     // Coral mode + has piece -> angle towards reef panel
     driverController
@@ -519,7 +516,7 @@ public class RobotContainer {
                 () -> -driverController.getRightX(),
                 slowMode));
 
-    // Switch to X pattern when X button is pressed (lock drive train)
+    // Switch to X pattern (lock drive train)
     driverController.x().whileTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when start button is pressed
@@ -533,8 +530,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // Climb buttons (only while in climb mode)
-
+    // Climb buttons (only work in climb mode)
     driverController
         .povUp()
         .or(driverController.povUpLeft().or(driverController.povUpRight()))
@@ -549,20 +545,6 @@ public class RobotContainer {
     driverController.povDown().and(climbMode).onTrue(climber.moveClimberDown());
     driverController.povDown().and(climbMode).onFalse(climber.stop());
 
-    driverController
-        .back()
-        .and(coralMode)
-        .onTrue(
-            Commands.either(
-                stateController.setNoIntakeMode(),
-                arm.home()
-                    .alongWith(
-                        new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                            .until(() -> !elevator.mahoming)
-                            .andThen(elevator.runOnce(() -> elevator.stop())))
-                    .andThen(stateController.setIntakeMode()),
-                intakeMode));
-
     /* SOURCE PATHFINDS */
 
     // Left bumper, coral mode, no piece -> left source
@@ -572,7 +554,7 @@ public class RobotContainer {
         .and(hasNoGamePiece)
         .whileTrue(
             Commands.defer(
-                    () -> AutoAline.autoAlineToPose(this, stateController.getSourcePose(true)),
+                    () -> AutoAline.autoAlineToSource(this, stateController.getSourcePose(true)),
                     Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
@@ -583,7 +565,7 @@ public class RobotContainer {
         .and(hasNoGamePiece)
         .whileTrue(
             Commands.defer(
-                    () -> AutoAline.autoAlineToPose(this, stateController.getSourcePose(false)),
+                    () -> AutoAline.autoAlineToSource(this, stateController.getSourcePose(false)),
                     Set.of(drive))
                 .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
@@ -637,6 +619,7 @@ public class RobotContainer {
                     () -> AutoAline.autoAlineToAlgaeReefPose(this, superStructure),
                     Set.of(drive))));
 
+    // For not auto driving away from an algae when we grab one
     driverController
         .rightBumper()
         .or(driverController.leftBumper())
@@ -775,6 +758,7 @@ public class RobotContainer {
                 .alongWith(
                     stateController
                         .setNoIntakeMode()
+                        .andThen(Commands.runOnce(() -> stateController.setHathntConcluded()))
                         .andThen(manipulator.stopIntake())
                         .alongWith(
                             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)))
@@ -805,6 +789,7 @@ public class RobotContainer {
         .and(intakeMode)
         .onTrue(Commands.runOnce(() -> stateController.setLongIntake()));
 
+    // Set intake mode
     operatorButtonBox
         .button(10)
         .onTrue(
@@ -917,15 +902,3 @@ public class RobotContainer {
     return autoChooser.get();
   }
 }
-
-// "the code is now very cleam" - andrew 3/10/2025
-
-// andrew is super awesome and cool
-
-// so is lucas
-
-// not simon and gavin tho (haha)
-
-// line 1k so cool
-
-// its not line 1k anymore, haha
