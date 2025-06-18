@@ -22,10 +22,8 @@ public class StateController extends SubsystemBase {
 
   @AutoLogOutput private RobotMode m_Mode;
   @AutoLogOutput private LevelState m_Level;
-  @AutoLogOutput private Pose2d m_TragetPose;
   @AutoLogOutput private Intaking m_Intake;
   @AutoLogOutput private GoGoGadgetIntakeMode m_goGoGadgetIntake;
-  @AutoLogOutput private ReefSide m_Side;
   @AutoLogOutput private Branch m_Branch;
 
   @AutoLogOutput private boolean gotGamePieceAutoAlgae = false;
@@ -189,10 +187,6 @@ public class StateController extends SubsystemBase {
     return m_Level;
   }
 
-  public ReefSide getSide() {
-    return m_Side;
-  }
-
   public Branch getBranch() {
     return m_Branch;
   }
@@ -302,10 +296,9 @@ public class StateController extends SubsystemBase {
 
   public void periodic() {
     Logger.recordOutput(
-        " Left   Branch Positons ",
-        FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
+        "Left Branch Positons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
     Logger.recordOutput(
-        "RightBranchPositons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
+        "Right Branch Positons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
     SmartDashboard.putBoolean("L4", isL4());
     SmartDashboard.putBoolean("L3", isL3());
     SmartDashboard.putBoolean("L2", isL2());
@@ -319,15 +312,6 @@ public class StateController extends SubsystemBase {
   public enum GoGoGadgetIntakeMode {
     SHORT,
     LONG
-  }
-
-  public enum ReefSide {
-    ONE,
-    TWO,
-    THREE,
-    FOUR,
-    FIVE,
-    SIX
   }
 
   public enum Branch {

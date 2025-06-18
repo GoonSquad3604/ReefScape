@@ -44,7 +44,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void moveDown() {
-    io.setPower(-0.4001);
+    io.setPower(-0.4);
   }
 
   public void stop() {

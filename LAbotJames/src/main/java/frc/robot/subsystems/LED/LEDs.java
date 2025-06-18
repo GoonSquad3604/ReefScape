@@ -148,7 +148,6 @@ public class LEDs extends SubsystemBase {
   @Override
   public void periodic() {
     leds.setData(buffer);
-    // System.out.println("test");
   }
 
   public Command solidCommand(Color color) {

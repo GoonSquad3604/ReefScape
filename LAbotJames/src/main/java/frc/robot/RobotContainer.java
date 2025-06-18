@@ -184,12 +184,12 @@ public class RobotContainer {
     NamedCommands.registerCommand("stopIntake", manipulator.stopIntaking());
     NamedCommands.registerCommand(
         "fire",
-        new InstantCommand(() -> manipulator.runWheels(ManipulatorConstants.coralShoot))
+        new InstantCommand(() -> manipulator.setWheelPower(ManipulatorConstants.coralShoot))
             .andThen(Commands.waitSeconds(0.25))
-            .andThen(manipulator.stopIntake()));
+            .andThen(Commands.runOnce(() -> manipulator.stopWheels())));
     NamedCommands.registerCommand(
         "AlgaeFire",
-        Commands.runOnce(() -> manipulator.runWheels(ManipulatorConstants.bargeShoot))
+        Commands.runOnce(() -> manipulator.setWheelPower(ManipulatorConstants.bargeShoot))
             .repeatedly()
             .withTimeout(0.265));
     NamedCommands.registerCommand(
@@ -326,12 +326,11 @@ public class RobotContainer {
 
     // Auto fire
     fireReadyAuto.onTrue(
-        new InstantCommand(() -> manipulator.runWheels(ManipulatorConstants.coralShoot))
+        new InstantCommand(() -> manipulator.setWheelPower(ManipulatorConstants.coralShoot))
             .andThen(
                 Commands.waitSeconds(0.3604)
                     .andThen(
-                        manipulator
-                            .stopIntake()
+                        Commands.runOnce(() -> manipulator.stopWheels())
                             .alongWith(
                                 superStructure
                                     .goHome()
@@ -431,7 +430,7 @@ public class RobotContainer {
                 .alongWith(Commands.runOnce(() -> stateController.setShortIntake())));
 
     // Climb mode stops intake wheels
-    climbMode.onTrue(manipulator.stopIntake());
+    climbMode.onTrue(Commands.runOnce(() -> manipulator.stopWheels()));
 
     /* DRIVER BUTTONS */
 
@@ -633,7 +632,7 @@ public class RobotContainer {
         .onTrue(
             stateController
                 .setCoralMode()
-                .andThen(manipulator.stopIntake())
+                .andThen(Commands.runOnce(() -> manipulator.stopWheels()))
                 .andThen(Commands.runOnce(() -> stateController.setShortIntake()))
                 .andThen(Commands.runOnce(() -> stateController.setHathntConcluded())));
 
@@ -759,7 +758,7 @@ public class RobotContainer {
                     stateController
                         .setNoIntakeMode()
                         .andThen(Commands.runOnce(() -> stateController.setHathntConcluded()))
-                        .andThen(manipulator.stopIntake())
+                        .andThen(Commands.runOnce(() -> manipulator.stopWheels()))
                         .alongWith(
                             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)))
                 .until(() -> !elevator.mahoming)
@@ -850,8 +849,7 @@ public class RobotContainer {
         .button(12)
         .and(coralMode)
         .onFalse(
-            manipulator
-                .stopIntake()
+            Commands.runOnce(() -> manipulator.stopWheels())
                 .alongWith(arm.home())
                 .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
                 .until(() -> !elevator.mahoming)
@@ -872,8 +870,7 @@ public class RobotContainer {
         .button(12)
         .and(algaeMode)
         .onFalse(
-            manipulator
-                .stopIntake()
+            Commands.runOnce(() -> manipulator.stopWheels())
                 .alongWith(new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true))
                 .until(() -> !elevator.mahoming)
                 .andThen(elevator.runOnce(() -> elevator.stop())));

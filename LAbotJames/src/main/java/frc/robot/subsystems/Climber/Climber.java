@@ -21,7 +21,7 @@ public class Climber extends SubsystemBase {
 
     this.io = io;
 
-    disconnected = new Alert("Climber motor disconnected!", Alert.AlertType.kWarning);
+    disconnected = new Alert("Climber motor disconnected", Alert.AlertType.kWarning);
   }
 
   /* Moves climber up with power (raise) */

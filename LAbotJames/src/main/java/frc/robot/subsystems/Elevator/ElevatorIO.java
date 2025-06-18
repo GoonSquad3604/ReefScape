@@ -9,18 +9,17 @@ public interface ElevatorIO {
   @AutoLog
   class ElevatorIOInputs {
 
-    public boolean limitSwitchLeft = false;
-    public boolean limitSwitchRight = false;
+    public boolean limitSwitch = false;
 
-    public double MotorLeftVoltage;
-    public double MotorRightVoltage;
-    public double MotorLeftVelocity;
+    public double motorLeftVoltage;
+    public double motorRightVoltage;
+    public double motorLeftVelocity;
 
-    public double MotorLeftCurrent;
-    public double MotorRightCurrent;
+    public double motorLeftCurrent;
+    public double motorRightCurrent;
 
-    public double MotorLeftPos;
-    public double MotorRightPos;
+    public double motorLeftPos;
+    public double motorRightPos;
   }
 
   default boolean checkLimitSwitch() {

@@ -24,7 +24,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.algaeL2();
-          manipulator.runWheels(ManipulatorConstants.algaeIntake);
+          manipulator.setWheelPower(ManipulatorConstants.algaeIntake);
         });
   }
 
@@ -32,7 +32,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.algaeL3();
-          manipulator.runWheels(ManipulatorConstants.algaeIntake);
+          manipulator.setWheelPower(ManipulatorConstants.algaeIntake);
         });
   }
 
@@ -40,7 +40,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.source();
-          manipulator.runWheels(ManipulatorConstants.coralIntake);
+          manipulator.setWheelPower(ManipulatorConstants.coralIntake);
         });
   }
 
@@ -48,7 +48,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.processor();
-          manipulator.runWheels(ManipulatorConstants.algaeIntakeSlow);
+          manipulator.setWheelPower(ManipulatorConstants.algaeIntakeSlow);
         });
   }
 
@@ -56,7 +56,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.lollyPop();
-          manipulator.runWheels(ManipulatorConstants.algaeIntake);
+          manipulator.setWheelPower(ManipulatorConstants.algaeIntake);
         });
   }
 
@@ -64,7 +64,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.intakeFromGround();
-          manipulator.runWheels(ManipulatorConstants.algaeIntake);
+          manipulator.setWheelPower(ManipulatorConstants.algaeIntake);
         });
   }
 
@@ -80,7 +80,7 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(
         () -> {
           arm.barge();
-          manipulator.runWheels(ManipulatorConstants.algaeIntakeSlow);
+          manipulator.setWheelPower(ManipulatorConstants.algaeIntakeSlow);
         });
   }
 

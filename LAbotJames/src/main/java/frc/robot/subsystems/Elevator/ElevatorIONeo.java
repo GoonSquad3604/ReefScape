@@ -82,21 +82,20 @@ public class ElevatorIONeo implements ElevatorIO {
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
 
-    inputs.limitSwitchLeft = leftMotor.getReverseLimitSwitch().isPressed();
-    // inputs.limitSwitchRight = limitSwitchRight.get();
+    inputs.limitSwitch = leftMotor.getReverseLimitSwitch().isPressed();
 
     double leftVoltage = leftMotor.getAppliedOutput() * leftMotor.getBusVoltage();
     double rightVoltage = rightMotor.getAppliedOutput() * rightMotor.getBusVoltage();
 
-    inputs.MotorLeftVoltage = leftVoltage;
-    inputs.MotorRightVoltage = rightVoltage;
+    inputs.motorLeftVoltage = leftVoltage;
+    inputs.motorRightVoltage = rightVoltage;
 
-    inputs.MotorLeftCurrent = leftMotor.getOutputCurrent();
-    inputs.MotorRightCurrent = rightMotor.getOutputCurrent();
-    inputs.MotorLeftVelocity = leftMotor.getEncoder().getVelocity();
+    inputs.motorLeftCurrent = leftMotor.getOutputCurrent();
+    inputs.motorRightCurrent = rightMotor.getOutputCurrent();
+    inputs.motorLeftVelocity = leftMotor.getEncoder().getVelocity();
 
-    inputs.MotorLeftPos = leftMotor.getEncoder().getPosition();
-    inputs.MotorRightPos = rightMotor.getEncoder().getPosition();
+    inputs.motorLeftPos = leftMotor.getEncoder().getPosition();
+    inputs.motorRightPos = rightMotor.getEncoder().getPosition();
   }
 
   @Override

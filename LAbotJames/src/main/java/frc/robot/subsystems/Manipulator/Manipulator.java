@@ -7,7 +7,6 @@ package frc.robot.subsystems.Manipulator;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.util.LevelState;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
@@ -21,7 +20,7 @@ public class Manipulator extends SubsystemBase {
   private final LoggedTunableNumber kP;
   private final LoggedTunableNumber kI;
   private final LoggedTunableNumber kD;
-  private SysIdRoutine openSysID;
+
   /** Creates a new Manipulator. */
   public Manipulator(ManipulatorIO manipulatorIO) {
     io = manipulatorIO;
@@ -41,87 +40,27 @@ public class Manipulator extends SubsystemBase {
   }
 
   public boolean hasGamePiece() {
-    return inputs.manipulatorOtherDistance <= ManipulatorConstants.hasGamePieceThreshold;
-  }
-
-  public void intakeGamePiece() {
-    io.setRPM(ManipulatorConstants.intakeRPM);
-  }
-
-  public void fireGamePiece() {
-    io.setRPM(ManipulatorConstants.fireRPM);
-  }
-
-  public void fireCoral() {
-    io.setRPM(ManipulatorConstants.coralRPM);
-  }
-
-  public void fireAlgae() {
-    io.setRPM(ManipulatorConstants.algaeRPM);
+    return inputs.manipulatorPieceSensorDistance <= ManipulatorConstants.hasGamePieceThreshold;
   }
 
   public void stopWheels() {
     io.setWheelPower(ManipulatorConstants.zeroPower);
   }
 
-  public void runWheels() {
-    io.setWheelPower(ManipulatorConstants.wheelPower);
-  }
-
   public void runWheelsBackwards() {
-    io.setWheelPower(-1.0 / 2);
+    io.setWheelPower(-0.5);
   }
 
-  public void runWheels(double power) {
+  public void setWheelPower(double power) {
     io.setWheelPower(power);
-  }
-
-  public Command keepCoralIn() {
-    return runOnce(() -> io.setVoltage(3));
-  }
-
-  public Command stopIntake() {
-    return runOnce(() -> io.setWheelPower(ManipulatorConstants.zeroPower));
-  }
-
-  public Command vomit() {
-    return runOnce(() -> io.setWheelPower(ManipulatorConstants.backwardsWheelPower));
-  }
-
-  public Command openQuasiForward() {
-    return openSysID.quasistatic(SysIdRoutine.Direction.kForward);
-  }
-
-  public Command openQuasiBackward() {
-    return openSysID.quasistatic(SysIdRoutine.Direction.kReverse);
-  }
-
-  public Command openDynaForward() {
-    return openSysID.dynamic(SysIdRoutine.Direction.kForward);
-  }
-
-  public Command openDynaBackward() {
-    return openSysID.dynamic(SysIdRoutine.Direction.kReverse);
-  }
-
-  public void wheelCurrent() {
-    io.setCurrent(5);
   }
 
   public boolean isInPosition(LevelState level) {
     if (level == LevelState.L4) {
-      return inputs.manipulatorDistance <= ManipulatorConstants.l4Threshold;
+      return inputs.manipulatorReefSensorDistance <= ManipulatorConstants.l4Threshold;
     } else {
-      return inputs.manipulatorDistance <= ManipulatorConstants.reefThreshold;
+      return inputs.manipulatorReefSensorDistance <= ManipulatorConstants.reefThreshold;
     }
-  }
-
-  public Command intakeCoral() {
-    return runOnce(() -> io.setWheelPower(ManipulatorConstants.coralIntake));
-  }
-
-  public Command intakeAlgae() {
-    return runOnce(() -> io.setWheelPower(ManipulatorConstants.algaeIntake));
   }
 
   public Command keepAlgaeIn() {
@@ -149,7 +88,7 @@ public class Manipulator extends SubsystemBase {
   }
 
   public Command stopIntaking() {
-    return runOnce(() -> io.setWheelPower(0));
+    return runOnce(() -> io.setWheelPower(ManipulatorConstants.zeroPower));
   }
 
   @Override
