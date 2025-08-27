@@ -4,31 +4,24 @@
 
 package frc.robot;
 
-import com.therekrab.autopilot.APTarget;
+import com.ctre.phoenix6.swerve.SwerveModule;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.StateController.Branch;
 import frc.robot.subsystems.SuperStructure;
-import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 // Inspired by Team 2137's AutoAline code
@@ -38,73 +31,22 @@ public class AutoAline {
 
   private static final double JoystickScalar = 2.500000;
 
-  private Pose2d desiredPoseForDriveToPoint = new Pose2d();
+  private static Pose2d desiredPoseForDriveToPoint = new Pose2d();
 
-  private double maxAngularVelocityForDriveToPoint = Double.NaN;
+  private static double maxAngularVelocityForDriveToPoint = Double.NaN;
 
-  public double maxVelocityOutputForDriveToPoint = Units.feetToMeters(10.0);
+  public static double maxVelocityOutputForDriveToPoint = Units.feetToMeters(10.0);
 
-  // public enum Target {
-  //   LEFT_POLE,
-  //   RIGHT_POLE,
-  //   ALGAE
-  // }
+  private static final PIDController autoAlineController = new PIDController(3.6, 0, 0.1);
 
-  // private static final Map<Target, List<Pose2d>> targetToPoseData =
-  //     Map.of(
-  //         // Left reef poles
-  //         Target.LEFT_POLE, FieldConstants.Reef.leftRobotBranchPoses,
+  public static final double DRIVE_TO_POINT_STATIC_FRICTION_CONSTANT = 0.02;
 
-  //         // Right reef poles
-  //         Target.RIGHT_POLE, FieldConstants.Reef.rightRobotBranchPoses,
+  private static final SwerveRequest.FieldCentricFacingAngle driveAtAngle =
+      new SwerveRequest.FieldCentricFacingAngle()
+          .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
 
-  //         // Locations for removing algae
-  //         Target.ALGAE, FieldConstants.Reef.centerFaces);
-
-  private static Pose2d lastTargeted =
-      new Pose2d(); // The most recently targeted position (not null)
+  private static Pose2d lastTargeted = new Pose2d(); // last targeted pose
   private static Pose2d targetPose;
-
-  // public static APTarget lastAutopilotTarget;
-
-  // public static Pose2d getActiveTarget() {
-  //   return target;
-  // }
-
-  // public static Pose2d getLastTargeted() {
-  //   return lastTargeted;
-  // }
-
-  // public static int mapToPoseId(Target targetType, Drive drive, Translation2d motionVector) {
-  //   List<Pose2d> poseData = targetToPoseData.get(targetType);
-  //   return getNearestPose(drive.getPose(), motionVector, poseData);
-  // }
-
-  // public static Pose2d fromPoseId(int id, Target targetType) {
-  //   List<Pose2d> poseData = targetToPoseData.get(targetType);
-  //   return poseData.get(id);
-  // }
-
-  // public static Command autoAlineTo(
-  //     Target targetType, RobotContainer robot, Supplier<Translation2d> motionSupplier) {
-
-  //   ProfiledPIDController angleController = DriveCommands.getAngleController();
-  //   angleController.enableContinuousInput(-Math.PI, Math.PI);
-
-  //   // Construct command
-  //   return Commands.sequence(
-  //       Commands.runOnce(
-  //           () -> {
-  //             target = getFlippedPose(robot.drive, targetType, motionSupplier);
-  //             Logger.recordOutput("target", target);
-  //             lastTargeted = target;
-  //           }),
-  //       Commands.defer(
-  //           () ->
-  //               robot.drive.pathfindToFieldPose(
-  //                   getFlippedPose(robot.drive, targetType, motionSupplier)),
-  //           Set.of(robot.drive)));
-  // }
 
   public static Command autoAlineToPose(RobotContainer robot, Branch branch) {
     return Commands.sequence(
@@ -320,54 +262,56 @@ public class AutoAline {
     }
   }
 
-public static Command customAutoAli(){
- // return runOnce(() ->
+  //         public static Command customAutoAline(RobotContainer robotContainer){
+  //             Translation2d translationToDesiredPoint =
+  // desiredPoseForDriveToPoint.getTranslation().minus(robotContainer.drive.getPose().getTranslation());
+  //             var linearDistance = translationToDesiredPoint.getNorm();
+  //             var frictionConstant = 0.0;
 
-    var translationToDesiredPoint = desiredPoseForDriveToPoint.getTranslation().minus(swerveInputs.Pose.getTranslation());
-    var linearDistance = translationToDesiredPoint.getNorm();
-    var frictionConstant = 0.0;
+  //             if (linearDistance >= Units.inchesToMeters(0.5)) {
+  //                 frictionConstant = DRIVE_TO_POINT_STATIC_FRICTION_CONSTANT *
+  // DriveConstants.PF_MAX_SPEED_OR_SOMETHING;
+  //             }
+  //             var directionOfTravel = translationToDesiredPoint.getAngle();
+  //             var velocityOutput = 0.0;
 
-    if (linearDistance >= Units.inchesToMeters(0.5)) {
-        frictionConstant = DRIVE_TO_POINT_STATIC_FRICTION_CONSTANT * maxVelocity;
-    }
-    var directionOfTravel = translationToDesiredPoint.getAngle();
-    var velocityOutput = 0.0;
-    
-    velocityOutput = Math.min(
-            Math.abs(teleopDriveToPointController.calculate(linearDistance, 0)) + frictionConstant,
-            maxVelocityOutputForDriveToPoint);
+  //             velocityOutput = Math.min(
+  //                     Math.abs(autoAlineController.calculate(linearDistance, 0)) +
+  // frictionConstant,
+  //                     maxVelocityOutputForDriveToPoint);
 
-    var xComponent = velocityOutput * directionOfTravel.getCos();
-    var yComponent = velocityOutput * directionOfTravel.getSin();
+  //             var xComponent = velocityOutput * directionOfTravel.getCos();
+  //             var yComponent = velocityOutput * directionOfTravel.getSin();
 
-    Logger.recordOutput("Subsystems/Drive/DriveToPoint/xVelocitySetpoint", xComponent);
-    Logger.recordOutput("Subsystems/Drive/DriveToPoint/yVelocitySetpoint", yComponent);
-    Logger.recordOutput("Subsystems/Drive/DriveToPoint/velocityOutput", velocityOutput);
-    Logger.recordOutput("Subsystems/Drive/DriveToPoint/linearDistance", linearDistance);
-    Logger.recordOutput("Subsystems/Drive/DriveToPoint/directionOfTravel", directionOfTravel);
-    Logger.recordOutput("Subsystems/Drive/DriveToPoint/desiredPoint", desiredPoseForDriveToPoint);
+  //             Logger.recordOutput("Subsystems/Drive/DriveToPoint/xVelocitySetpoint", xComponent);
+  //             Logger.recordOutput("Subsystems/Drive/DriveToPoint/yVelocitySetpoint", yComponent);
+  //             Logger.recordOutput("Subsystems/Drive/DriveToPoint/velocityOutput",
+  // velocityOutput);
+  //             Logger.recordOutput("Subsystems/Drive/DriveToPoint/linearDistance",
+  // linearDistance);
+  //             Logger.recordOutput("Subsystems/Drive/DriveToPoint/directionOfTravel",
+  // directionOfTravel);
+  //             Logger.recordOutput("Subsystems/Drive/DriveToPoint/desiredPoint",
+  // desiredPoseForDriveToPoint);
 
-    if (Double.isNaN(maximumAngularVelocityForDriveToPoint)) {
-        io.setSwerveState(driveAtAngle
-                .withVelocityX(xComponent)
-                .withVelocityY(yComponent)
-                .withTargetDirection(desiredPoseForDriveToPoint.getRotation()));
-    } else {
-        io.setSwerveState(driveAtAngle
-                .withVelocityX(xComponent)
-                .withVelocityY(yComponent)
-                .withTargetDirection(desiredPoseForDriveToPoint.getRotation())
-                .withMaxAbsRotationalRate(maximumAngularVelocityForDriveToPoint));
-    }
-    break;
-  //)
-}
+  //             if (Double.isNaN(maxAngularVelocityForDriveToPoint)) {
+  //                 DriveCommands.setSwerveState(driveAtAngle
+  //                 .withVelocityX(xComponent)
+  //                 .withVelocityY(yComponent)
+  //                 .withTargetDirection(desiredPoseForDriveToPoint.getRotation()));
+  //     } else {
+  //         DriveCommands.setSwerveState(driveAtAngle
+  //                 .withVelocityX(xComponent)
+  //                 .withVelocityY(yComponent)
+  //                 .withTargetDirection(desiredPoseForDriveToPoint.getRotation())
+  //                 .withMaxAbsRotationalRate(maxAngularVelocityForDriveToPoint));
+  //     }
+  //     break;
+  // }
 
-public static void setPoseForDriveToPoint(Pose2d pose) {
-  this.desiredPoseForDriveToPoint = pose;
-  this.maxVelocityOutputForDriveToPoint = Units.feetToMeters(10.0);
-  this.maxAngularVelocityForDriveToPoint = Double.NaN;
-}
-
-
+  public static void setPoseForDriveToPoint(Pose2d pose) {
+    desiredPoseForDriveToPoint = pose;
+    maxVelocityOutputForDriveToPoint = Units.feetToMeters(10.0);
+    maxAngularVelocityForDriveToPoint = Double.NaN;
+  }
 }

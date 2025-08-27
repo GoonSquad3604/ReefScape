@@ -28,7 +28,6 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.therekrab.autopilot.APTarget;
 import com.therekrab.autopilot.Autopilot.APResult;
-
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -401,6 +400,10 @@ public class Drive extends SubsystemBase {
     return getPose().getRotation();
   }
 
+  public ChassisSpeeds getFieldVelocity() {
+    return ChassisSpeeds.fromRobotRelativeSpeeds(this.getChassisSpeeds(), getRotation());
+  }
+
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
@@ -563,28 +566,29 @@ public class Drive extends SubsystemBase {
   }
 
   public Command align(APTarget target) {
-    return this.run(() -> {
-      ChassisSpeeds robotRelativeSpeeds = this.getChassisSpeeds();
-      Pose2d pose = this.getPose();
+    return this.run(
+            () -> {
+              ChassisSpeeds robotRelativeSpeeds = this.getChassisSpeeds();
+              Pose2d pose = this.getPose();
 
-      APResult output = DriveConstants.kAutopilot.calculate(pose, robotRelativeSpeeds, target);
+              APResult output =
+                  DriveConstants.kAutopilot.calculate(pose, robotRelativeSpeeds, target);
 
-      /* these speeds are field relative */
-      double veloX = output.vx().magnitude();
-      double veloY = output.vy().magnitude();
-      Rotation2d headingReference = output.targetAngle();
+              /* these speeds are field relative */
+              double veloX = output.vx().magnitude();
+              double veloY = output.vy().magnitude();
+              Rotation2d headingReference = output.targetAngle();
 
-      ChassisSpeeds speed = new ChassisSpeeds(veloX, veloY, headingReference.getRadians());
+              ChassisSpeeds speed = new ChassisSpeeds(veloX, veloY, headingReference.getRadians());
 
-      this.runVelocity(speed);
+              this.runVelocity(speed);
 
-      // this.setControl(DriveConstants.m_request
-      //     .withVelocityX(veloX)
-      //     .withVelocityY(veloY)
-      //     .withTargetDirection(headingReference));
-    })
+              // this.setControl(DriveConstants.m_request
+              //     .withVelocityX(veloX)
+              //     .withVelocityY(veloY)
+              //     .withTargetDirection(headingReference));
+            })
         .until(() -> DriveConstants.kAutopilot.atTarget(this.getPose(), target))
         .finallyDo(this::stop);
   }
-
 }

@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Autos.ThreePieceRight;
+import frc.robot.commands.CustomAutoAlign;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorToSetpoint;
 import frc.robot.generated.TunerConstants;
@@ -55,15 +56,12 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.MitoCANdriaIO;
-import frc.robot.subsystems.vision.ObjectDetectionVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LevelState;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -325,78 +323,80 @@ public class RobotContainer {
             .andThen(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0)));
 
     // Auto fire
-    fireReadyAuto.onTrue(
-        new InstantCommand(() -> manipulator.setWheelPower(ManipulatorConstants.coralShoot))
-            .andThen(
-                Commands.waitSeconds(0.3604)
-                    .andThen(
-                        Commands.runOnce(() -> manipulator.stopWheels())
-                            .alongWith(
-                                superStructure
-                                    .goHome()
-                                    .andThen(
-                                        Commands.runOnce(
-                                            () -> stateController.setHathntConcluded()))
-                                    .andThen(
-                                        new ElevatorToSetpoint(
-                                                elevator, ElevatorConstants.homePos, true)
-                                            .until(() -> !elevator.mahoming)
-                                            .andThen(elevator.runOnce(() -> elevator.stop())))))));
+    // fireReadyAuto.onTrue(
+    //     new InstantCommand(() -> manipulator.setWheelPower(ManipulatorConstants.coralShoot))
+    //         .andThen(
+    //             Commands.waitSeconds(0.3604)
+    //                 .andThen(
+    //                     Commands.runOnce(() -> manipulator.stopWheels())
+    //                         .alongWith(
+    //                             superStructure
+    //                                 .goHome()
+    //                                 .andThen(
+    //                                     Commands.runOnce(
+    //                                         () -> stateController.setHathntConcluded()))
+    //                                 .andThen(
+    //                                     new ElevatorToSetpoint(
+    //                                             elevator, ElevatorConstants.homePos, true)
+    //                                         .until(() -> !elevator.mahoming)
+    //                                         .andThen(elevator.runOnce(() ->
+    // elevator.stop())))))));
 
     // auto aline is done pathing, auto raise elevator
-    autoAlineModeHathConcluded
-        .and(coralMode)
-        .onTrue(
-            Commands.select(
-                Map.ofEntries(
-                    // L1 Entry
-                    Map.entry(
-                        LevelState.L1, // L1 State
-                        // Command at state l1
-                        arm.coralL1()
-                            .andThen(
-                                new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                                    .until(() -> !elevator.mahoming)
-                                    .andThen(elevator.runOnce(() -> elevator.stop())))),
-                    // L2 Entry
-                    Map.entry(
-                        LevelState.L2, // L2 State
-                        // Command at state l2
-                        arm.coralL2()
-                            .andThen(
-                                new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                                    .until(() -> !elevator.mahoming)
-                                    .andThen(elevator.runOnce(() -> elevator.stop())))),
-                    // L3 Entry
-                    Map.entry(
-                        LevelState.L3, // L3 State
-                        // Command at sate L3
-                        arm.coralL3()
-                            .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos))),
-                    Map.entry(
-                        LevelState.L4, // L4 State
-                        // Command at state l4
-                        new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
-                            .alongWith(Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
-                stateController::getLevel));
+    // autoAlineModeHathConcluded
+    //     .and(coralMode)
+    //     .onTrue(
+    //         Commands.select(
+    //             Map.ofEntries(
+    //                 // L1 Entry
+    //                 Map.entry(
+    //                     LevelState.L1, // L1 State
+    //                     // Command at state l1
+    //                     arm.coralL1()
+    //                         .andThen(
+    //                             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+    //                                 .until(() -> !elevator.mahoming)
+    //                                 .andThen(elevator.runOnce(() -> elevator.stop())))),
+    //                 // L2 Entry
+    //                 Map.entry(
+    //                     LevelState.L2, // L2 State
+    //                     // Command at state l2
+    //                     arm.coralL2()
+    //                         .andThen(
+    //                             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+    //                                 .until(() -> !elevator.mahoming)
+    //                                 .andThen(elevator.runOnce(() -> elevator.stop())))),
+    //                 // L3 Entry
+    //                 Map.entry(
+    //                     LevelState.L3, // L3 State
+    //                     // Command at sate L3
+    //                     arm.coralL3()
+    //                         .andThen(new ElevatorToSetpoint(elevator, ElevatorConstants.l3Pos))),
+    //                 Map.entry(
+    //                     LevelState.L4, // L4 State
+    //                     // Command at state l4
+    //                     new ElevatorToSetpoint(elevator, ElevatorConstants.l4Pos)
+    //                         .alongWith(Commands.waitSeconds(0.5).andThen(arm.coralL4())))),
+    //             stateController::getLevel));
 
-    // Auto barge after done pathing
-    autoAlineModeHathConcluded
-        .and(algaeMode)
-        .onTrue(
-            Commands.sequence(
-                Commands.runOnce(() -> arm.barge()),
-                new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos, false)
-                    .until(() -> Math.abs(elevator.getPos() - ElevatorConstants.bargePos) < 0.5),
-                Commands.waitSeconds(0.2),
-                manipulator.shootAlgaeFaster().repeatedly().withTimeout(0.3),
-                manipulator.stopIntaking(),
-                new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
-                    .until(() -> !elevator.mahoming)
-                    .andThen(
-                        elevator.runOnce(() -> elevator.stop()),
-                        Commands.runOnce(
-                            () -> stateController.setHathntConcluded())))); // semicolon by lucas :3
+    // // Auto barge after done pathing
+    // autoAlineModeHathConcluded
+    //     .and(algaeMode)
+    //     .onTrue(
+    //         Commands.sequence(
+    //             Commands.runOnce(() -> arm.barge()),
+    //             new ElevatorToSetpoint(elevator, ElevatorConstants.bargePos, false)
+    //                 .until(() -> Math.abs(elevator.getPos() - ElevatorConstants.bargePos) < 0.5),
+    //             Commands.waitSeconds(0.2),
+    //             manipulator.shootAlgaeFaster().repeatedly().withTimeout(0.3),
+    //             manipulator.stopIntaking(),
+    //             new ElevatorToSetpoint(elevator, ElevatorConstants.homePos, true)
+    //                 .until(() -> !elevator.mahoming)
+    //                 .andThen(
+    //                     elevator.runOnce(() -> elevator.stop()),
+    //                     Commands.runOnce(
+    //                         () -> stateController.setHathntConcluded())))); // semicolon by lucas
+    // :3
 
     /* Intake mode */
 
@@ -413,12 +413,12 @@ public class RobotContainer {
                 .until(() -> !elevator.mahoming)
                 .andThen(elevator.runOnce(() -> elevator.stop())));
 
-    // Ground algae
+    // // Ground algae
     intakeMode.and(algaeMode).onTrue(superStructure.intakeFromGround());
     intakeMode.and(algaeMode).and(hasGamePiece).onTrue(stateController.setNoIntakeMode());
     intakeMode.and(algaeMode).onFalse(superStructure.goToProcessor());
 
-    // when get a game piece, set intake mode to false
+    // // when get a game piece, set intake mode to false
     intakeMode.and(coralMode).and(hasGamePiece).onTrue(stateController.setNoIntakeMode());
 
     // intake mode on false, home the robot
@@ -443,66 +443,67 @@ public class RobotContainer {
             () -> -driverController.getRightX(),
             slowMode));
 
-    // Angle towards algae
-    driverController
-        .y()
-        .whileTrue(
-            DriveCommands.angleTowardsAlgae2(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () ->
-                    ObjectDetectionVision.hasTarget()
-                        ? ObjectDetectionVision.getTargetX().getRadians()
-                        : 0));
+    // // Angle towards algae
+    // driverController
+    //     .y()
+    //     .whileTrue(
+    //         DriveCommands.angleTowardsAlgae2(
+    //             drive,
+    //             () -> -driverController.getLeftY(),
+    //             () -> -driverController.getLeftX(),
+    //             () ->
+    //                 ObjectDetectionVision.hasTarget()
+    //                     ? ObjectDetectionVision.getTargetX().getRadians()
+    //                     : 0));
 
-    // Coral mode + has piece -> angle towards reef panel
-    driverController
-        .b()
-        .and(coralMode)
-        .and(hasGamePiece)
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> AllianceFlipUtil.apply(drive.getClosestReefPanel()).getRotation()));
+    // // Coral mode + has piece -> angle towards reef panel
+    // driverController
+    //     .b()
+    //     .and(coralMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -driverController.getLeftY(),
+    //             () -> -driverController.getLeftX(),
+    //             () -> AllianceFlipUtil.apply(drive.getClosestReefPanel()).getRotation()));
 
-    // Coral mode + no piece -> angle towards source
-    driverController
-        .b()
-        .and(coralMode)
-        .and(hasNoGamePiece)
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> AllianceFlipUtil.apply(drive.getClosestSource()).getRotation()));
+    // // Coral mode + no piece -> angle towards source
+    // driverController
+    //     .b()
+    //     .and(coralMode)
+    //     .and(hasNoGamePiece)
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -driverController.getLeftY(),
+    //             () -> -driverController.getLeftX(),
+    //             () -> AllianceFlipUtil.apply(drive.getClosestSource()).getRotation()));
 
-    // Algae mode + has piece -> angle towards processor
-    driverController
-        .b()
-        .and(algaeMode)
-        .and(hasGamePiece)
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> AllianceFlipUtil.apply(FieldConstants.Processor.centerFace).getRotation()));
+    // // Algae mode + has piece -> angle towards processor
+    // driverController
+    //     .b()
+    //     .and(algaeMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -driverController.getLeftY(),
+    //             () -> -driverController.getLeftX(),
+    //             () ->
+    // AllianceFlipUtil.apply(FieldConstants.Processor.centerFace).getRotation()));
 
-    // Algae mode + no piece -> angle towards reef
-    driverController
-        .b()
-        .and(algaeMode)
-        .and(hasNoGamePiece)
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> AllianceFlipUtil.apply(drive.getClosestReefPanel()).getRotation()));
+    // // Algae mode + no piece -> angle towards reef
+    // driverController
+    //     .b()
+    //     .and(algaeMode)
+    //     .and(hasNoGamePiece)
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -driverController.getLeftY(),
+    //             () -> -driverController.getLeftX(),
+    //             () -> AllianceFlipUtil.apply(drive.getClosestReefPanel()).getRotation()));
 
     // Robot Relative Drive
     driverController
@@ -547,82 +548,93 @@ public class RobotContainer {
     /* SOURCE PATHFINDS */
 
     // Left bumper, coral mode, no piece -> left source
-    driverController
-        .leftBumper()
-        .and(coralMode)
-        .and(hasNoGamePiece)
-        .whileTrue(
-            Commands.defer(
-                    () -> AutoAline.autoAlineToSource(this, stateController.getSourcePose(true)),
-                    Set.of(drive))
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+    // driverController
+    //     .leftBumper()
+    //     .and(coralMode)
+    //     .and(hasNoGamePiece)
+    //     .whileTrue(
+    //         Commands.defer(
+    //                 () -> AutoAline.autoAlineToSource(this, stateController.getSourcePose(true)),
+    //                 Set.of(drive))
+    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
-    // Right bumper, coral mode, no piece -> right source
-    driverController
-        .rightBumper()
-        .and(coralMode)
-        .and(hasNoGamePiece)
-        .whileTrue(
-            Commands.defer(
-                    () -> AutoAline.autoAlineToSource(this, stateController.getSourcePose(false)),
-                    Set.of(drive))
-                .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
+    // // Right bumper, coral mode, no piece -> right source
+    // driverController
+    //     .rightBumper()
+    //     .and(coralMode)
+    //     .and(hasNoGamePiece)
+    //     .whileTrue(
+    //         Commands.defer(
+    //                 () -> AutoAline.autoAlineToSource(this,
+    // stateController.getSourcePose(false)),
+    //                 Set.of(drive))
+    //             .andThen(lED.strobeCommand(Color.kDarkOrange, .333)));
 
-    // L/R Bumper drives to state controller branch (reef box)
-    driverController
-        .leftBumper()
-        .or(driverController.rightBumper())
-        .and(coralMode)
-        .and(hasGamePiece)
-        .whileTrue(
-            Commands.defer(
-                () ->
-                    AutoAline.autoAlineToPose(this, stateController.getBranch())
-                        .andThen(Commands.runOnce(() -> stateController.setHathConcluded())),
-                Set.of(drive)));
+    // // L/R Bumper drives to state controller branch (reef box)
+    // driverController
+    //     .leftBumper()
+    //     .or(driverController.rightBumper())
+    //     .and(coralMode)
+    //     .and(hasGamePiece)
+    //     .whileTrue(
+    //         Commands.defer(
+    //             () ->
+    //                 AutoAline.autoAlineToPose(this, stateController.getBranch())
+    //                     .andThen(Commands.runOnce(() -> stateController.setHathConcluded())),
+    //             Set.of(drive)));
 
-    /* ALGAE PATHFINDS */
+    // /* ALGAE PATHFINDS */
 
-    // Left bumper, algae mode, has piece -> barge
-    driverController
-        .leftBumper()
-        .and(algaeMode)
-        .and(hasGamePiece)
-        .and(gotGamePieceAutoAlgae.negate())
-        .whileTrue(
-            Commands.sequence(
-                Commands.defer(() -> AutoAline.autoAlineToBarge(this), Set.of(drive)),
-                Commands.runOnce(() -> stateController.setHathConcluded())));
+    // // Left bumper, algae mode, has piece -> barge
+    // driverController
+    //     .leftBumper()
+    //     .and(algaeMode)
+    //     .and(hasGamePiece)
+    //     .and(gotGamePieceAutoAlgae.negate())
+    //     .whileTrue(
+    //         Commands.sequence(
+    //             Commands.defer(() -> AutoAline.autoAlineToBarge(this), Set.of(drive)),
+    //             Commands.runOnce(() -> stateController.setHathConcluded())));
 
-    // Right bumper, algae mode, has piece -> processor
-    driverController
-        .rightBumper()
-        .and(algaeMode)
-        .and(hasGamePiece)
-        .and(gotGamePieceAutoAlgae.negate())
-        .whileTrue(
-            Commands.sequence(
-                Commands.defer(() -> AutoAline.autoAlineToProcessorPose(this), Set.of(drive)),
-                manipulator.shootAlgae(stateController.isL4())));
+    // // Right bumper, algae mode, has piece -> processor
+    // driverController
+    //     .rightBumper()
+    //     .and(algaeMode)
+    //     .and(hasGamePiece)
+    //     .and(gotGamePieceAutoAlgae.negate())
+    //     .whileTrue(
+    //         Commands.sequence(
+    //             Commands.defer(() -> AutoAline.autoAlineToProcessorPose(this), Set.of(drive)),
+    //             manipulator.shootAlgae(stateController.isL4())));
 
-    // Right or Left bumper, algae mode, no game piece -> closest reef panel
+    // // Right or Left bumper, algae mode, no game piece -> closest reef panel
+    // driverController
+    //     .rightBumper()
+    //     .or(driverController.leftBumper())
+    //     .and(algaeMode)
+    //     .and(hasNoGamePiece)
+    //     .whileTrue(
+    //         Commands.sequence(
+    //             Commands.runOnce(() -> stateController.setGotPieceAutoAlgae()),
+    //             Commands.defer(
+    //                 () -> AutoAline.autoAlineToAlgaeReefPose(this, superStructure),
+    //                 Set.of(drive))));
+
+    // // For not auto driving away from an algae when we grab one
+    // driverController
+    //     .rightBumper()
+    //     .or(driverController.leftBumper())
+    //     .onFalse(Commands.runOnce(() -> stateController.setNotGotPieceAutoAlgae()));
+
+    // TODO: make robotics great again (mrga)
+    // TODO: delete the line above this
+
+    /* NEW! pathfinds idk */
     driverController
         .rightBumper()
         .or(driverController.leftBumper())
-        .and(algaeMode)
-        .and(hasNoGamePiece)
-        .whileTrue(
-            Commands.sequence(
-                Commands.runOnce(() -> stateController.setGotPieceAutoAlgae()),
-                Commands.defer(
-                    () -> AutoAline.autoAlineToAlgaeReefPose(this, superStructure),
-                    Set.of(drive))));
-
-    // For not auto driving away from an algae when we grab one
-    driverController
-        .rightBumper()
-        .or(driverController.leftBumper())
-        .onFalse(Commands.runOnce(() -> stateController.setNotGotPieceAutoAlgae()));
+        .onTrue(
+            new CustomAutoAlign(drive, () -> AutoAline.poseGetter(stateController.getBranch())));
 
     /* OPERATOR BUTTONS */
 
