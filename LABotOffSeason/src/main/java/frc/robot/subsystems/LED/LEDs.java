@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Conversions;
-import frc.robot.util.RobotMode;
+import frc.robot.util.RobotState;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -204,22 +204,46 @@ public class LEDs extends SubsystemBase {
     return run(() -> mapped(currentValue.getAsDouble())).ignoringDisable(true);
   }
 
-  public Command defaultLeds(
-      Supplier<RobotMode> mode, BooleanSupplier intakng, BooleanSupplier autoAlineDone) {
+  public Command defaultLeds(RobotState state) {
     return runOnce(
             () -> {
-              if (intakng.getAsBoolean()) {
-                strobe(Color.kRed, 0.333);
-              } else if (autoAlineDone.getAsBoolean()) {
-                strobe(Color.kDarkOrange, 0.333);
-              } else if (mode.get().equals(RobotMode.CORAL)) {
-                solid(Color.kGhostWhite);
-              } else if (mode.get().equals(RobotMode.ALGAE)) {
-                solid(Color.kBlue);
-              } else if (mode.get().equals(RobotMode.CLIMB)) {
-                stripes(LEDConstants.stripes, LEDConstants.STRIP_LENGTH, 1.5);
-              } else {
-                wave(Color.kDarkViolet, Color.kBlack, 1, 1);
+              switch(state) {
+                case IDLE:
+                  wave(Color.kDarkViolet, Color.kBlack, 1, 1);
+                  break;
+                case HAS_PIECE_CORAL:
+                case NO_PIECE_CORAL:
+                case MANUAL_L1:
+                case MANUAL_L2:
+                case MANUAL_L3:
+                case MANUAL_L4:
+                  solid(Color.kGhostWhite);
+                  break;
+                case INTAKE_CORAL:
+                  strobe(Color.kRed, 0.333);
+                  break;
+                case HAS_PIECE_ALGAE:
+                case NO_PIECE_ALGAE:
+                case SCORE_ALGAE_PROCESSOR:
+                  solid(Color.kBlue);
+                  break;
+                case INTAKE_ALGAE_FROM_GROUND:
+                case INTAKE_ALGAE_FROM_LOLIPOP:
+                case INTAKE_ALGAE_FROM_REEF:
+                  strobe(Color.kBlue, 0.333);
+                  break;
+                case SCORE_L1:
+                case SCORE_L2:
+                case SCORE_L3:
+                case SCORE_L4:
+                case SCORE_ALGAE_NET:
+                  strobe(Color.kDarkOrange, 0.333);
+                  break;
+                case CLIMB:
+                  stripes(LEDConstants.stripes, LEDConstants.STRIP_LENGTH, 1.5);
+                  break;
+                default:
+                  wave(Color.kDarkViolet, Color.kBlack, 1, 1);
               }
             })
         .ignoringDisable(true);

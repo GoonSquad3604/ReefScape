@@ -16,52 +16,52 @@ public class SuperStructure extends SubsystemBase {
   private Arm arm;
   private Elevator elevator;
 
-  public enum WantedSuperState {
-    HOME,
-    STOPPED,
-    DEFAULT_STATE,
-    INTAKE_CORAL,
-    SCORE_L1,
-    SCORE_L2,
-    SCORE_L3,
-    SCORE_L4,
-    MANUAL_L4,
-    MANUAL_L3,
-    MANUAL_L2,
-    MANUAL_L1,
-    INTAKE_ALGAE_FROM_REEF,
-    INTAKE_ALGAE_FROM_GROUND,
-    INTAKE_ALGAE_FROM_LOLIPOP,
-    SCORE_ALGAE_NET,
-    SCORE_ALGAE_PROCESSOR,
-    CLIMB
-  }
+  // private enum WantedSuperState {
+  //   HOME,
+  //   STOPPED,
+  //   DEFAULT_STATE,
+  //   INTAKE_CORAL,
+  //   SCORE_L1,
+  //   SCORE_L2,
+  //   SCORE_L3,
+  //   SCORE_L4,
+  //   MANUAL_L4,
+  //   MANUAL_L3,
+  //   MANUAL_L2,
+  //   MANUAL_L1,
+  //   INTAKE_ALGAE_FROM_REEF,
+  //   INTAKE_ALGAE_FROM_GROUND,
+  //   INTAKE_ALGAE_FROM_LOLIPOP,
+  //   SCORE_ALGAE_NET,
+  //   SCORE_ALGAE_PROCESSOR,
+  //   CLIMB
+  // }
 
-  public enum CurrentSuperState {
-    HOME,
-    STOPPED,
-    NO_PIECE,
-    HAS_PIECE,
-    INTAKE_CORAL,
-    SCORE_L1,
-    SCORE_L2,
-    SCORE_L3,
-    SCORE_L4,
-    MANUAL_L4,
-    MANUAL_L3,
-    MANUAL_L2,
-    MANUAL_L1,
-    INTAKE_ALGAE_FROM_REEF,
-    INTAKE_ALGAE_FROM_GROUND,
-    INTAKE_ALGAE_FROM_LOLIPOP,
-    SCORE_ALGAE_NET,
-    SCORE_ALGAE_PROCESSOR,
-    CLIMB
-  }
+  // private enum CurrentSuperState {
+  //   HOME,
+  //   STOPPED,
+  //   NO_PIECE,
+  //   HAS_PIECE,
+  //   INTAKE_CORAL,
+  //   SCORE_L1,
+  //   SCORE_L2,
+  //   SCORE_L3,
+  //   SCORE_L4,
+  //   MANUAL_L4,
+  //   MANUAL_L3,
+  //   MANUAL_L2,
+  //   MANUAL_L1,
+  //   INTAKE_ALGAE_FROM_REEF,
+  //   INTAKE_ALGAE_FROM_GROUND,
+  //   INTAKE_ALGAE_FROM_LOLIPOP,
+  //   SCORE_ALGAE_NET,
+  //   SCORE_ALGAE_PROCESSOR,
+  //   CLIMB
+  // }
 
-  public static WantedSuperState wantedSuperState = WantedSuperState.STOPPED;
-  private CurrentSuperState currentSuperState = CurrentSuperState.STOPPED;
-  private CurrentSuperState previousSuperState;
+  // public static WantedSuperState wantedSuperState = WantedSuperState.STOPPED;
+  // private CurrentSuperState currentSuperState = CurrentSuperState.STOPPED;
+  // private CurrentSuperState previousSuperState;
 
   /** Creates a new SuperStructure. */
   public SuperStructure(Manipulator manipulator, Arm arm, Elevator elevator) {
@@ -143,8 +143,8 @@ public class SuperStructure extends SubsystemBase {
     Logger.recordOutput("Superstructure/CurrentSuperState", currentSuperState);
     Logger.recordOutput("Superstructure/PreviousSuperState", previousSuperState);
 
-    currentSuperState = handStateTransitions();
-    applyStates();
+    // currentSuperState = handStateTransitions();
+    // applyStates();
   }
 
   private CurrentSuperState handStateTransitions() {

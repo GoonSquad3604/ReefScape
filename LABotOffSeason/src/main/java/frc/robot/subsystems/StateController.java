@@ -1,5 +1,9 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,40 +16,76 @@ import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.util.LevelState;
-import frc.robot.util.RobotMode;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import frc.robot.util.RobotState;
 
 public class StateController extends SubsystemBase {
+
   public static StateController _instance;
 
-  @AutoLogOutput private RobotMode m_Mode;
+  // private enum WantedState {
+  //   IDLE,
+  //   STOPPED,
+  //   INTAKE_CORAL,
+  //   SCORE_L1,
+  //   SCORE_L2,
+  //   SCORE_L3,
+  //   SCORE_L4,
+  //   MANUAL_L4,
+  //   MANUAL_L3,
+  //   MANUAL_L2,
+  //   MANUAL_L1,
+  //   INTAKE_ALGAE_FROM_REEF,
+  //   INTAKE_ALGAE_FROM_GROUND,
+  //   INTAKE_ALGAE_FROM_LOLIPOP,
+  //   SCORE_ALGAE_NET,
+  //   SCORE_ALGAE_PROCESSOR,
+  //   CLIMB
+  // }
+
+  // private enum CurrentState {
+  //   IDLE,
+  //   STOPPED,
+  //   HAS_PIECE_CORAL,
+  //   HAS_PIECE_ALGAE,
+  //   INTAKE_CORAL,
+  //   SCORE_L1,
+  //   SCORE_L2,
+  //   SCORE_L3,
+  //   SCORE_L4,
+  //   MANUAL_L4,
+  //   MANUAL_L3,
+  //   MANUAL_L2,
+  //   MANUAL_L1,
+  //   INTAKE_ALGAE_FROM_REEF,
+  //   INTAKE_ALGAE_FROM_GROUND,
+  //   INTAKE_ALGAE_FROM_LOLIPOP,
+  //   SCORE_ALGAE_NET,
+  //   SCORE_ALGAE_PROCESSOR,
+  //   CLIMB
+  // }
+
+  private static RobotState wantedState;
+  private static RobotState currentState;
+  private static RobotState previousState;
+
   @AutoLogOutput private LevelState m_Level;
-  @AutoLogOutput private Pose2d m_TragetPose;
-  @AutoLogOutput private Intaking m_Intake;
-  @AutoLogOutput private GoGoGadgetIntakeMode m_goGoGadgetIntake;
-  @AutoLogOutput private ReefSide m_Side;
   @AutoLogOutput private Branch m_Branch;
 
-  @AutoLogOutput private boolean gotGamePieceAutoAlgae = false;
   @AutoLogOutput private boolean autoReadyFireIsTrue = false;
   @AutoLogOutput private boolean armIsReady = false;
   @AutoLogOutput private boolean elevatorIsReady = false;
   @AutoLogOutput private boolean manipulatorIsReady = false;
-  @AutoLogOutput private boolean autoAlineHathConcluded = false;
-
-  @AutoLogOutput private boolean autoFireAutoOverride = false;
 
   private final LoggedDashboardChooser<Boolean> rightSourceChooser;
   private final LoggedDashboardChooser<Boolean> leftSourceChooser;
 
   public StateController() {
+
+    wantedState = RobotState.IDLE;
+    currentState = RobotState.IDLE;
+
     m_Level = LevelState.MAHOME;
-    m_Mode = RobotMode.IDLE;
-    m_Intake = Intaking.NOINTAKE;
     m_Branch = Branch.FRONT_RIGHTBRANCH;
-    m_goGoGadgetIntake = GoGoGadgetIntakeMode.SHORT;
 
     rightSourceChooser = new LoggedDashboardChooser<>("Right Source NearOrFar");
     rightSourceChooser.addOption("Near", true);
@@ -65,44 +105,48 @@ public class StateController extends SubsystemBase {
     return _instance;
   }
 
-  public void setCoral() {
-    m_Mode = RobotMode.CORAL;
+  public boolean isCoralMode() {
+    return currentState == RobotState.HAS_PIECE_CORAL
+        || currentState == RobotState.NO_PIECE_CORAL
+        || currentState == RobotState.INTAKE_CORAL
+        || currentState == RobotState.MANUAL_L1
+        || currentState == RobotState.MANUAL_L2
+        || currentState == RobotState.MANUAL_L3
+        || currentState == RobotState.MANUAL_L4
+        || currentState == RobotState.SCORE_L1
+        || currentState == RobotState.SCORE_L2
+        || currentState == RobotState.SCORE_L3
+        || currentState == RobotState.SCORE_L4;
+  }
+  public boolean isAlgaeMode() {
+    return currentState == RobotState.HAS_PIECE_ALGAE
+        || currentState == RobotState.NO_PIECE_ALGAE
+        || currentState == RobotState.INTAKE_ALGAE_FROM_GROUND
+        || currentState == RobotState.INTAKE_ALGAE_FROM_LOLIPOP
+        || currentState == RobotState.INTAKE_ALGAE_FROM_REEF
+        || currentState == RobotState.SCORE_ALGAE_NET
+        || currentState == RobotState.SCORE_ALGAE_PROCESSOR;
   }
 
-  public void setAlgae() {
-    m_Mode = RobotMode.ALGAE;
+  public boolean isClimbMode() {
+    return currentState == RobotState.CLIMB;
   }
 
-  public void setClimb() {
-    m_Mode = RobotMode.CLIMB;
+  public boolean hasGamePiece() {
+    return currentState == RobotState.HAS_PIECE_ALGAE
+        || currentState == RobotState.HAS_PIECE_CORAL;
   }
 
-  public void setHathConcluded() {
-    autoAlineHathConcluded = true;
+  public RobotState getCurrentState() {
+    return currentState;
   }
 
-  public void setHathntConcluded() {
-    autoAlineHathConcluded = false;
+  public RobotState getWantedState() {
+    return wantedState;
   }
 
-  public boolean hathConcluded() {
-    return autoAlineHathConcluded;
-  }
-
-  public void setIntake() {
-    m_Intake = Intaking.INTAKE;
-  }
-
-  public void setNoIntake() {
-    m_Intake = Intaking.NOINTAKE;
-  }
-
-  public void setLongIntake() {
-    m_goGoGadgetIntake = GoGoGadgetIntakeMode.LONG;
-  }
-
-  public void setShortIntake() {
-    m_goGoGadgetIntake = GoGoGadgetIntakeMode.SHORT;
+  public void setWantedState(RobotState newState) {
+    wantedState = newState;
   }
 
   public Command setL1() {
@@ -145,101 +189,23 @@ public class StateController extends SubsystemBase {
     return m_Level == LevelState.MAHOME;
   }
 
-  public boolean isCoralMode() {
-    return m_Mode == RobotMode.CORAL;
-  }
-
-  public boolean isAlgaeMode() {
-    return m_Mode == RobotMode.ALGAE;
-  }
-
-  public boolean isClimbMode() {
-    return m_Mode == RobotMode.CLIMB;
-  }
-
-  public boolean isIntakeMode() {
-    return m_Intake == Intaking.INTAKE;
-  }
-
-  public boolean isLongIntakeMode() {
-    return m_goGoGadgetIntake == GoGoGadgetIntakeMode.LONG;
-  }
-
-  public boolean hasGamePiece(Manipulator manipulator) {
-    return manipulator.hasGamePiece();
-  }
-
-  public boolean gotGamePieceAutoAlgae() {
-    return gotGamePieceAutoAlgae;
-  }
-
-  public void setGotPieceAutoAlgae() {
-    gotGamePieceAutoAlgae = true;
-  }
-
-  public void setNotGotPieceAutoAlgae() {
-    gotGamePieceAutoAlgae = false;
-  }
-
-  public RobotMode getMode() {
-    return m_Mode;
-  }
+  // public boolean hasGamePiece(Manipulator manipulator) {
+  //   return manipulator.hasGamePiece();
+  // }
 
   public LevelState getLevel() {
     return m_Level;
-  }
-
-  public ReefSide getSide() {
-    return m_Side;
   }
 
   public Branch getBranch() {
     return m_Branch;
   }
 
-  public Command setCoralMode() {
-    return runOnce(
-        () -> {
-          setCoral();
-        });
-  }
-
-  public Command setAlgaeMode() {
-    return runOnce(
-        () -> {
-          setAlgae();
-        });
-  }
-
-  public Command setClimbMode() {
-    return runOnce(
-        () -> {
-          setClimb();
-        });
-  }
-
-  public Command setIntakeMode() {
-    return runOnce(
-        () -> {
-          setIntake();
-        });
-  }
-
-  public Command setNoIntakeMode() {
-    return runOnce(
-        () -> {
-          setNoIntake();
-        });
-  }
-
   public Command setBranch(Branch theBranch) {
     return runOnce(() -> m_Branch = theBranch);
   }
 
-  public Command setOverride(boolean overrideSet) {
-    return runOnce(() -> autoFireAutoOverride = overrideSet);
-  }
-
+  // abomination
   public boolean autoReadyFire(Arm arm, Elevator elevator, Manipulator manipulator) {
 
     armIsReady = false;
@@ -270,13 +236,13 @@ public class StateController extends SubsystemBase {
     }
 
     autoReadyFireIsTrue =
-        isCoralMode()
+        currentState == RobotState.HAS_PIECE_CORAL
             && manipulator.hasGamePiece()
             && !elevator.mahoming
             && manipulatorIsReady
             && armIsReady
             && elevatorIsReady
-            && (!DriverStation.isAutonomous() || autoFireAutoOverride);
+            && (!DriverStation.isAutonomous());
 
     return autoReadyFireIsTrue;
   }
@@ -302,32 +268,13 @@ public class StateController extends SubsystemBase {
 
   public void periodic() {
     Logger.recordOutput(
-        " Left   Branch Positons ",
+        "Left Branch Positons",
         FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
     Logger.recordOutput(
-        "RightBranchPositons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
+        "Right Branch Positons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
     SmartDashboard.putBoolean("L4", isL4());
     SmartDashboard.putBoolean("L3", isL3());
     SmartDashboard.putBoolean("L2", isL2());
-  }
-
-  public enum Intaking {
-    INTAKE,
-    NOINTAKE
-  }
-
-  public enum GoGoGadgetIntakeMode {
-    SHORT,
-    LONG
-  }
-
-  public enum ReefSide {
-    ONE,
-    TWO,
-    THREE,
-    FOUR,
-    FIVE,
-    SIX
   }
 
   public enum Branch {

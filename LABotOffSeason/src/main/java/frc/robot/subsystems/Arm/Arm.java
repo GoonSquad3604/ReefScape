@@ -9,8 +9,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.StateController;
 import frc.robot.subsystems.SuperStructure;
-import frc.robot.subsystems.SuperStructure.WantedSuperState;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -222,8 +222,9 @@ public class Arm extends SubsystemBase {
   }
   
   public void applyStates() {
-    switch (SuperStructure.wantedSuperState) {
-      case HOME:
+    WantedState wantedState = StateController.getCurrentState();
+    switch (StateController.getCurrentState()) {
+      case WantedState.HOME:
         wantedElbowPose = ArmConstants.homeElbow;
         wantedWristPose = ArmConstants.homeWrist;
         break;
