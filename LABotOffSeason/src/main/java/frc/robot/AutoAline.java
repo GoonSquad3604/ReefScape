@@ -17,10 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ElevatorToSetpoint;
-import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.StateController.Branch;
-import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.util.AllianceFlipUtil;
@@ -35,7 +32,7 @@ import org.littletonrobotics.junction.Logger;
 /** Add your docs here. */
 public class AutoAline {
 
-  private static final double JoystickScalar = 2.500000;
+  private static final double JoystickScalar = 2.5;
 
   public enum Target {
     LEFT_POLE,
@@ -163,31 +160,31 @@ public class AutoAline {
         () -> robot.drive.pathfindToPath(robot.drive.getClosestReefPath()), Set.of(robot.drive));
   }
 
-  public static Command autoAlineToAlgaeReefPose(
-      RobotContainer robot, SuperStructure superStructure) {
-    return Commands.sequence(
-        Commands.runOnce(
-            () -> {
-              targetPose =
-                  FieldConstants.Reef.algaeReefPoses.get(robot.drive.getClosestReefPanelInt());
-            }),
-        Commands.defer(() -> robot.drive.pathfindToFieldPose2(targetPose), Set.of(robot.drive)),
-        Commands.runOnce(
-            () -> {
-              targetPose =
-                  FieldConstants.Reef.algaeReefPoses2.get(robot.drive.getClosestReefPanelInt());
-            }),
-        Commands.defer(() -> robot.drive.pathfindToFieldPose2(targetPose), Set.of(robot.drive)),
-        Commands.runOnce(
-            () ->
-                superStructure
-                    .goToProcessor()
-                    .alongWith(
-                        new ElevatorToSetpoint(
-                            robot.elevator, ElevatorConstants.homePos, true, true))
-                    .until(() -> !robot.elevator.mahoming)
-                    .andThen(robot.elevator.runOnce(() -> robot.elevator.stop()))));
-  }
+  // public static Command autoAlineToAlgaeReefPose(
+  //     RobotContainer robot, SuperStructure superStructure) {
+  // return Commands.sequence(
+  //     Commands.runOnce(
+  //         () -> {
+  //           targetPose =
+  //               FieldConstants.Reef.algaeReefPoses.get(robot.drive.getClosestReefPanelInt());
+  //         }),
+  //     Commands.defer(() -> robot.drive.pathfindToFieldPose2(targetPose), Set.of(robot.drive)),
+  //     Commands.runOnce(
+  //         () -> {
+  //           targetPose =
+  //               FieldConstants.Reef.algaeReefPoses2.get(robot.drive.getClosestReefPanelInt());
+  //         }),
+  //     Commands.defer(() -> robot.drive.pathfindToFieldPose2(targetPose), Set.of(robot.drive)),
+  // Commands.runOnce(
+  //     () ->
+  //         superStructure
+  //             .goToProcessor()
+  //             .alongWith(
+  //                 new ElevatorToSetpoint(
+  //                     robot.elevator, ElevatorConstants.homePos, true, true))
+  //             .until(() -> !robot.elevator.mahoming)
+  //             .andThen(robot.elevator.runOnce(() -> robot.elevator.stop()))));
+  // }
 
   public static Pose2d driveToBarge(RobotContainer robot) {
     double currY = robot.drive.getPose().getY();

@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Conversions;
 import frc.robot.util.RobotState;
 import java.util.List;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -207,10 +206,12 @@ public class LEDs extends SubsystemBase {
   public Command defaultLeds(RobotState state) {
     return runOnce(
             () -> {
-              switch(state) {
+              switch (state) {
+                  /* idle/just turned on: wave purple */
                 case IDLE:
                   wave(Color.kDarkViolet, Color.kBlack, 1, 1);
                   break;
+                  /* base coral mode: solid white */
                 case HAS_PIECE_CORAL:
                 case NO_PIECE_CORAL:
                 case MANUAL_L1:
@@ -219,26 +220,31 @@ public class LEDs extends SubsystemBase {
                 case MANUAL_L4:
                   solid(Color.kGhostWhite);
                   break;
+                  /* intake coral: blink red */
                 case INTAKE_CORAL:
                   strobe(Color.kRed, 0.333);
                   break;
                 case HAS_PIECE_ALGAE:
                 case NO_PIECE_ALGAE:
-                case SCORE_ALGAE_PROCESSOR:
+                case ALGAE_PROCESSOR:
                   solid(Color.kBlue);
                   break;
-                case INTAKE_ALGAE_FROM_GROUND:
-                case INTAKE_ALGAE_FROM_LOLIPOP:
-                case INTAKE_ALGAE_FROM_REEF:
+                  /* base algae mode: solid blue */
+                case INTAKE_ALGAE_GROUND:
+                case INTAKE_ALGAE_LOLIPOP:
+                case INTAKE_ALGAE_REEF_L2:
+                case INTAKE_ALGAE_REEF_L3:
                   strobe(Color.kBlue, 0.333);
                   break;
-                case SCORE_L1:
+                  /* auto align: blink orange */
+                  // case SCORE_L1:
                 case SCORE_L2:
                 case SCORE_L3:
                 case SCORE_L4:
-                case SCORE_ALGAE_NET:
+                case ALGAE_NET:
                   strobe(Color.kDarkOrange, 0.333);
                   break;
+                  /* climb mode: cycle rainbow colors */
                 case CLIMB:
                   stripes(LEDConstants.stripes, LEDConstants.STRIP_LENGTH, 1.5);
                   break;

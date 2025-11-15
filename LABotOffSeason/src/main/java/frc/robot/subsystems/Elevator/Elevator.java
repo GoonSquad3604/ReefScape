@@ -162,7 +162,7 @@ public class Elevator extends SubsystemBase {
   public Command setMahoming() {
     return runOnce(() -> mahoming = true);
   }
-  
+
   public boolean isHome() {
     return atHome;
   }

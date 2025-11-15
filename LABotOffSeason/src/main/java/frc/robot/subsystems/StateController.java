@@ -1,90 +1,36 @@
 package frc.robot.subsystems;
 
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
-import frc.robot.subsystems.Arm.Arm;
-import frc.robot.subsystems.Arm.ArmConstants;
-import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Elevator.ElevatorConstants;
-import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.util.LevelState;
 import frc.robot.util.RobotState;
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class StateController extends SubsystemBase {
 
   public static StateController _instance;
 
-  // private enum WantedState {
-  //   IDLE,
-  //   STOPPED,
-  //   INTAKE_CORAL,
-  //   SCORE_L1,
-  //   SCORE_L2,
-  //   SCORE_L3,
-  //   SCORE_L4,
-  //   MANUAL_L4,
-  //   MANUAL_L3,
-  //   MANUAL_L2,
-  //   MANUAL_L1,
-  //   INTAKE_ALGAE_FROM_REEF,
-  //   INTAKE_ALGAE_FROM_GROUND,
-  //   INTAKE_ALGAE_FROM_LOLIPOP,
-  //   SCORE_ALGAE_NET,
-  //   SCORE_ALGAE_PROCESSOR,
-  //   CLIMB
-  // }
-
-  // private enum CurrentState {
-  //   IDLE,
-  //   STOPPED,
-  //   HAS_PIECE_CORAL,
-  //   HAS_PIECE_ALGAE,
-  //   INTAKE_CORAL,
-  //   SCORE_L1,
-  //   SCORE_L2,
-  //   SCORE_L3,
-  //   SCORE_L4,
-  //   MANUAL_L4,
-  //   MANUAL_L3,
-  //   MANUAL_L2,
-  //   MANUAL_L1,
-  //   INTAKE_ALGAE_FROM_REEF,
-  //   INTAKE_ALGAE_FROM_GROUND,
-  //   INTAKE_ALGAE_FROM_LOLIPOP,
-  //   SCORE_ALGAE_NET,
-  //   SCORE_ALGAE_PROCESSOR,
-  //   CLIMB
-  // }
-
-  private static RobotState wantedState;
-  private static RobotState currentState;
-  private static RobotState previousState;
+  // @AutoLogOutput private static RobotState wantedState;
+  @AutoLogOutput private static RobotState currentState;
+  @AutoLogOutput private static RobotState previousState;
 
   @AutoLogOutput private LevelState m_Level;
   @AutoLogOutput private Branch m_Branch;
-
-  @AutoLogOutput private boolean autoReadyFireIsTrue = false;
-  @AutoLogOutput private boolean armIsReady = false;
-  @AutoLogOutput private boolean elevatorIsReady = false;
-  @AutoLogOutput private boolean manipulatorIsReady = false;
 
   private final LoggedDashboardChooser<Boolean> rightSourceChooser;
   private final LoggedDashboardChooser<Boolean> leftSourceChooser;
 
   public StateController() {
 
-    wantedState = RobotState.IDLE;
+    // wantedState = RobotState.IDLE;
     currentState = RobotState.IDLE;
 
-    m_Level = LevelState.MAHOME;
+    m_Level = LevelState.HOME;
     m_Branch = Branch.FRONT_RIGHTBRANCH;
 
     rightSourceChooser = new LoggedDashboardChooser<>("Right Source NearOrFar");
@@ -113,19 +59,21 @@ public class StateController extends SubsystemBase {
         || currentState == RobotState.MANUAL_L2
         || currentState == RobotState.MANUAL_L3
         || currentState == RobotState.MANUAL_L4
-        || currentState == RobotState.SCORE_L1
+        // || currentState == RobotState.SCORE_L1
         || currentState == RobotState.SCORE_L2
         || currentState == RobotState.SCORE_L3
         || currentState == RobotState.SCORE_L4;
   }
+
   public boolean isAlgaeMode() {
     return currentState == RobotState.HAS_PIECE_ALGAE
         || currentState == RobotState.NO_PIECE_ALGAE
-        || currentState == RobotState.INTAKE_ALGAE_FROM_GROUND
-        || currentState == RobotState.INTAKE_ALGAE_FROM_LOLIPOP
-        || currentState == RobotState.INTAKE_ALGAE_FROM_REEF
-        || currentState == RobotState.SCORE_ALGAE_NET
-        || currentState == RobotState.SCORE_ALGAE_PROCESSOR;
+        || currentState == RobotState.INTAKE_ALGAE_GROUND
+        || currentState == RobotState.INTAKE_ALGAE_LOLIPOP
+        || currentState == RobotState.INTAKE_ALGAE_REEF_L2
+        || currentState == RobotState.INTAKE_ALGAE_REEF_L3
+        || currentState == RobotState.ALGAE_NET
+        || currentState == RobotState.ALGAE_PROCESSOR;
   }
 
   public boolean isClimbMode() {
@@ -133,20 +81,32 @@ public class StateController extends SubsystemBase {
   }
 
   public boolean hasGamePiece() {
-    return currentState == RobotState.HAS_PIECE_ALGAE
-        || currentState == RobotState.HAS_PIECE_CORAL;
+    return currentState == RobotState.HAS_PIECE_ALGAE || currentState == RobotState.HAS_PIECE_CORAL;
+  }
+
+  public boolean isIntakeMode() {
+    return currentState == RobotState.INTAKE_CORAL;
   }
 
   public RobotState getCurrentState() {
     return currentState;
   }
 
-  public RobotState getWantedState() {
-    return wantedState;
+  // public RobotState getWantedState() {
+  //   return wantedState;
+  // }
+
+  public RobotState getPreviousState() {
+    return previousState;
   }
 
   public void setWantedState(RobotState newState) {
-    wantedState = newState;
+    previousState = currentState;
+    currentState = newState;
+  }
+
+  public Command setHome() {
+    return runOnce(() -> m_Level = LevelState.HOME);
   }
 
   public Command setL1() {
@@ -165,8 +125,8 @@ public class StateController extends SubsystemBase {
     return runOnce(() -> m_Level = LevelState.L4);
   }
 
-  public Command setMahome() {
-    return runOnce(() -> m_Level = LevelState.MAHOME);
+  public boolean isHome() {
+    return m_Level == LevelState.HOME;
   }
 
   public boolean isL1() {
@@ -185,14 +145,6 @@ public class StateController extends SubsystemBase {
     return m_Level == LevelState.L4;
   }
 
-  public boolean isMahome() {
-    return m_Level == LevelState.MAHOME;
-  }
-
-  // public boolean hasGamePiece(Manipulator manipulator) {
-  //   return manipulator.hasGamePiece();
-  // }
-
   public LevelState getLevel() {
     return m_Level;
   }
@@ -203,48 +155,6 @@ public class StateController extends SubsystemBase {
 
   public Command setBranch(Branch theBranch) {
     return runOnce(() -> m_Branch = theBranch);
-  }
-
-  // abomination
-  public boolean autoReadyFire(Arm arm, Elevator elevator, Manipulator manipulator) {
-
-    armIsReady = false;
-    elevatorIsReady = false;
-    manipulatorIsReady = manipulator.isInPosition(m_Level);
-
-    if (isL1()) {
-      armIsReady =
-          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL1) < 0.075
-              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL1) < 0.075;
-      elevatorIsReady = false;
-
-    } else if (isL2()) {
-      armIsReady =
-          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL2) < 0.075
-              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL2) < 0.02;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l2Pos) < 0.5;
-    } else if (isL3()) {
-      armIsReady =
-          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL3) < 0.075
-              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL3) < 0.02;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l3Pos) < 0.5;
-    } else if (isL4()) {
-      armIsReady =
-          Math.abs(arm.getElbowPos() - ArmConstants.coralElbowL4) < 0.075
-              && Math.abs(arm.getWristPos() - ArmConstants.coralWristL4) < 0.075;
-      elevatorIsReady = Math.abs(elevator.getPos() - ElevatorConstants.l4Pos) < 0.5;
-    }
-
-    autoReadyFireIsTrue =
-        currentState == RobotState.HAS_PIECE_CORAL
-            && manipulator.hasGamePiece()
-            && !elevator.mahoming
-            && manipulatorIsReady
-            && armIsReady
-            && elevatorIsReady
-            && (!DriverStation.isAutonomous());
-
-    return autoReadyFireIsTrue;
   }
 
   public Pose2d getSourcePose(boolean isLeft) {
@@ -268,8 +178,7 @@ public class StateController extends SubsystemBase {
 
   public void periodic() {
     Logger.recordOutput(
-        "Left Branch Positons",
-        FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
+        "Left Branch Positons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
     Logger.recordOutput(
         "Right Branch Positons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
     SmartDashboard.putBoolean("L4", isL4());
