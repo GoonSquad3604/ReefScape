@@ -16,9 +16,6 @@ public class Arm extends SubsystemBase {
   protected final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
   private final Alert elbowDisconnected;
 
-  @AutoLogOutput private boolean atWristPosition = false;
-  @AutoLogOutput private boolean atElbowPosition = false;
-
   @AutoLogOutput private double wantedWristPosition;
   @AutoLogOutput private double wantedElbowPosition;
 

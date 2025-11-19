@@ -23,11 +23,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.Autos.CustomBranchAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Arm.Arm;
@@ -168,10 +168,7 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    // autoChooser.addOption(
-    //     "Right3PieceAutoAlineOnly",
-    //     new ThreePieceRight(
-    //         stateController, elevator, manipulator, arm, drive, this, superStructure));
+    autoChooser.addOption("CustomBranchAuto", new CustomBranchAuto(stateController));
   }
 
   /**
@@ -190,12 +187,13 @@ public class RobotContainer {
 
     BooleanSupplier slowMode = new Trigger(() -> driverController.getRightTriggerAxis() > 0.01);
 
-    // Rumble controler for 1s when endgame
-    Trigger rumbleTime = new Trigger(() -> Timer.getMatchTime() <= 20 && Timer.getMatchTime() > 18);
-    rumbleTime.onTrue(
-        new InstantCommand(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, .8))
-            .andThen(new WaitCommand(1))
-            .andThen(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0)));
+    // Rumble controler for 1s when endgame begins
+    new Trigger(() -> Timer.getMatchTime() <= 20 && Timer.getMatchTime() >= 18)
+        .onTrue(
+            Commands.runOnce(
+                    () -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, .8))
+                .andThen(new WaitCommand(1))
+                .andThen(() -> driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0)));
 
     /* DRIVER BUTTONS */
 

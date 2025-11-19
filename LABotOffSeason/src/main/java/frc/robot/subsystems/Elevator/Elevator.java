@@ -4,120 +4,53 @@
 
 package frc.robot.subsystems.Elevator;
 
-import static edu.wpi.first.units.Units.Volts;
-
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.util.LoggedTunableNumber;
+import frc.robot.commands.ElevatorToSetpoint;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
 
-  /** Creates a new Elevator. */
   public ElevatorIO io;
 
   protected final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-  private final Alert leftDisconnected;
-  private final Alert rightDisconnected;
-  private final LoggedTunableNumber kP;
-  private final LoggedTunableNumber kI;
-  private final LoggedTunableNumber kD;
-  private SysIdRoutine elevatorSysID;
 
   @AutoLogOutput(key = "Elevator/atHome")
-  private boolean atHome = false; // very false
+  private boolean atHome = false;
 
   @AutoLogOutput(key = "Elevator/mahoming")
-  public boolean mahoming = false; // falsish
+  private boolean mahoming = false;
 
+  @AutoLogOutput private double wantedElevatorPosition;
+
+  /** Creates a new Elevator. */
   public Elevator(ElevatorIO elevatorIo) {
-
-    // whee elevator go up yippee
-
     io = elevatorIo;
-
-    elevatorSysID =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                Volts.of(1).per(Units.Second),
-                Volts.of(2),
-                Time.ofBaseUnits(2.9999, Units.Second), // Use default config
-                (state) -> Logger.recordOutput("Elevator/SysIdTestState", state.toString())),
-            new SysIdRoutine.Mechanism(
-                (voltage) -> this.setVolts(voltage.in(Volts)),
-                null, // No log consumer, since data is recorded by AdvantageKit
-                this));
-
-    kP = new LoggedTunableNumber("Elevator/kP");
-    kI = new LoggedTunableNumber("Elevator/kI");
-    kD = new LoggedTunableNumber("Elevator/kD");
-
-    kP.initDefault(0);
-    kI.initDefault(0);
-    kD.initDefault(0);
-
-    // will throw an error if a motor is disconnected
-    leftDisconnected = new Alert("Left elevator motor is disconnected!", Alert.AlertType.kWarning);
-    rightDisconnected =
-        new Alert("Right elevator motor is disconnected!", Alert.AlertType.kWarning);
   }
 
-  // goes to a set position, C is coral and A is algae
-  public void elevatorCL1() {
-    io.setPos(ElevatorConstants.l1Pos);
-  }
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    io.updateInputs(inputs);
+    Logger.processInputs("Elevator", inputs);
 
-  public void elevatorCL2() {
-    io.setPos(ElevatorConstants.l2Pos);
-  }
+    if (!atHome && io.checkLimitSwitch()) {
 
-  public void elevatorCL3() {
-    io.setPos(ElevatorConstants.l3Pos);
-  }
+      io.setToZero();
+      io.setPower(0.0);
+      atHome = true;
 
-  public void elevatorCL4() {
-    io.setPos(ElevatorConstants.l4Pos);
-  }
+    } else if (!io.checkLimitSwitch() && atHome) {
 
-  public void elevatorAL2() {
-    io.setPos(ElevatorConstants.algaeL2Pos);
-  }
+      atHome = false;
+    }
+    if (mahoming && (ElevatorConstants.homeThreshold > io.getPos())) {
 
-  public void elevatorAL3() {
-    io.setPos(ElevatorConstants.algaeL3Pos);
-  }
-
-  public void source() {
-    io.setPos(ElevatorConstants.sourcePos);
-  }
-
-  public void barge() {
-    io.setPos(ElevatorConstants.bargePos);
-  }
-
-  public void home() {
-    io.setPos(ElevatorConstants.homePos);
-  }
-
-  public void algaeGround() {
-    io.setPos(ElevatorConstants.algaeL3Pos);
-  }
-
-  public void processor() {
-    io.setPos(ElevatorConstants.processorPos);
-  }
-
-  public void moveUp() {
-    io.setPower(0.2);
-  }
-
-  public void moveDown() {
-    io.setPower(-0.4001);
+      stop();
+      mahoming = false;
+    }
   }
 
   public void stop() {
@@ -130,33 +63,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getPos() {
-
     return io.getPos();
-  }
-
-  public double getDist() {
-
-    return io.getLCanDist();
-  }
-
-  public void setVolts(double volts) {
-    io.setVoltage(volts);
-  }
-
-  public Command elevatorQuasiDown() {
-    return elevatorSysID.quasistatic(SysIdRoutine.Direction.kReverse);
-  }
-
-  public Command elevatorQuasiUp() {
-    return elevatorSysID.quasistatic(SysIdRoutine.Direction.kForward);
-  }
-
-  public Command elevatorDynaDown() {
-    return elevatorSysID.dynamic(SysIdRoutine.Direction.kReverse);
-  }
-
-  public Command elevatorDynaUp() {
-    return elevatorSysID.dynamic(SysIdRoutine.Direction.kForward);
   }
 
   public Command setMahoming() {
@@ -167,31 +74,12 @@ public class Elevator extends SubsystemBase {
     return atHome;
   }
 
-  @Override
-  public void periodic() {
+  public void setElevatorPosition(double wantedPosition) {
+    wantedElevatorPosition = wantedPosition;
+    new ElevatorToSetpoint(this, wantedPosition);
+  }
 
-    // This method will be called once per scheduler run
-    io.updateInputs(inputs);
-    Logger.processInputs("Elevator", inputs);
-
-    // if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
-    //   io.setPID(kP.get(), kI.get(), kD.get());
-    // }
-
-    if (!atHome && io.checkLimitSwitch()) {
-
-      io.setToZero();
-      io.setPower(0.0);
-      atHome = true;
-
-    } else if (!io.checkLimitSwitch() && atHome) {
-
-      atHome = false;
-    }
-    if (mahoming && (ElevatorConstants.mahomingThreshold > io.getPos())) {
-
-      stop();
-      mahoming = false;
-    }
+  public boolean reachedSetpoint() {
+    return MathUtil.isNear(wantedElevatorPosition, getPos(), 0.25);
   }
 }

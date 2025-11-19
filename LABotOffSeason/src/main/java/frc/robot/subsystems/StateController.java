@@ -25,9 +25,13 @@ public class StateController extends SubsystemBase {
   private final LoggedDashboardChooser<Boolean> rightSourceChooser;
   private final LoggedDashboardChooser<Boolean> leftSourceChooser;
 
+  private final LoggedDashboardChooser<Branch> autoBranchSelector1;
+  private final LoggedDashboardChooser<Branch> autoBranchSelector2;
+  private final LoggedDashboardChooser<Branch> autoBranchSelector3;
+  private final LoggedDashboardChooser<Branch> autoBranchSelector4;
+
   public StateController() {
 
-    // wantedState = RobotState.IDLE;
     currentState = RobotState.IDLE;
 
     m_Level = LevelState.HOME;
@@ -42,6 +46,22 @@ public class StateController extends SubsystemBase {
     leftSourceChooser.addOption("Near", true);
     leftSourceChooser.addOption("Far", false);
     leftSourceChooser.addDefaultOption("Near", true);
+
+    autoBranchSelector1 = new LoggedDashboardChooser<>("FIRST BRANCH");
+    autoBranchSelector2 = new LoggedDashboardChooser<>("SECOND BRANCH");
+    autoBranchSelector3 = new LoggedDashboardChooser<>("THIRD BRANCH");
+    autoBranchSelector4 = new LoggedDashboardChooser<>("FOURTH BRANCH");
+    addAutoBranchOptions();
+  }
+
+  public void periodic() {
+    Logger.recordOutput(
+        "Left Branch Positons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
+    Logger.recordOutput(
+        "Right Branch Positons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
+    SmartDashboard.putBoolean("L4", isL4());
+    SmartDashboard.putBoolean("L3", isL3());
+    SmartDashboard.putBoolean("L2", isL2());
   }
 
   public static StateController getInstance() {
@@ -49,6 +69,67 @@ public class StateController extends SubsystemBase {
       _instance = new StateController();
     }
     return _instance;
+  }
+
+  private void addAutoBranchOptions() {
+
+    // this might either be the worst or best code ever written.
+    // default of each is the 3/4 piece for right
+    autoBranchSelector1.addOption("↖L", Branch.BACKLEFT_LEFTBRANCH);
+    autoBranchSelector1.addOption("↖R", Branch.BACKLEFT_RIGHTBRANCH);
+    autoBranchSelector1.addOption("↙L", Branch.FRONTLEFT_LEFTBRANCH);
+    autoBranchSelector1.addOption("↙R", Branch.FRONTLEFT_RIGHTBRANCH);
+    autoBranchSelector1.addOption("↓L", Branch.FRONT_LEFTBRANCH);
+    autoBranchSelector1.addOption("↓R", Branch.FRONT_RIGHTBRANCH);
+    autoBranchSelector1.addOption("↘L", Branch.FRONTRIGHT_LEFTBRANCH);
+    autoBranchSelector1.addOption("↘R", Branch.FRONTRIGHT_RIGHTBRANCH);
+    autoBranchSelector1.addOption("↗L", Branch.BACKRIGHT_LEFTBRANCH);
+    autoBranchSelector1.addOption("↗R", Branch.BACKRIGHT_RIGHTBRANCH);
+    autoBranchSelector1.addOption("↑L", Branch.BACK_LEFTBRANCH);
+    autoBranchSelector1.addOption("↑R", Branch.BACK_RIGHTBRANCH);
+    autoBranchSelector1.addDefaultOption("↗L", Branch.BACKRIGHT_LEFTBRANCH);
+
+    autoBranchSelector2.addOption("↖L", Branch.BACKLEFT_LEFTBRANCH);
+    autoBranchSelector2.addOption("↖R", Branch.BACKLEFT_RIGHTBRANCH);
+    autoBranchSelector2.addOption("↙L", Branch.FRONTLEFT_LEFTBRANCH);
+    autoBranchSelector2.addOption("↙R", Branch.FRONTLEFT_RIGHTBRANCH);
+    autoBranchSelector2.addOption("↓L", Branch.FRONT_LEFTBRANCH);
+    autoBranchSelector2.addOption("↓R", Branch.FRONT_RIGHTBRANCH);
+    autoBranchSelector2.addOption("↘L", Branch.FRONTRIGHT_LEFTBRANCH);
+    autoBranchSelector2.addOption("↘R", Branch.FRONTRIGHT_RIGHTBRANCH);
+    autoBranchSelector2.addOption("↗L", Branch.BACKRIGHT_LEFTBRANCH);
+    autoBranchSelector2.addOption("↗R", Branch.BACKRIGHT_RIGHTBRANCH);
+    autoBranchSelector2.addOption("↑L", Branch.BACK_LEFTBRANCH);
+    autoBranchSelector2.addOption("↑R", Branch.BACK_RIGHTBRANCH);
+    autoBranchSelector2.addDefaultOption("↘R", Branch.FRONTRIGHT_RIGHTBRANCH);
+
+    autoBranchSelector3.addOption("↖L", Branch.BACKLEFT_LEFTBRANCH);
+    autoBranchSelector3.addOption("↖R", Branch.BACKLEFT_RIGHTBRANCH);
+    autoBranchSelector3.addOption("↙L", Branch.FRONTLEFT_LEFTBRANCH);
+    autoBranchSelector3.addOption("↙R", Branch.FRONTLEFT_RIGHTBRANCH);
+    autoBranchSelector3.addOption("↓L", Branch.FRONT_LEFTBRANCH);
+    autoBranchSelector3.addOption("↓R", Branch.FRONT_RIGHTBRANCH);
+    autoBranchSelector3.addOption("↘L", Branch.FRONTRIGHT_LEFTBRANCH);
+    autoBranchSelector3.addOption("↘R", Branch.FRONTRIGHT_RIGHTBRANCH);
+    autoBranchSelector3.addOption("↗L", Branch.BACKRIGHT_LEFTBRANCH);
+    autoBranchSelector3.addOption("↗R", Branch.BACKRIGHT_RIGHTBRANCH);
+    autoBranchSelector3.addOption("↑L", Branch.BACK_LEFTBRANCH);
+    autoBranchSelector3.addOption("↑R", Branch.BACK_RIGHTBRANCH);
+    autoBranchSelector3.addDefaultOption("↘L", Branch.FRONTRIGHT_LEFTBRANCH);
+
+    autoBranchSelector4.addOption("↖L", Branch.BACKLEFT_LEFTBRANCH);
+    autoBranchSelector4.addOption("↖R", Branch.BACKLEFT_RIGHTBRANCH);
+    autoBranchSelector4.addOption("↙L", Branch.FRONTLEFT_LEFTBRANCH);
+    autoBranchSelector4.addOption("↙R", Branch.FRONTLEFT_RIGHTBRANCH);
+    autoBranchSelector4.addOption("↓L", Branch.FRONT_LEFTBRANCH);
+    autoBranchSelector4.addOption("↓R", Branch.FRONT_RIGHTBRANCH);
+    autoBranchSelector4.addOption("↘L", Branch.FRONTRIGHT_LEFTBRANCH);
+    autoBranchSelector4.addOption("↘R", Branch.FRONTRIGHT_RIGHTBRANCH);
+    autoBranchSelector4.addOption("↗L", Branch.BACKRIGHT_LEFTBRANCH);
+    autoBranchSelector4.addOption("↗R", Branch.BACKRIGHT_RIGHTBRANCH);
+    autoBranchSelector4.addOption("↑L", Branch.BACK_LEFTBRANCH);
+    autoBranchSelector4.addOption("↑R", Branch.BACK_RIGHTBRANCH);
+    autoBranchSelector4.addDefaultOption("↓R", Branch.FRONT_RIGHTBRANCH);
   }
 
   public boolean isCoralMode() {
@@ -91,10 +172,6 @@ public class StateController extends SubsystemBase {
   public RobotState getCurrentState() {
     return currentState;
   }
-
-  // public RobotState getWantedState() {
-  //   return wantedState;
-  // }
 
   public RobotState getPreviousState() {
     return previousState;
@@ -176,14 +253,20 @@ public class StateController extends SubsystemBase {
     }
   }
 
-  public void periodic() {
-    Logger.recordOutput(
-        "Left Branch Positons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
-    Logger.recordOutput(
-        "Right Branch Positons", FieldConstants.Reef.leftRobotBranchPoses.toArray(new Pose2d[0]));
-    SmartDashboard.putBoolean("L4", isL4());
-    SmartDashboard.putBoolean("L3", isL3());
-    SmartDashboard.putBoolean("L2", isL2());
+  public Branch getAutoBranch1() {
+    return autoBranchSelector1.get();
+  }
+
+  public Branch getAutoBranch2() {
+    return autoBranchSelector2.get();
+  }
+
+  public Branch getAutoBranch3() {
+    return autoBranchSelector3.get();
+  }
+
+  public Branch getAutoBranch4() {
+    return autoBranchSelector4.get();
   }
 
   public enum Branch {
