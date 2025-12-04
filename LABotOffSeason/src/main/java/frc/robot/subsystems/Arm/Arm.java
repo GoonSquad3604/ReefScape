@@ -21,6 +21,10 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Arm. */
   public Arm(ArmIO armIO) {
+
+    wantedWristPosition = ArmConstants.homeWrist;
+    wantedElbowPosition = ArmConstants.homeElbow;
+
     io = armIO;
     elbowDisconnected = new Alert("ELBOW DISCONNECTED", Alert.AlertType.kWarning);
   }

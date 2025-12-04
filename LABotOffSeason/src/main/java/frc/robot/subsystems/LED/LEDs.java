@@ -203,55 +203,54 @@ public class LEDs extends SubsystemBase {
     return run(() -> mapped(currentValue.getAsDouble())).ignoringDisable(true);
   }
 
-  public Command defaultLeds(RobotState state) {
-    return runOnce(
-            () -> {
-              switch (state) {
-                  /* idle/just turned on: wave purple */
-                case IDLE:
-                  wave(Color.kDarkViolet, Color.kBlack, 1, 1);
-                  break;
-                  /* base coral mode: solid white */
-                case HAS_PIECE_CORAL:
-                case NO_PIECE_CORAL:
-                case MANUAL_L1:
-                case MANUAL_L2:
-                case MANUAL_L3:
-                case MANUAL_L4:
-                  solid(Color.kGhostWhite);
-                  break;
-                  /* intake coral: blink red */
-                case INTAKE_CORAL:
-                  strobe(Color.kRed, 0.333);
-                  break;
-                case HAS_PIECE_ALGAE:
-                case NO_PIECE_ALGAE:
-                case ALGAE_PROCESSOR:
-                  solid(Color.kBlue);
-                  break;
-                  /* base algae mode: solid blue */
-                case INTAKE_ALGAE_GROUND:
-                case INTAKE_ALGAE_LOLIPOP:
-                case INTAKE_ALGAE_REEF_L2:
-                case INTAKE_ALGAE_REEF_L3:
-                  strobe(Color.kBlue, 0.333);
-                  break;
-                  /* auto align: blink orange */
-                  // case SCORE_L1:
-                case SCORE_L2:
-                case SCORE_L3:
-                case SCORE_L4:
-                case ALGAE_NET:
-                  strobe(Color.kDarkOrange, 0.333);
-                  break;
-                  /* climb mode: cycle rainbow colors */
-                case CLIMB:
-                  stripes(LEDConstants.stripes, LEDConstants.STRIP_LENGTH, 1.5);
-                  break;
-                default:
-                  wave(Color.kDarkViolet, Color.kBlack, 1, 1);
-              }
-            })
+  public Command defaultLeds(Supplier<RobotState> state) {
+    return run(() -> {
+          switch (state.get()) {
+              /* idle/just turned on: wave purple */
+            case IDLE:
+              wave(Color.kDarkViolet, Color.kBlack, 1, 1);
+              break;
+              /* base coral mode: solid white */
+            case HAS_PIECE_CORAL:
+            case NO_PIECE_CORAL:
+            case MANUAL_L1:
+            case MANUAL_L2:
+            case MANUAL_L3:
+            case MANUAL_L4:
+              solid(Color.kGhostWhite);
+              break;
+              /* intake coral: blink red */
+            case INTAKE_CORAL:
+              strobe(Color.kRed, 0.333);
+              break;
+            case HAS_PIECE_ALGAE:
+            case NO_PIECE_ALGAE:
+            case ALGAE_PROCESSOR:
+              solid(Color.kBlue);
+              break;
+              /* base algae mode: solid blue */
+            case INTAKE_ALGAE_GROUND:
+            case INTAKE_ALGAE_LOLIPOP:
+            case INTAKE_ALGAE_REEF_L2:
+            case INTAKE_ALGAE_REEF_L3:
+              strobe(Color.kBlue, 0.333);
+              break;
+              /* auto align: blink orange */
+              // case SCORE_L1:
+            case SCORE_L2:
+            case SCORE_L3:
+            case SCORE_L4:
+            case ALGAE_NET:
+              strobe(Color.kDarkOrange, 0.333);
+              break;
+              /* climb mode: cycle rainbow colors */
+            case CLIMB:
+              stripes(LEDConstants.stripes, LEDConstants.STRIP_LENGTH, 1.5);
+              break;
+            default:
+              wave(Color.kDarkViolet, Color.kBlack, 1, 1);
+          }
+        })
         .ignoringDisable(true);
   }
 }

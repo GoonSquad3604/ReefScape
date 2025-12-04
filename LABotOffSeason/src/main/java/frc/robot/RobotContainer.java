@@ -162,7 +162,7 @@ public class RobotContainer {
     stateController = StateController.getInstance();
     superStructure = new SuperStructure(manipulator, arm, elevator, stateController);
 
-    LED.setDefaultCommand(LED.defaultLeds(stateController.getCurrentState()));
+    LED.setDefaultCommand(LED.defaultLeds(() -> stateController.getCurrentState()));
 
     configureButtonBindings();
 
